@@ -537,16 +537,10 @@ function MainApp() {
                   </div>
                 )}
                 {tab.id === 'api-tester' && (
-                  <div className="p-8 text-center text-gray-400">
-                    <Globe className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <p>REST API Tester - Loading...</p>
-                  </div>
+                  <RestApiTester tab={tab} tabs={tabs} setTabs={setTabs} />
                 )}
                 {tab.id === 'grpc-tester' && (
-                  <div className="p-8 text-center text-gray-400">
-                    <Globe className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <p>gRPC Tester - Loading...</p>
-                  </div>
+                  <GrpcTester tab={tab} tabs={tabs} setTabs={setTabs} />
                 )}
               </div>
             ))}
