@@ -84,18 +84,15 @@ function App() {
   };
 
   const openTool = (tool) => {
-    const existingTab = tabs.find(t => t.id === tool.id);
-    if (existingTab) {
-      setActiveTab(existingTab.tabId);
-    } else {
-      const newTab = {
-        tabId: `${tool.id}-${Date.now()}`,
-        ...tool,
-        data: {}
-      };
-      setTabs([...tabs, newTab]);
-      setActiveTab(newTab.tabId);
-    }
+    // Allow multiple instances of the same tool
+    const newTab = {
+      tabId: `${tool.id}-${Date.now()}`,
+      ...tool,
+      customName: null, // For user-renamed tabs
+      data: {}
+    };
+    setTabs([...tabs, newTab]);
+    setActiveTab(newTab.tabId);
   };
 
   const handleCategorySelect = (category) => {
