@@ -44,8 +44,9 @@ export default function UiRecorder({ tab, tabs, setTabs }) {
       setRecordedEvents([]);
       setGeneratedCode('// Recording... Interact with the page to capture actions');
 
-      // Open new window
-      const recordingWindow = window.open(targetUrl, '_blank', 'width=1200,height=800');
+      // Open new window with our recorder page
+      const recorderPageUrl = `${window.location.origin}/recorder.html?url=${encodeURIComponent(targetUrl)}&session=${newSessionId}&token=${token}`;
+      const recordingWindow = window.open(recorderPageUrl, '_blank', 'width=1200,height=800');
       recordingWindowRef.current = recordingWindow;
 
       if (!recordingWindow) {
@@ -54,10 +55,7 @@ export default function UiRecorder({ tab, tabs, setTabs }) {
         return;
       }
 
-      // Wait for window to load and inject recorder script
-      recordingWindow.addEventListener('load', () => {
-        injectRecorderScript(recordingWindow, newSessionId);
-      });
+      toast.success('Recording started! Interact with the page in the new window');
 
       // Monitor if window is closed
       const checkWindow = setInterval(() => {
