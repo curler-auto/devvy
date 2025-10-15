@@ -144,6 +144,139 @@ export default function CollectionsPanel({ onOpenItem }) {
     return (folders[collectionId] || []).filter(folder => !folder.parent_folder_id);
   };
 
+  const createFolder = async (collectionId) => {
+    if (!newFolderName.trim()) {
+      toast.error('Folder name cannot be empty');
+      return;
+    }
+
+    try {
+      await axios.post(
+        `${API}/folders/create`,
+        {
+          collection_id: collectionId,
+          name: newFolderName,
+          parent_folder_id: null
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success('Folder created!');
+      loadFolders(collectionId);
+      setShowNewFolder(null);
+      setNewFolderName('');
+    } catch (error) {
+      console.error('Failed to create folder:', error);
+      toast.error('Failed to create folder');
+    }
+  };
+
+  const exportCollection = async (collectionId) => {
+    try {
+      const collection = collections.find(c => c.id === collectionId);
+      const collectionFolders = folders[collectionId] || [];
+      const collectionItems = items[collectionId] || [];
+
+      const exportData = {
+        collection: {
+          name: collection.name,
+          description: collection.description
+        },
+        folders: collectionFolders,
+        items: collectionItems
+      };
+
+      const dataStr = JSON.stringify(exportData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${collection.name.replace(/\s+/g, '_')}_collection.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success('Collection exported successfully!');
+    } catch (error) {
+      console.error('Failed to export collection:', error);
+      toast.error('Failed to export collection');
+    }
+  };
+
+  const importCollection = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      const fileContent = await file.text();
+      const importData = JSON.parse(fileContent);
+
+      // Create the collection
+      const collectionResponse = await axios.post(
+        `${API}/collections/create`,
+        {
+          name: `${importData.collection.name} (Imported)`,
+          description: importData.collection.description || ''
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const newCollectionId = collectionResponse.data.id;
+
+      // Create folder ID mapping (old ID -> new ID)
+      const folderIdMap = {};
+
+      // Create folders (root folders first, then nested)
+      const createFoldersRecursively = async (parentId = null, depth = 0) => {
+        const foldersToCreate = importData.folders.filter(f => 
+          parentId ? f.parent_folder_id === parentId : !f.parent_folder_id
+        );
+
+        for (const folder of foldersToCreate) {
+          const response = await axios.post(
+            `${API}/folders/create`,
+            {
+              collection_id: newCollectionId,
+              name: folder.name,
+              parent_folder_id: parentId ? folderIdMap[parentId] : null
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          folderIdMap[folder.id] = response.data.id;
+
+          // Recursively create subfolders
+          await createFoldersRecursively(folder.id, depth + 1);
+        }
+      };
+
+      await createFoldersRecursively();
+
+      // Create items
+      for (const item of importData.items) {
+        await axios.post(
+          `${API}/saved-items/save`,
+          {
+            collection_id: newCollectionId,
+            folder_id: item.folder_id ? folderIdMap[item.folder_id] : null,
+            name: item.name,
+            tool_id: item.tool_id,
+            data: item.data
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+
+      toast.success('Collection imported successfully!');
+      loadCollections();
+    } catch (error) {
+      console.error('Failed to import collection:', error);
+      toast.error('Failed to import collection. Please check the file format.');
+    }
+
+    // Reset file input
+    event.target.value = '';
+  };
+
   return (
     <div className="collections-panel-container">
       <div className="collections-header">
