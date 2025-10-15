@@ -217,6 +217,15 @@ function MainApp() {
   };
 
   const handleOpenSavedItem = (savedItem) => {
+    // Check if this saved item is already open
+    const existingTab = tabs.find(t => t.savedItemId === savedItem.id);
+    if (existingTab) {
+      // Switch to existing tab instead of opening new one
+      setActiveTab(existingTab.tabId);
+      toast.success(`Switched to: ${savedItem.name}`);
+      return;
+    }
+
     // Find the tool definition
     const tool = TOOLS.find(t => t.id === savedItem.tool_id);
     if (!tool) {
@@ -224,12 +233,13 @@ function MainApp() {
       return;
     }
 
-    // Create a new tab with saved data
+    // Create a new tab with saved data and savedItemId
     const newTab = {
-      tabId: `${tool.id}-${Date.now()}`,
+      tabId: `saved-${savedItem.id}-${Date.now()}`,
       ...tool,
       customName: savedItem.name,
-      data: savedItem.tool_data || {}
+      data: savedItem.tool_data || {},
+      savedItemId: savedItem.id // Mark this tab as opened from collection
     };
     setTabs([...tabs, newTab]);
     setActiveTab(newTab.tabId);
