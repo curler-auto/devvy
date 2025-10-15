@@ -281,13 +281,33 @@ export default function CollectionsPanel({ onOpenItem }) {
     <div className="collections-panel-container">
       <div className="collections-header">
         <h3 className="text-sm font-semibold">Collections</h3>
-        <Button
-          size="sm"
-          onClick={() => setShowNewCollection(true)}
-          data-testid="new-collection-button"
-        >
-          <Plus className="w-4 h-4" />
-        </Button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <label htmlFor="import-collection-input">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => document.getElementById('import-collection-input').click()}
+              data-testid="import-collection-button"
+              title="Import Collection"
+            >
+              <Upload className="w-4 h-4" />
+            </Button>
+          </label>
+          <input
+            id="import-collection-input"
+            type="file"
+            accept=".json"
+            style={{ display: 'none' }}
+            onChange={importCollection}
+          />
+          <Button
+            size="sm"
+            onClick={() => setShowNewCollection(true)}
+            data-testid="new-collection-button"
+          >
+            <Plus className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
       <div className="collections-list">
