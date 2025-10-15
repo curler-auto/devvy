@@ -640,6 +640,140 @@ async def list_favorites(user_id: str = "default_user"):
     return {"favorites": [fav["tool_id"] for fav in favorites]}
 
 
+# ========== gRPC PROXY ENDPOINT ==========
+
+class GrpcCallRequest(BaseModel):
+    server_url: str
+    service: str
+    method: str
+    request: dict
+    metadata: dict = {}
+    proto_content: str
+
+
+@api_router.post("/grpc/call")
+async def grpc_call(request: GrpcCallRequest):
+    """
+    Proxy endpoint for making gRPC calls.
+    This endpoint receives proto file content, parses it, and makes a gRPC call.
+    """
+    try:
+        import grpc
+        from google.protobuf import descriptor_pb2
+        from google.protobuf.descriptor_pool import DescriptorPool
+        from google.protobuf.message_factory import MessageFactory
+        from google.protobuf import json_format
+        import tempfile
+        import subprocess
+        
+        # Save proto content to a temporary file
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.proto', delete=False) as proto_file:
+            proto_file.write(request.proto_content)
+            proto_file_path = proto_file.name
+        
+        # Compile the proto file to get descriptor
+        descriptor_set_file = proto_file_path + '.desc'
+        compile_result = subprocess.run(
+            ['protoc', f'--descriptor_set_out={descriptor_set_file}', 
+             f'--include_imports', proto_file_path],
+            capture_output=True,
+            text=True
+        )
+        
+        if compile_result.returncode != 0:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Failed to compile proto file: {compile_result.stderr}"
+            )
+        
+        # Load the descriptor
+        with open(descriptor_set_file, 'rb') as f:
+            descriptor_set = descriptor_pb2.FileDescriptorSet()
+            descriptor_set.ParseFromString(f.read())
+        
+        # Create a descriptor pool and register the descriptors
+        pool = DescriptorPool()
+        for file_descriptor_proto in descriptor_set.file:
+            pool.Add(file_descriptor_proto)
+        
+        # Create a message factory
+        factory = MessageFactory(pool)
+        
+        # Find the service and method descriptors
+        service_descriptor = None
+        for file_descriptor_proto in descriptor_set.file:
+            for service in file_descriptor_proto.service:
+                if service.name == request.service:
+                    service_descriptor = service
+                    break
+            if service_descriptor:
+                break
+        
+        if not service_descriptor:
+            raise HTTPException(status_code=400, detail=f"Service '{request.service}' not found")
+        
+        # Find the method
+        method_descriptor = None
+        for method in service_descriptor.method:
+            if method.name == request.method:
+                method_descriptor = method
+                break
+        
+        if not method_descriptor:
+            raise HTTPException(status_code=400, detail=f"Method '{request.method}' not found")
+        
+        # Get the request and response message types
+        request_type = pool.FindMessageTypeByName(method_descriptor.input_type.lstrip('.'))
+        response_type = pool.FindMessageTypeByName(method_descriptor.output_type.lstrip('.'))
+        
+        # Create message instances
+        request_message_class = factory.GetPrototype(request_type)
+        response_message_class = factory.GetPrototype(response_type)
+        
+        # Convert JSON request to protobuf message
+        request_message = json_format.ParseDict(request.request, request_message_class())
+        
+        # Create gRPC channel and make the call
+        channel = grpc.insecure_channel(request.server_url)
+        
+        # Prepare metadata
+        metadata_list = [(k, v) for k, v in request.metadata.items()]
+        
+        # Make the unary-unary call
+        method_full_name = f'/{service_descriptor.full_name}/{request.method}'
+        response = channel.unary_unary(
+            method_full_name,
+            request_serializer=lambda x: x.SerializeToString(),
+            response_deserializer=response_message_class.FromString,
+        )(request_message, metadata=metadata_list, timeout=30)
+        
+        # Convert response to dict
+        response_dict = json_format.MessageToDict(response, preserving_proto_field_name=True)
+        
+        # Clean up temporary files
+        import os
+        os.unlink(proto_file_path)
+        os.unlink(descriptor_set_file)
+        
+        channel.close()
+        
+        return {
+            "response": response_dict,
+            "metadata": {}
+        }
+        
+    except grpc.RpcError as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"gRPC Error: {e.code()}: {e.details()}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error making gRPC call: {str(e)}"
+        )
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
