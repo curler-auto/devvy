@@ -52,7 +52,7 @@ const TOOLS = [
 ];
 
 function MainApp() {
-  const { user, organization, isLoading, logout, isAdmin, isPremium, getAuthHeader } = useAuth();
+  const { user, organization, isLoading, logout, isAdmin, isPremium, token } = useAuth();
   const [activePane, setActivePane] = useState('categories');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [tabs, setTabs] = useState([]);
