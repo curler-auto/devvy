@@ -177,68 +177,152 @@ function App() {
       </div>
 
       <div className="main-container">
-        {/* Sidebar */}
-        <div 
-          className={`sidebar ${sidebarExpanded ? 'expanded' : 'collapsed'}`}
-          onMouseEnter={() => setSidebarExpanded(true)}
-          onMouseLeave={() => setSidebarExpanded(false)}
-          data-testid="sidebar"
-        >
-          <div className="sidebar-content">
-            {/* Categories */}
-            <div className="sidebar-section">
-              {sidebarExpanded && <div className="sidebar-section-title">Categories</div>}
-              {CATEGORIES.map((category) => {
-                const Icon = category.icon;
-                return (
-                  <button
-                    key={category.id}
-                    className="sidebar-item"
-                    onClick={() => handleCategoryClick(category)}
-                    title={category.name}
-                    data-testid={`category-${category.id}`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    {sidebarExpanded && <span>{category.name}</span>}
-                  </button>
-                );
-              })}
+        {/* Two-Pane Sidebar */}
+        <div className="sidebar" data-testid="sidebar">
+          {/* First Level - Icon Pane */}
+          <div className="icon-pane">
+            <button
+              className={`icon-pane-item ${activePane === 'categories' ? 'active' : ''}`}
+              onClick={() => {
+                setActivePane('categories');
+                setSelectedCategory(null);
+                setSearchQuery('');
+              }}
+              title="Categories"
+              data-testid="icon-categories"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <button
+              className={`icon-pane-item ${activePane === 'tools' ? 'active' : ''}`}
+              onClick={() => {
+                setActivePane('tools');
+                setSelectedCategory(null);
+                setSearchQuery('');
+              }}
+              title="All Tools"
+              data-testid="icon-tools"
+            >
+              <Search className="w-5 h-5" />
+            </button>
+            {favoriteTools.length > 0 && (
+              <button
+                className={`icon-pane-item ${activePane === 'favorites' ? 'active' : ''}`}
+                onClick={() => {
+                  setActivePane('favorites');
+                  setSelectedCategory(null);
+                  setSearchQuery('');
+                }}
+                title="Favorites"
+                data-testid="icon-favorites"
+              >
+                <Star className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+
+          {/* Second Level - Content Pane */}
+          <div className="content-pane">
+            <div className="content-pane-header">
+              <div className="content-pane-title">
+                {activePane === 'categories' && !selectedCategory && 'Categories'}
+                {activePane === 'categories' && selectedCategory && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleBackToCategories}
+                      className="text-gray-400 hover:text-white"
+                      data-testid="back-to-categories"
+                    >
+                      <ChevronRight className="w-4 h-4 rotate-180" />
+                    </button>
+                    {selectedCategory.name} Tools
+                  </div>
+                )}
+                {activePane === 'tools' && 'All Tools'}
+                {activePane === 'favorites' && 'Favorites'}
+              </div>
+              <Input
+                placeholder={`Search ${activePane}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+                data-testid="pane-search-input"
+              />
             </div>
 
-            {/* Favorites */}
-            {favoriteTools.length > 0 && (
-              <div className="sidebar-section">
-                {sidebarExpanded && <div className="sidebar-section-title">Favorites</div>}
-                {favoriteTools.map((tool) => {
-                  const Icon = tool.icon;
-                  return (
-                    <button
-                      key={tool.id}
-                      className="sidebar-item"
-                      onClick={() => openTool(tool)}
-                      title={tool.name}
-                      data-testid={`favorite-tool-${tool.id}`}
-                    >
-                      <Icon className="w-5 h-5" />
-                      {sidebarExpanded && <span>{tool.name}</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+            <div className="content-pane-body">
+              {/* Show Categories */}
+              {activePane === 'categories' && !selectedCategory && (
+                <>
+                  {filteredCategories.map((category) => {
+                    const Icon = category.icon;
+                    return (
+                      <button
+                        key={category.id}
+                        className="pane-item"
+                        onClick={() => handleCategorySelect(category)}
+                        data-testid={`pane-category-${category.id}`}
+                      >
+                        <div className="pane-item-icon">
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div className="pane-item-content">
+                          <div className="pane-item-name">{category.name}</div>
+                          <div className="pane-item-desc">
+                            {TOOLS.filter(t => t.category === category.id).length} tools
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-gray-600" />
+                      </button>
+                    );
+                  })}
+                </>
+              )}
 
-            {/* Tools */}
-            <div className="sidebar-section">
-              {sidebarExpanded && <div className="sidebar-section-title">All Tools</div>}
-              <button
-                className="sidebar-item"
-                onClick={() => setShowToolsModal(true)}
-                title="Browse Tools"
-                data-testid="browse-tools-button"
-              >
-                <Search className="w-5 h-5" />
-                {sidebarExpanded && <span>Browse Tools</span>}
-              </button>
+              {/* Show Tools in Selected Category */}
+              {activePane === 'categories' && selectedCategory && (
+                <>
+                  {categoryTools.map((tool) => (
+                    <ToolPaneItem
+                      key={tool.id}
+                      tool={tool}
+                      onOpen={openTool}
+                      isFavorite={favorites.includes(tool.id)}
+                      onToggleFavorite={toggleFavorite}
+                    />
+                  ))}
+                </>
+              )}
+
+              {/* Show All Tools */}
+              {activePane === 'tools' && (
+                <>
+                  {filteredTools.map((tool) => (
+                    <ToolPaneItem
+                      key={tool.id}
+                      tool={tool}
+                      onOpen={openTool}
+                      isFavorite={favorites.includes(tool.id)}
+                      onToggleFavorite={toggleFavorite}
+                    />
+                  ))}
+                </>
+              )}
+
+              {/* Show Favorites */}
+              {activePane === 'favorites' && (
+                <>
+                  {favoriteTools.map((tool) => (
+                    <ToolPaneItem
+                      key={tool.id}
+                      tool={tool}
+                      onOpen={openTool}
+                      isFavorite={true}
+                      onToggleFavorite={toggleFavorite}
+                    />
+                  ))}
+                </>
+              )}
             </div>
           </div>
         </div>
