@@ -281,8 +281,16 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
     setShowContextMenu(true);
   };
 
-  const handleDeleteFolder = async () => {
-    if (!window.confirm(`Delete "${folder.name}" and all its contents?`)) return;
+  const handleDeleteFolder = async (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    
+    if (!window.confirm(`Delete "${folder.name}" and all its contents?`)) {
+      setShowContextMenu(false);
+      return;
+    }
 
     try {
       await axios.delete(`${API}/folders/${folder.id}`, {
@@ -294,6 +302,7 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
     } catch (error) {
       console.error('Failed to delete folder:', error);
       toast.error('Failed to delete folder');
+      setShowContextMenu(false);
     }
   };
 
