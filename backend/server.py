@@ -32,6 +32,28 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Security
+security = HTTPBearer()
+
+# Dependency to get current user from JWT token
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
+    token = credentials.credentials
+    payload = decode_token(token)
+    if payload is None:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    
+    user = await db.users.find_one({"id": payload.get("sub")}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    
+    return user
+
+# Dependency to check if user is admin
+async def require_admin(current_user: dict = Depends(get_current_user)) -> dict:
+    if current_user.get("role") not in ["admin", "org_admin"]:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return current_user
+
 
 # Define Models
 class StatusCheck(BaseModel):
