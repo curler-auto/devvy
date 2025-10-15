@@ -481,7 +481,7 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
       )}
     </div>
   );
-}
+});
 
 function NewCollectionDialog({ onClose, onCreate }) {
   const [name, setName] = useState('');
