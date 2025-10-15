@@ -236,8 +236,8 @@ async def get_tools_config():
         default_tools = [
             {"tool_id": "json-beautifier", "tool_name": "JSON Beautifier", "is_premium": False},
             {"tool_id": "json-validator", "tool_name": "JSON Validator", "is_premium": False},
-            {"tool_id": "api-tester", "tool_name": "REST API Tester", "is_premium": True},
-            {"tool_id": "grpc-tester", "tool_name": "gRPC Tester", "is_premium": True},
+            {"tool_id": "api-tester", "tool_name": "REST API Tester", "is_premium": False},
+            {"tool_id": "grpc-tester", "tool_name": "gRPC Tester", "is_premium": False},
         ]
         
         for tool_data in default_tools:
