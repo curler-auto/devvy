@@ -653,7 +653,7 @@ class GrpcCallRequest(BaseModel):
 
 
 @api_router.post("/grpc/call")
-async def grpc_call(request: GrpcCallRequest):
+async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_current_user)):
     """
     Proxy endpoint for making gRPC calls.
     This endpoint receives proto file content, parses it, and makes a gRPC call.
