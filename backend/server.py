@@ -365,15 +365,33 @@ async def update_folder(folder_id: str, updates: FolderCreate, current_user: dic
 
 @api_router.delete("/folders/{folder_id}")
 async def delete_folder(folder_id: str, current_user: dict = Depends(get_current_user)):
-    """Delete a folder and all its items"""
-    # Delete all saved items in this folder
-    await db.saved_items.delete_many({"folder_id": folder_id, "user_id": current_user['id']})
+    """Delete a folder and all its items and subfolders recursively"""
     
-    # Delete the folder
-    result = await db.folders.delete_one({"id": folder_id, "user_id": current_user['id']})
+    # Recursive function to delete folder and all descendants
+    async def delete_folder_recursive(fid: str):
+        # Find all subfolders
+        subfolders = await db.folders.find(
+            {"parent_folder_id": fid, "user_id": current_user['id']},
+            {"_id": 0}
+        ).to_list(1000)
+        
+        # Recursively delete subfolders
+        for subfolder in subfolders:
+            await delete_folder_recursive(subfolder['id'])
+        
+        # Delete all saved items in this folder
+        await db.saved_items.delete_many({"folder_id": fid, "user_id": current_user['id']})
+        
+        # Delete the folder itself
+        await db.folders.delete_one({"id": fid, "user_id": current_user['id']})
     
-    if result.deleted_count == 0:
+    # Check if folder exists
+    folder = await db.folders.find_one({"id": folder_id, "user_id": current_user['id']}, {"_id": 0})
+    if not folder:
         raise HTTPException(status_code=404, detail="Folder not found")
+    
+    # Delete recursively
+    await delete_folder_recursive(folder_id)
     
     return {"message": "Folder deleted"}
 
