@@ -65,6 +65,7 @@ function MainApp() {
 
   useEffect(() => {
     loadFavorites();
+    loadToolsConfig();
   }, []);
 
   const loadFavorites = async () => {
