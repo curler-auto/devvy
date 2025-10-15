@@ -222,7 +222,16 @@ export default function UiRecorder({ tab, tabs, setTabs }) {
   return (
     <div className="api-tester-container">
       {/* Header Section */}
-      <div className="api-request-section" style={{ maxHeight: '35%', minHeight: 'auto' }}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: '16px', 
+        padding: '20px', 
+        borderBottom: '1px solid #2a2a2a',
+        maxHeight: '280px',
+        minHeight: 'auto',
+        overflowY: 'auto'
+      }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <Globe className="w-5 h-5 text-emerald-500" />
