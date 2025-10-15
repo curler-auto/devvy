@@ -768,6 +768,9 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
             "metadata": {}
         }
         
+    except HTTPException:
+        # Re-raise HTTPExceptions (like 400 errors) as-is
+        raise
     except grpc.RpcError as e:
         raise HTTPException(
             status_code=500,
