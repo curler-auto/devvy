@@ -72,6 +72,55 @@ class ToolConfigUpdate(BaseModel):
     is_premium: bool
 
 
+# Collections Models
+class CollectionBase(BaseModel):
+    name: str
+    description: str = ""
+
+class CollectionCreate(CollectionBase):
+    pass
+
+class Collection(CollectionBase):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class FolderBase(BaseModel):
+    name: str
+    collection_id: str
+    parent_folder_id: Optional[str] = None
+
+class FolderCreate(FolderBase):
+    pass
+
+class Folder(FolderBase):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class SavedItemBase(BaseModel):
+    name: str
+    description: str = ""
+    tool_id: str
+    tool_data: dict
+    collection_id: str
+    folder_id: Optional[str] = None
+
+class SavedItemCreate(SavedItemBase):
+    pass
+
+class SavedItem(SavedItemBase):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
 # Password utilities
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
