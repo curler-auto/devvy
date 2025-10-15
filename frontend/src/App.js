@@ -270,6 +270,17 @@ function MainApp() {
             organization={organization} 
             onUpgrade={() => setShowUpgrade(true)} 
           />
+          {activeTab && (
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={handleSaveCurrentTab}
+              data-testid="save-tab-button"
+              title="Save to Collection"
+            >
+              <Save className="w-5 h-5 text-gray-400 hover:text-emerald-500" />
+            </Button>
+          )}
           {isAdmin && (
             <Button 
               variant="ghost" 
