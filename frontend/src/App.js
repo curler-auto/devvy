@@ -97,8 +97,14 @@ function App() {
       setTabs([...tabs, newTab]);
       setActiveTab(newTab.tabId);
     }
-    setShowCategoryModal(false);
-    setShowToolsModal(false);
+  };
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const handleBackToCategories = () => {
+    setSelectedCategory(null);
   };
 
   const closeTab = (tabId, e) => {
