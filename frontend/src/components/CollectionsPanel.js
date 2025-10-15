@@ -232,9 +232,13 @@ export default function CollectionsPanel({ onOpenItem }) {
   );
 }
 
-function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle, onOpenItem, getItemsForFolder, expandedFolders, toggleFolder, token }) {
+function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle, onOpenItem, getItemsForFolder, expandedFolders, toggleFolder, token, onFolderDeleted }) {
   const [showNewSubfolder, setShowNewSubfolder] = useState(false);
   const [newSubfolderName, setNewSubfolderName] = useState('');
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
+  const [showRename, setShowRename] = useState(false);
+  const [renameValue, setRenameValue] = useState(folder.name);
 
   const getSubfolders = (parentId) => {
     return folders.filter(f => f.parent_folder_id === parentId);
