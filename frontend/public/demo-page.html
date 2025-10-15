@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Page - UI Recorder Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0fdf4;
+            border: 2px solid #86efac;
+            border-radius: 8px;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result h3 {
+            color: #166534;
+            margin-bottom: 10px;
+        }
+        .result p {
+            color: #15803d;
+            font-size: 14px;
+        }
+        .link-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .link-section a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-right: 20px;
+        }
+        .link-section a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Demo Test Page</h1>
+        <p class="subtitle">Practice recording UI interactions with this form</p>
+        
+        <form id="demoForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="country">Country</label>
+                <select id="country" name="country">
+                    <option value="">Select a country</option>
+                    <option value="us">United States</option>
+                    <option value="uk">United Kingdom</option>
+                    <option value="ca">Canada</option>
+                    <option value="au">Australia</option>
+                    <option value="in">India</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Type your message here..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="newsletter" name="newsletter">
+                    <label for="newsletter" style="margin-bottom: 0;">Subscribe to newsletter</label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-primary">Submit Form</button>
+                <button type="reset" class="btn-secondary">Reset</button>
+            </div>
+        </form>
+
+        <div id="result" class="result">
+            <h3>✅ Form Submitted Successfully!</h3>
+            <p>Your information has been recorded. Check the generated Playwright code!</p>
+        </div>
+
+        <div class="link-section">
+            <h3 style="margin-bottom: 15px; color: #333;">Quick Actions:</h3>
+            <a href="#" id="showAlert">Show Alert</a>
+            <a href="#" id="changeText">Change Text</a>
+            <a href="#page2" id="goToPage2">Go to Page 2</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('demoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('result').classList.add('show');
+            setTimeout(() => {
+                document.getElementById('result').classList.remove('show');
+            }, 5000);
+        });
+
+        document.getElementById('showAlert').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('This is a test alert!');
+        });
+
+        document.getElementById('changeText').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('h1').textContent = '🎉 Text Changed!';
+            setTimeout(() => {
+                document.querySelector('h1').textContent = '🎯 Demo Test Page';
+            }, 2000);
+        });
+
+        document.getElementById('goToPage2').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '/demo-page2.html';
+        });
+    </script>
+</body>
+</html>
