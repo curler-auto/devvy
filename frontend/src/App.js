@@ -48,10 +48,17 @@ const TOOLS = [
   },
   { 
     id: 'api-tester', 
-    name: 'API Tester', 
+    name: 'REST API Tester', 
     category: 'api',
     icon: Globe,
     description: 'Test REST API endpoints'
+  },
+  { 
+    id: 'grpc-tester', 
+    name: 'gRPC Tester', 
+    category: 'api',
+    icon: Globe,
+    description: 'Test gRPC services'
   },
 ];
 
