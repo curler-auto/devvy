@@ -228,21 +228,106 @@ export default function CollectionsPanel({ onOpenItem }) {
   );
 }
 
-function FolderItem({ folder, collectionId, items, isExpanded, onToggle, onOpenItem, getItemsForFolder }) {
+function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle, onOpenItem, getItemsForFolder, expandedFolders, toggleFolder, token }) {
+  const [showNewSubfolder, setShowNewSubfolder] = useState(false);
+  const [newSubfolderName, setNewSubfolderName] = useState('');
+
+  const getSubfolders = (parentId) => {
+    return folders.filter(f => f.parent_folder_id === parentId);
+  };
+
+  const createSubfolder = async (e) => {
+    e.stopPropagation();
+    if (!newSubfolderName.trim()) return;
+
+    try {
+      await axios.post(
+        `${API}/folders/create`,
+        {
+          name: newSubfolderName,
+          collection_id: collectionId,
+          parent_folder_id: folder.id
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success('Subfolder created!');
+      setNewSubfolderName('');
+      setShowNewSubfolder(false);
+      // Reload folders - this should be passed from parent
+      window.location.reload(); // Temporary solution
+    } catch (error) {
+      console.error('Failed to create subfolder:', error);
+      toast.error('Failed to create subfolder');
+    }
+  };
+
+  const subfolders = getSubfolders(folder.id);
+
   return (
     <div className="folder-item">
-      <div className="folder-header" onClick={onToggle}>
-        {isExpanded ? (
-          <ChevronDown className="w-4 h-4" />
-        ) : (
-          <ChevronRight className="w-4 h-4" />
-        )}
-        <Folder className="w-4 h-4 text-amber-500" />
-        <span>{folder.name}</span>
+      <div className="folder-header-wrapper">
+        <div className="folder-header" onClick={onToggle}>
+          {isExpanded ? (
+            <ChevronDown className="w-4 h-4" />
+          ) : (
+            <ChevronRight className="w-4 h-4" />
+          )}
+          <Folder className="w-4 h-4 text-amber-500" />
+          <span>{folder.name}</span>
+        </div>
+        <button
+          className="folder-add-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowNewSubfolder(!showNewSubfolder);
+          }}
+          title="New Subfolder"
+          data-testid={`new-subfolder-${folder.id}`}
+        >
+          <FolderPlus className="w-3.5 h-3.5" />
+        </button>
       </div>
+
+      {showNewSubfolder && (
+        <div className="new-subfolder-input" onClick={(e) => e.stopPropagation()}>
+          <Input
+            value={newSubfolderName}
+            onChange={(e) => setNewSubfolderName(e.target.value)}
+            placeholder="Subfolder name"
+            size="sm"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') createSubfolder(e);
+              if (e.key === 'Escape') setShowNewSubfolder(false);
+            }}
+            autoFocus
+          />
+          <Button size="sm" onClick={createSubfolder}>
+            <Plus className="w-3 h-3" />
+          </Button>
+        </div>
+      )}
 
       {isExpanded && (
         <div className="folder-content">
+          {/* Render subfolders recursively */}
+          {subfolders.map((subfolder) => (
+            <FolderItem
+              key={subfolder.id}
+              folder={subfolder}
+              collectionId={collectionId}
+              items={items}
+              folders={folders}
+              isExpanded={expandedFolders.has(subfolder.id)}
+              onToggle={() => toggleFolder(subfolder.id)}
+              onOpenItem={onOpenItem}
+              getItemsForFolder={getItemsForFolder}
+              expandedFolders={expandedFolders}
+              toggleFolder={toggleFolder}
+              token={token}
+            />
+          ))}
+
+          {/* Render items in this folder */}
           {getItemsForFolder(collectionId, folder.id).map((item) => (
             <div
               key={item.id}
