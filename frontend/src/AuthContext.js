@@ -30,6 +30,10 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserInfo = async () => {
     try {
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
       const response = await axios.get(`${API}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -37,7 +41,8 @@ export const AuthProvider = ({ children }) => {
       setOrganization(response.data.organization);
     } catch (error) {
       console.error('Failed to fetch user info:', error);
-      logout();
+      // Don't logout - user might still have valid token from login
+      // Just set loading to false
     } finally {
       setIsLoading(false);
     }
