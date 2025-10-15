@@ -206,6 +206,36 @@ function MainApp() {
     }
   };
 
+  const handleSaveCurrentTab = () => {
+    const currentTab = tabs.find(t => t.tabId === activeTab);
+    if (currentTab) {
+      setTabToSave(currentTab);
+      setShowSaveDialog(true);
+    } else {
+      toast.error('No active tab to save');
+    }
+  };
+
+  const handleOpenSavedItem = (savedItem) => {
+    // Find the tool definition
+    const tool = TOOLS.find(t => t.id === savedItem.tool_id);
+    if (!tool) {
+      toast.error('Tool not found');
+      return;
+    }
+
+    // Create a new tab with saved data
+    const newTab = {
+      tabId: `${tool.id}-${Date.now()}`,
+      ...tool,
+      customName: savedItem.name,
+      data: savedItem.tool_data || {}
+    };
+    setTabs([...tabs, newTab]);
+    setActiveTab(newTab.tabId);
+    toast.success(`Opened: ${savedItem.name}`);
+  };
+
   const filteredTools = searchQuery
     ? TOOLS.filter(tool => 
         tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
