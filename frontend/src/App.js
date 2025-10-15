@@ -11,11 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import { AuthProvider, useAuth } from '@/AuthContext';
-import AuthScreen from '@/components/AuthScreen';
-import AdminPanel from '@/components/AdminPanel';
-import LicenseStatus from '@/components/LicenseStatus';
-import UpgradeDialog from '@/components/UpgradeDialog';
+import { AuthProvider, useAuth } from '@/AuthContextDesktop';
 import CollectionsPanel from '@/components/CollectionsPanel';
 import SaveToCollectionDialog from '@/components/SaveToCollectionDialog';
 import RestApiTester from '@/components/RestApiTester';
@@ -72,7 +68,10 @@ const TOOLS = [
 ];
 
 function MainApp() {
-  const { user, organization, isLoading, logout, isAdmin, isPremium, token } = useAuth();
+  // Desktop version - no authentication needed
+  const user = { name: 'Desktop User' };
+  const isAdmin = false;
+  const isPremium = false;
   const [activePane, setActivePane] = useState('categories');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [tabs, setTabs] = useState([]);
@@ -84,6 +83,7 @@ function MainApp() {
   const [toolsConfig, setToolsConfig] = useState({});
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [tabToSave, setTabToSave] = useState(null);
+  // const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     loadFavorites();
@@ -168,7 +168,12 @@ function MainApp() {
 
   const handleBackToCategories = () => {
     setSelectedCategory(null);
+    // setIsSidebarCollapsed(true);
   };
+
+  // const toggleSidebar = () => {
+  //   setIsSidebarCollapsed(!isSidebarCollapsed);
+  // };
 
   const closeTab = (tabId, e) => {
     e?.stopPropagation();
@@ -297,13 +302,9 @@ function MainApp() {
       <div className="top-bar" data-testid="top-bar">
         <div className="flex items-center gap-3">
           <Code className="w-6 h-6" />
-          <span className="text-lg font-semibold">DevTools Suite</span>
+          <span className="text-lg font-semibold">Devvy Studio</span>
         </div>
         <div className="flex items-center gap-3">
-          <LicenseStatus 
-            organization={organization} 
-            onUpgrade={() => setShowUpgrade(true)} 
-          />
           {activeTab && (
             <Button 
               variant="ghost" 
@@ -315,30 +316,10 @@ function MainApp() {
               <Save className="w-5 h-5 text-gray-400 hover:text-emerald-500" />
             </Button>
           )}
-          {isAdmin && (
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => setShowAdminPanel(true)}
-              data-testid="admin-button"
-              title="Admin Panel"
-            >
-              <Shield className="w-5 h-5 text-emerald-500" />
-            </Button>
-          )}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-800/50">
             <User className="w-4 h-4" />
-            <span className="text-sm">{user?.email}</span>
+            <span className="text-sm">Desktop User</span>
           </div>
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={logout}
-            data-testid="logout-button"
-            title="Logout"
-          >
-            <LogOut className="w-5 h-5" />
-          </Button>
         </div>
       </div>
 
@@ -383,7 +364,7 @@ function MainApp() {
             >
               <Bookmark className="w-5 h-5" />
             </button>
-            {favoriteTools.length > 0 && (
+            {favorites.length > 0 && (
               <button
                 className={`icon-pane-item ${activePane === 'favorites' ? 'active' : ''}`}
                 onClick={() => {
@@ -434,7 +415,7 @@ function MainApp() {
               </div>
             )}
 
-            <div className="content-pane-body">
+            <div className={`content-pane-body ${activePane !== 'collections' ? 'grid-layout' : ''}`}>
               {/* Show Collections Panel */}
               {activePane === 'collections' && (
                 <CollectionsPanel onOpenItem={handleOpenSavedItem} />
@@ -448,11 +429,12 @@ function MainApp() {
                       <button
                         key={category.id}
                         className="pane-item"
+                        data-category={category.id}
                         onClick={() => handleCategorySelect(category)}
                         data-testid={`pane-category-${category.id}`}
                       >
                         <div className="pane-item-icon">
-                          <Icon className="w-5 h-5" />
+                          <Icon className="w-6 h-6" />
                         </div>
                         <div className="pane-item-content">
                           <div className="pane-item-name">{category.name}</div>
@@ -460,7 +442,6 @@ function MainApp() {
                             {TOOLS.filter(t => t.category === category.id).length} tools
                           </div>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-gray-600" />
                       </button>
                     );
                   })}
@@ -570,21 +551,13 @@ function MainApp() {
             {tabs.length === 0 && (
               <div className="empty-state" data-testid="empty-state">
                 <Code className="w-24 h-24 mb-6 opacity-30" />
-                <h2 className="text-2xl font-semibold mb-2">Welcome to DevTools Suite</h2>
+                <h2 className="text-2xl font-semibold mb-2">Welcome to Devvy Studio</h2>
                 <p className="text-gray-400 mb-6">Select a tool from the sidebar to get started</p>
               </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* Admin Panel */}
-      {showAdminPanel && (
-        <AdminPanel onClose={() => setShowAdminPanel(false)} />
-      )}
-
-      {/* Upgrade Dialog */}
-      <UpgradeDialog open={showUpgrade} onClose={() => setShowUpgrade(false)} />
 
       {/* Save to Collection Dialog */}
       {showSaveDialog && tabToSave && (
@@ -762,36 +735,25 @@ function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium })
   const Icon = tool.icon;
   
   return (
-    <div className="pane-item" data-testid={`tool-pane-item-${tool.id}`}>
-      <button
-        className="w-full flex items-center gap-3 text-left"
-        onClick={() => onOpen(tool)}
-        data-testid={`open-tool-${tool.id}`}
-      >
-        <div className="pane-item-icon">
-          <Icon className="w-5 h-5" />
+    <button
+      className="pane-item"
+      data-category={tool.category}
+      onClick={() => onOpen(tool)}
+      data-testid={`tool-pane-item-${tool.id}`}
+    >
+      <div className="pane-item-icon">
+        <Icon className="w-6 h-6" />
+      </div>
+      <div className="pane-item-content">
+        <div className="pane-item-name">
+          {tool.name}
+          {isPremium && <Crown className="w-3 h-3 text-amber-500 inline ml-1" />}
         </div>
-        <div className="pane-item-content">
-          <div className="pane-item-name">
-            {tool.name}
-            {isPremium && (
-              <Crown className="w-3 h-3 text-amber-500 inline ml-1" />
-            )}
-          </div>
-          <div className="pane-item-desc">{tool.description}</div>
-        </div>
-      </button>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleFavorite(tool.id);
-        }}
-        className={`favorite-button ml-2 flex-shrink-0 ${isFavorite ? 'active' : ''}`}
-        data-testid={`favorite-button-${tool.id}`}
-      >
-        <Star className="w-4 h-4" fill={isFavorite ? 'currentColor' : 'none'} />
-      </button>
-    </div>
+      </div>
+      {isFavorite && (
+        <Star className="w-3 h-3 text-amber-500 absolute top-2 right-2" fill="currentColor" />
+      )}
+    </button>
   );
 }
 
@@ -804,7 +766,7 @@ function JSONBeautifierTool({ tab, tabs, setTabs }) {
 
   const beautifyJSON = async () => {
     try {
-      const response = await axios.post(`${API}/tools/json-beautifier`, {
+      const response = await axios.post(`${API}/beautify`, {
         json_string: inputJSON,
         indent: 2
       });

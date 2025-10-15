@@ -2,7 +2,6 @@ from fastapi import FastAPI, APIRouter, HTTPException, Depends, Header
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
@@ -17,15 +16,23 @@ from auth import (
     create_access_token, decode_token, Collection, CollectionCreate,
     Folder, FolderCreate, SavedItem, SavedItemCreate
 )
+from db_service import get_db
 
 
 ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# Load environment files based on mode
+env_file = ROOT_DIR / '.env.desktop' if os.environ.get('APP_MODE') == 'desktop' else ROOT_DIR / '.env'
+if env_file.exists():
+    load_dotenv(env_file)
+else:
+    # Fallback to default environment variables for desktop mode
+    if os.environ.get('APP_MODE') == 'desktop':
+        os.environ.setdefault('DATABASE_URL', 'sqlite+aiosqlite:///./devtools.db')
+        os.environ.setdefault('CORS_ORIGINS', '*')
+
+# Database will be initialized via dependency injection
+db_instance = None
 
 # Create the main app without a prefix
 app = FastAPI()
@@ -36,14 +43,22 @@ api_router = APIRouter(prefix="/api")
 # Security
 security = HTTPBearer()
 
+# Dependency to get database instance
+async def get_database():
+    global db_instance
+    if db_instance is None:
+        db_instance = await get_db()
+    return db_instance
+
 # Dependency to get current user from JWT token
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
+    db = await get_database()
     token = credentials.credentials
     payload = decode_token(token)
     if payload is None:
         raise HTTPException(status_code=401, detail="Invalid or expired token")
     
-    user = await db.users.find_one({"id": payload.get("sub")}, {"_id": 0})
+    user = await db.get_user_by_id(payload.get("sub"))
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     
@@ -996,4 +1011,7 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    client.close()
+    global db_instance
+    if db_instance:
+        await db_instance.disconnect()
+        db_instance = None
