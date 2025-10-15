@@ -66,7 +66,8 @@ export default function SaveToCollectionDialog({ open, onClose, tab }) {
         `${API}/folders/create`,
         {
           name: newFolderName,
-          collection_id: selectedCollection
+          collection_id: selectedCollection,
+          parent_folder_id: selectedFolder || null
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -78,6 +79,18 @@ export default function SaveToCollectionDialog({ open, onClose, tab }) {
       console.error('Failed to create folder:', error);
       toast.error('Failed to create folder');
     }
+  };
+
+  const renderFolderOptions = (foldersList, level = 0, parentId = null) => {
+    const filtered = foldersList.filter(f => f.parent_folder_id === parentId);
+    const indent = '  '.repeat(level);
+    
+    return filtered.flatMap(folder => [
+      <option key={folder.id} value={folder.id}>
+        {indent}{level > 0 ? '└─ ' : ''}{folder.name}
+      </option>,
+      ...renderFolderOptions(foldersList, level + 1, folder.id)
+    ]);
   };
 
   const handleSave = async () => {
