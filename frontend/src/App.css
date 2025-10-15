@@ -223,6 +223,7 @@ body {
   flex-direction: column;
   background: #0f0f0f;
   overflow: hidden;
+  min-height: 0;
 }
 
 .panel-header {
@@ -243,6 +244,8 @@ body {
 
 .editor-container {
   flex: 1;
+  min-height: 400px;
+  height: 100%;
   overflow: hidden;
 }
 
