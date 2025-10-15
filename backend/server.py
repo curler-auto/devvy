@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,9 +6,10 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
+import json
 
 
 ROOT_DIR = Path(__file__).parent
@@ -37,10 +38,34 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
+
+class JSONBeautifyRequest(BaseModel):
+    json_string: str
+    indent: int = 2
+
+class JSONBeautifyResponse(BaseModel):
+    beautified: str
+    valid: bool
+    error: Optional[str] = None
+
+
+class FavoriteToolRequest(BaseModel):
+    tool_id: str
+    user_id: str = "default_user"  # For now, using a default user
+
+class FavoriteTool(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    tool_id: str
+    user_id: str
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Developer Productivity Suite API"}
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
@@ -65,6 +90,73 @@ async def get_status_checks():
             check['timestamp'] = datetime.fromisoformat(check['timestamp'])
     
     return status_checks
+
+
+# JSON Beautifier Tool
+@api_router.post("/tools/json-beautifier", response_model=JSONBeautifyResponse)
+async def beautify_json(request: JSONBeautifyRequest):
+    try:
+        # Parse JSON to validate
+        parsed = json.loads(request.json_string)
+        
+        # Beautify with specified indent
+        beautified = json.dumps(parsed, indent=request.indent, sort_keys=False)
+        
+        return JSONBeautifyResponse(
+            beautified=beautified,
+            valid=True,
+            error=None
+        )
+    except json.JSONDecodeError as e:
+        return JSONBeautifyResponse(
+            beautified=request.json_string,
+            valid=False,
+            error=f"Invalid JSON: {str(e)}"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Favorites Management
+@api_router.post("/favorites/add")
+async def add_favorite(request: FavoriteToolRequest):
+    # Check if already exists
+    existing = await db.favorites.find_one({
+        "tool_id": request.tool_id,
+        "user_id": request.user_id
+    }, {"_id": 0})
+    
+    if existing:
+        return {"message": "Already in favorites", "favorite_id": existing["id"]}
+    
+    favorite = FavoriteTool(**request.model_dump())
+    doc = favorite.model_dump()
+    doc['timestamp'] = doc['timestamp'].isoformat()
+    
+    await db.favorites.insert_one(doc)
+    return {"message": "Added to favorites", "favorite_id": favorite.id}
+
+@api_router.post("/favorites/remove")
+async def remove_favorite(request: FavoriteToolRequest):
+    result = await db.favorites.delete_one({
+        "tool_id": request.tool_id,
+        "user_id": request.user_id
+    })
+    
+    if result.deleted_count > 0:
+        return {"message": "Removed from favorites"}
+    else:
+        return {"message": "Not found in favorites"}
+
+@api_router.get("/favorites/list")
+async def list_favorites(user_id: str = "default_user"):
+    favorites = await db.favorites.find(
+        {"user_id": user_id},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    return {"favorites": [fav["tool_id"] for fav in favorites]}
+
 
 # Include the router in the main app
 app.include_router(api_router)
