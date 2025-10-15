@@ -61,6 +61,13 @@ const TOOLS = [
     icon: Globe,
     description: 'Test gRPC services'
   },
+  { 
+    id: 'ui-recorder', 
+    name: 'UI Automation Recorder', 
+    category: 'automation',
+    icon: Globe,
+    description: 'Record browser interactions and generate Playwright code'
+  },
 ];
 
 function MainApp() {
