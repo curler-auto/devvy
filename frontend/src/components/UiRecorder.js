@@ -252,7 +252,13 @@ export default function UiRecorder({ tab, tabs, setTabs }) {
   };
 
   return (
-    <div className="api-tester-container">
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      height: '100%', 
+      overflow: 'hidden', 
+      background: '#0a0a0a' 
+    }}>
       {/* Header Section */}
       <div style={{ 
         display: 'flex', 
@@ -260,9 +266,7 @@ export default function UiRecorder({ tab, tabs, setTabs }) {
         gap: '16px', 
         padding: '20px', 
         borderBottom: '1px solid #2a2a2a',
-        maxHeight: '280px',
-        minHeight: 'auto',
-        overflowY: 'auto'
+        flexShrink: 0
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
