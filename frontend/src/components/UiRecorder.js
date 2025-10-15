@@ -13,7 +13,7 @@ const API = `${BACKEND_URL}/api`;
 export default function UiRecorder({ tab, tabs, setTabs }) {
   const [isRecording, setIsRecording] = useState(false);
   const [sessionId, setSessionId] = useState(null);
-  const [targetUrl, setTargetUrl] = useState('https://example.com');
+  const [targetUrl, setTargetUrl] = useState(`${window.location.origin}/demo-page.html`);
   const [language, setLanguage] = useState('python');
   const [generatedCode, setGeneratedCode] = useState('');
   const [recordedEvents, setRecordedEvents] = useState([]);
