@@ -456,6 +456,7 @@ function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle
               expandedFolders={expandedFolders}
               toggleFolder={toggleFolder}
               token={token}
+              onFolderDeleted={onFolderDeleted}
             />
           ))}
 
