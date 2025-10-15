@@ -290,15 +290,16 @@ body {
 }
 
 .tab-name-input {
-  background: #1a1a1a;
-  border: 1px solid #10b981;
-  color: #e5e5e5;
-  padding: 2px 6px;
+  background: #0f0f0f;
+  border: 2px solid #10b981;
+  color: #ffffff;
+  padding: 4px 8px;
   border-radius: 4px;
   font-size: 13px;
   outline: none;
-  min-width: 80px;
-  max-width: 150px;
+  min-width: 100px;
+  max-width: 200px;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
 }
 
 /* Context Menu */
