@@ -408,6 +408,163 @@ function App() {
   );
 }
 
+function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, onCloseOthers, onCloseToRight }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleDoubleClick = (e) => {
+    e.stopPropagation();
+    setEditName(tab.customName || tab.name);
+    setIsEditing(true);
+  };
+
+  const handleRename = () => {
+    if (editName.trim()) {
+      onRename(editName);
+    }
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleRename();
+    } else if (e.key === 'Escape') {
+      setIsEditing(false);
+    }
+  };
+
+  const handleContextMenu = (e) => {
+    e.preventDefault();
+    setContextMenuPos({ x: e.clientX, y: e.clientY });
+    setShowContextMenu(true);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = () => setShowContextMenu(false);
+    if (showContextMenu) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [showContextMenu]);
+
+  return (
+    <>
+      <div
+        className={`tab ${isActive ? 'active' : ''}`}
+        onClick={onActivate}
+        onContextMenu={handleContextMenu}
+        data-testid={`tab-${tab.tabId}`}
+      >
+        <tab.icon className="w-4 h-4 flex-shrink-0" />
+        {isEditing ? (
+          <input
+            ref={inputRef}
+            type="text"
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+            onBlur={handleRename}
+            onKeyDown={handleKeyDown}
+            className="tab-name-input"
+            onClick={(e) => e.stopPropagation()}
+            data-testid={`tab-rename-input-${tab.tabId}`}
+          />
+        ) : (
+          <span 
+            onDoubleClick={handleDoubleClick}
+            className="tab-name"
+            title={tab.customName || tab.name}
+          >
+            {tab.customName || tab.name}
+          </span>
+        )}
+        <button
+          className="tab-close"
+          onClick={onClose}
+          data-testid={`close-tab-${tab.tabId}`}
+        >
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
+      {showContextMenu && (
+        <div 
+          className="context-menu"
+          style={{ 
+            position: 'fixed', 
+            top: contextMenuPos.y, 
+            left: contextMenuPos.x,
+            zIndex: 1000
+          }}
+          data-testid={`context-menu-${tab.tabId}`}
+        >
+          <button 
+            className="context-menu-item"
+            onClick={() => {
+              setEditName(tab.customName || tab.name);
+              setIsEditing(true);
+              setShowContextMenu(false);
+            }}
+            data-testid="context-menu-rename"
+          >
+            Rename Tab
+          </button>
+          <button 
+            className="context-menu-item"
+            onClick={() => {
+              onDuplicate();
+              setShowContextMenu(false);
+            }}
+            data-testid="context-menu-duplicate"
+          >
+            Duplicate Tab
+          </button>
+          <div className="context-menu-divider" />
+          <button 
+            className="context-menu-item"
+            onClick={() => {
+              onClose();
+              setShowContextMenu(false);
+            }}
+            data-testid="context-menu-close"
+          >
+            Close
+          </button>
+          <button 
+            className="context-menu-item"
+            onClick={() => {
+              onCloseOthers();
+              setShowContextMenu(false);
+            }}
+            data-testid="context-menu-close-others"
+          >
+            Close Others
+          </button>
+          <button 
+            className="context-menu-item"
+            onClick={() => {
+              onCloseToRight();
+              setShowContextMenu(false);
+            }}
+            data-testid="context-menu-close-right"
+          >
+            Close to the Right
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
 function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite }) {
   const Icon = tool.icon;
   
