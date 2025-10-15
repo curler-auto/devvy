@@ -801,6 +801,180 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
         )
 
 
+# ========== UI AUTOMATION RECORDER ENDPOINTS ==========
+
+# In-memory storage for recording sessions
+recording_sessions = {}
+
+class RecorderSession(BaseModel):
+    language: str
+    target_url: str
+
+class RecorderEvents(BaseModel):
+    events: List[dict]
+
+@api_router.post("/recorder/session")
+async def create_recorder_session(session: RecorderSession, current_user: dict = Depends(get_current_user)):
+    """Create a new recording session"""
+    session_id = str(uuid.uuid4())
+    recording_sessions[session_id] = {
+        'user_id': current_user['id'],
+        'language': session.language,
+        'target_url': session.target_url,
+        'events': [],
+        'created_at': datetime.now(timezone.utc)
+    }
+    return {"session_id": session_id, "message": "Recording session created"}
+
+@api_router.post("/recorder/events/{session_id}")
+async def add_recorder_events(session_id: str, events: RecorderEvents, current_user: dict = Depends(get_current_user)):
+    """Add recorded events to a session"""
+    if session_id not in recording_sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    session = recording_sessions[session_id]
+    if session['user_id'] != current_user['id']:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    session['events'].extend(events.events)
+    return {"message": "Events recorded", "total_events": len(session['events'])}
+
+@api_router.post("/recorder/generate/{session_id}")
+async def generate_recorder_code(session_id: str, request: dict, current_user: dict = Depends(get_current_user)):
+    """Generate Playwright code from recorded events"""
+    if session_id not in recording_sessions:
+        raise HTTPException(status_code=404, detail="Session not found")
+    
+    session = recording_sessions[session_id]
+    if session['user_id'] != current_user['id']:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    
+    language = request.get('language', session['language'])
+    events = session['events']
+    
+    # Generate code based on language
+    if language == 'python':
+        code = generate_python_code(events, session['target_url'])
+    elif language == 'javascript':
+        code = generate_javascript_code(events, session['target_url'])
+    elif language == 'typescript':
+        code = generate_typescript_code(events, session['target_url'])
+    else:
+        code = generate_python_code(events, session['target_url'])
+    
+    return {"code": code, "total_events": len(events)}
+
+def generate_python_code(events, target_url):
+    """Generate Python Playwright code from events"""
+    lines = [
+        "from playwright.sync_api import sync_playwright",
+        "",
+        "def run(playwright):",
+        "    browser = playwright.chromium.launch(headless=False)",
+        "    context = browser.new_context()",
+        "    page = context.new_page()",
+        ""
+    ]
+    
+    # Add initial navigation
+    if events and events[0]['type'] != 'navigation':
+        lines.append(f"    page.goto('{target_url}')")
+    
+    # Process events
+    for event in events:
+        if event['type'] == 'navigation':
+            lines.append(f"    page.goto('{event['url']}')")
+        elif event['type'] == 'click':
+            lines.append(f"    page.click('{event['selector']}')")
+        elif event['type'] == 'input':
+            value = event.get('value', '').replace("'", "\\'")
+            lines.append(f"    page.fill('{event['selector']}', '{value}')")
+    
+    lines.extend([
+        "",
+        "    # Close the browser",
+        "    context.close()",
+        "    browser.close()",
+        "",
+        "with sync_playwright() as playwright:",
+        "    run(playwright)"
+    ])
+    
+    return "\n".join(lines)
+
+def generate_javascript_code(events, target_url):
+    """Generate JavaScript Playwright code from events"""
+    lines = [
+        "const { chromium } = require('playwright');",
+        "",
+        "(async () => {",
+        "  const browser = await chromium.launch({ headless: false });",
+        "  const context = await browser.newContext();",
+        "  const page = await context.newPage();",
+        ""
+    ]
+    
+    # Add initial navigation
+    if events and events[0]['type'] != 'navigation':
+        lines.append(f"  await page.goto('{target_url}');")
+    
+    # Process events
+    for event in events:
+        if event['type'] == 'navigation':
+            lines.append(f"  await page.goto('{event['url']}');")
+        elif event['type'] == 'click':
+            lines.append(f"  await page.click('{event['selector']}');")
+        elif event['type'] == 'input':
+            value = event.get('value', '').replace("'", "\\'")
+            lines.append(f"  await page.fill('{event['selector']}', '{value}');")
+    
+    lines.extend([
+        "",
+        "  // Close the browser",
+        "  await context.close();",
+        "  await browser.close();",
+        "})();"
+    ])
+    
+    return "\n".join(lines)
+
+def generate_typescript_code(events, target_url):
+    """Generate TypeScript Playwright code from events"""
+    lines = [
+        "import { chromium, Browser, BrowserContext, Page } from 'playwright';",
+        "",
+        "(async () => {",
+        "  const browser: Browser = await chromium.launch({ headless: false });",
+        "  const context: BrowserContext = await browser.newContext();",
+        "  const page: Page = await context.newPage();",
+        ""
+    ]
+    
+    # Add initial navigation
+    if events and events[0]['type'] != 'navigation':
+        lines.append(f"  await page.goto('{target_url}');")
+    
+    # Process events
+    for event in events:
+        if event['type'] == 'navigation':
+            lines.append(f"  await page.goto('{event['url']}');")
+        elif event['type'] == 'click':
+            lines.append(f"  await page.click('{event['selector']}');")
+        elif event['type'] == 'input':
+            value = event.get('value', '').replace("'", "\\'")
+            lines.append(f"  await page.fill('{event['selector']}', '{value}');")
+    
+    lines.extend([
+        "",
+        "  // Close the browser",
+        "  await context.close();",
+        "  await browser.close();",
+        "})();"
+    ])
+    
+    return "\n".join(lines)
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
