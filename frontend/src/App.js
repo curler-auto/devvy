@@ -28,6 +28,7 @@ const API = `${BACKEND_URL}/api`;
 const CATEGORIES = [
   { id: 'json', name: 'JSON', icon: FileJson },
   { id: 'api', name: 'API', icon: Globe },
+  { id: 'automation', name: 'Automation', icon: Globe },
   { id: 'xml', name: 'XML', icon: Code },
   { id: 'excel', name: 'Excel', icon: FileSpreadsheet },
 ];
