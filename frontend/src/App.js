@@ -412,7 +412,11 @@ function MainApp() {
                   {activePane === 'favorites' && 'Favorites'}
                 </div>
                 <Input
-                  placeholder={`Search ${activePane}...`}
+                  placeholder={
+                    activePane === 'categories' && selectedCategory
+                      ? `Search ${selectedCategory.name} tools...`
+                      : `Search ${activePane}...`
+                  }
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="search-input"
