@@ -354,26 +354,17 @@ function App() {
           {tabs.length > 0 && (
             <div className="tab-bar" data-testid="tab-bar">
               {tabs.map((tab) => (
-                <div
+                <TabItem
                   key={tab.tabId}
-                  className={`tab ${activeTab === tab.tabId ? 'active' : ''}`}
-                  onClick={() => setActiveTab(tab.tabId)}
-                  onContextMenu={(e) => {
-                    e.preventDefault();
-                    // Show context menu options
-                  }}
-                  data-testid={`tab-${tab.tabId}`}
-                >
-                  <tab.icon className="w-4 h-4" />
-                  <span>{tab.name}</span>
-                  <button
-                    className="tab-close"
-                    onClick={(e) => closeTab(tab.tabId, e)}
-                    data-testid={`close-tab-${tab.tabId}`}
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                  tab={tab}
+                  isActive={activeTab === tab.tabId}
+                  onActivate={() => setActiveTab(tab.tabId)}
+                  onClose={(e) => closeTab(tab.tabId, e)}
+                  onRename={(newName) => renameTab(tab.tabId, newName)}
+                  onDuplicate={() => duplicateTab(tab.tabId)}
+                  onCloseOthers={() => closeOtherTabs(tab.tabId)}
+                  onCloseToRight={() => closeTabsToRight(tab.tabId)}
+                />
               ))}
             </div>
           )}
