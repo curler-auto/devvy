@@ -426,7 +426,7 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
           <div className="context-menu-divider" />
           <button
             className="context-menu-item text-red-400"
-            onClick={handleDeleteFolder}
+            onClick={(e) => handleDeleteFolder(e)}
           >
             <Trash2 className="w-3.5 h-3.5" />
             Delete Folder
