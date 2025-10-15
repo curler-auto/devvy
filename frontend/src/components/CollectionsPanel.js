@@ -308,6 +308,17 @@ export default function CollectionsPanel({ onOpenItem }) {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  exportCollection(collection.id);
+                }}
+                className="delete-icon"
+                title="Export Collection"
+                data-testid={`export-collection-${collection.id}`}
+              >
+                <Download className="w-3 h-3" />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
                   deleteCollection(collection.id);
                 }}
                 className="delete-icon"
