@@ -152,11 +152,7 @@ export default function SaveToCollectionDialog({ open, onClose, tab }) {
                 data-testid="select-folder"
               >
                 <option value="">-- No Folder --</option>
-                {folders.map((folder) => (
-                  <option key={folder.id} value={folder.id}>
-                    {folder.name}
-                  </option>
-                ))}
+                {renderFolderOptions(folders)}
               </select>
               <Button
                 type="button"
