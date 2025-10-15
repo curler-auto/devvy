@@ -48,6 +48,11 @@ export default function CollectionsPanel({ onOpenItem }) {
     }
   };
 
+  const handleFolderDeleted = (collectionId) => {
+    loadFolders(collectionId);
+    loadItems(collectionId);
+  };
+
   const loadItems = async (collectionId) => {
     try {
       const response = await axios.get(`${API}/saved-items/list/${collectionId}`, {
