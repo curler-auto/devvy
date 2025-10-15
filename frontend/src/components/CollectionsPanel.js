@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { 
   FolderPlus, Plus, Trash2, Edit2, ChevronRight, ChevronDown,
-  FileText, Folder, FolderOpen, Check
+  FileText, Folder, FolderOpen, Check, Download, Upload
 } from 'lucide-react';
 import { useAuth } from '@/AuthContext';
 import { toast } from 'sonner';
