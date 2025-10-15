@@ -199,6 +199,7 @@ export default function CollectionsPanel({ onOpenItem }) {
                     expandedFolders={expandedFolders}
                     toggleFolder={toggleFolder}
                     token={token}
+                    onFolderDeleted={() => handleFolderDeleted(collection.id)}
                   />
                 ))}
 
