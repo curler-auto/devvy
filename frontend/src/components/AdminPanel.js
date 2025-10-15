@@ -215,7 +215,7 @@ function CreateOrganizationDialog({ onClose, onCreated }) {
     admin_password: ''
   });
   const [isLoading, setIsLoading] = useState(false);
-  const { getAuthHeader } = useAuth();
+  const { token } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -223,7 +223,9 @@ function CreateOrganizationDialog({ onClose, onCreated }) {
 
     try {
       await axios.post(`${API}/admin/create-organization`, formData, {
-        headers: getAuthHeader()
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       toast.success('Organization created successfully!');
       onCreated();
