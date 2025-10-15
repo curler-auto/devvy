@@ -132,6 +132,31 @@ function App() {
     }
   };
 
+  const renameTab = (tabId, newName) => {
+    const updatedTabs = tabs.map(t => 
+      t.tabId === tabId 
+        ? { ...t, customName: newName.trim() || null }
+        : t
+    );
+    setTabs(updatedTabs);
+  };
+
+  const duplicateTab = (tabId) => {
+    const tabToDuplicate = tabs.find(t => t.tabId === tabId);
+    if (tabToDuplicate) {
+      const newTab = {
+        ...tabToDuplicate,
+        tabId: `${tabToDuplicate.id}-${Date.now()}`,
+        customName: tabToDuplicate.customName ? `${tabToDuplicate.customName} (Copy)` : null,
+        data: { ...tabToDuplicate.data }
+      };
+      const tabIndex = tabs.findIndex(t => t.tabId === tabId);
+      const newTabs = [...tabs.slice(0, tabIndex + 1), newTab, ...tabs.slice(tabIndex + 1)];
+      setTabs(newTabs);
+      setActiveTab(newTab.tabId);
+    }
+  };
+
   const filteredTools = searchQuery
     ? TOOLS.filter(tool => 
         tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
