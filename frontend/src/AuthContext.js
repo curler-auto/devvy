@@ -56,8 +56,16 @@ export const AuthProvider = ({ children }) => {
     setToken(access_token);
     setUser(userData);
     
-    // Fetch full user info including organization
-    await fetchUserInfo();
+    // Fetch full user info including organization using the fresh token
+    try {
+      const userInfoResponse = await axios.get(`${API}/auth/me`, {
+        headers: { Authorization: `Bearer ${access_token}` }
+      });
+      setUser(userInfoResponse.data.user);
+      setOrganization(userInfoResponse.data.organization);
+    } catch (error) {
+      console.error('Failed to fetch full user info:', error);
+    }
     
     return userData;
   };
@@ -70,7 +78,15 @@ export const AuthProvider = ({ children }) => {
     setToken(access_token);
     setUser(userData);
     
-    await fetchUserInfo();
+    try {
+      const userInfoResponse = await axios.get(`${API}/auth/me`, {
+        headers: { Authorization: `Bearer ${access_token}` }
+      });
+      setUser(userInfoResponse.data.user);
+      setOrganization(userInfoResponse.data.organization);
+    } catch (error) {
+      console.error('Failed to fetch full user info:', error);
+    }
     
     return userData;
   };
