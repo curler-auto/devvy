@@ -758,9 +758,8 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
         response_dict = json_format.MessageToDict(response, preserving_proto_field_name=True)
         
         # Clean up temporary files
-        import os
-        os.unlink(proto_file_path)
-        os.unlink(descriptor_set_file)
+        os_module.unlink(proto_file_path)
+        os_module.unlink(descriptor_set_file)
         
         channel.close()
         
