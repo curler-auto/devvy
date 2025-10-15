@@ -47,7 +47,9 @@ export default function AdminPanel({ onClose }) {
   const loadOrganizations = async () => {
     try {
       const response = await axios.get(`${API}/admin/organizations`, {
-        headers: getAuthHeader()
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       setOrganizations(response.data.organizations);
     } catch (error) {
@@ -61,7 +63,11 @@ export default function AdminPanel({ onClose }) {
       await axios.post(
         `${API}/admin/configure-tool`,
         { tool_id: toolId, is_premium: isPremium },
-        { headers: getAuthHeader() }
+        { 
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
       );
       toast.success(`Tool ${isPremium ? 'set to Premium' : 'set to Free'}`);
       loadToolsConfig();
