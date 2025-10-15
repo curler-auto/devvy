@@ -506,6 +506,342 @@ button {
   font-family: 'Space Grotesk', sans-serif;
 }
 
+/* Auth Screen */
+.auth-screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.auth-card {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.auth-card-header {
+  margin-bottom: 24px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #e5e5e5;
+}
+
+.auth-input {
+  background: #0f0f0f;
+  border: 1px solid #2a2a2a;
+  color: #e5e5e5;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.15s ease;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: #10b981;
+}
+
+.auth-button {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+}
+
+.auth-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #2a2a2a;
+}
+
+.auth-switch-button {
+  background: none;
+  border: none;
+  color: #10b981;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.auth-switch-button:hover {
+  color: #059669;
+}
+
+.auth-note {
+  margin-top: 16px;
+  padding: 12px;
+  background: #0f0f0f;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.auth-demo-credentials {
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* License Status */
+.license-status {
+  display: flex;
+  align-items: center;
+}
+
+.license-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.license-badge.premium {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1a1a1a;
+}
+
+.license-count {
+  padding-left: 8px;
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.upgrade-button {
+  border: 1px solid #fbbf24;
+  color: #fbbf24;
+}
+
+.upgrade-button:hover {
+  background: #fbbf24;
+  color: #1a1a1a;
+}
+
+/* Admin Panel */
+.admin-panel-dialog {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  max-width: 800px;
+  max-height: 85vh;
+}
+
+.admin-panel-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 20px;
+}
+
+.admin-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.admin-tab:hover {
+  color: #e5e5e5;
+  background: #1a1a1a;
+}
+
+.admin-tab.active {
+  color: #10b981;
+  border-bottom-color: #10b981;
+}
+
+.admin-panel-content {
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.tools-config-list,
+.organizations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tool-config-card,
+.org-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.org-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.license-badge.free {
+  background: #374151;
+  color: #e5e5e5;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.license-badge.premium {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1a1a1a;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.org-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* Upgrade Dialog */
+.upgrade-dialog {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  max-width: 500px;
+}
+
+.upgrade-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pricing-section {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #1a1a1a, #0f0f0f);
+  border-radius: 12px;
+}
+
+.price-tag {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+}
+
+.price {
+  font-size: 48px;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.period {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #e5e5e5;
+}
+
+.upgrade-cta {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.upgrade-cta:hover {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+/* Loading Screen */
+.loading-screen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .json-tool {
@@ -514,5 +850,9 @@ button {
   
   .tools-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .auth-container {
+    padding: 16px;
   }
 }
