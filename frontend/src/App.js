@@ -18,8 +18,9 @@ import LicenseStatus from '@/components/LicenseStatus';
 import UpgradeDialog from '@/components/UpgradeDialog';
 import CollectionsPanel from '@/components/CollectionsPanel';
 import SaveToCollectionDialog from '@/components/SaveToCollectionDialog';
-import RestApiTester from '@/components/RestApiTester';
-import GrpcTester from '@/components/GrpcTester';
+// Temporarily comment out to debug
+// import RestApiTester from '@/components/RestApiTester';
+// import GrpcTester from '@/components/GrpcTester';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
