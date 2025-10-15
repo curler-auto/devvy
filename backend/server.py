@@ -658,6 +658,10 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
     Proxy endpoint for making gRPC calls.
     This endpoint receives proto file content, parses it, and makes a gRPC call.
     """
+    # Validate proto content
+    if not request.proto_content or not request.proto_content.strip():
+        raise HTTPException(status_code=400, detail="Proto content is required")
+    
     try:
         import grpc
         from google.protobuf import descriptor_pb2
