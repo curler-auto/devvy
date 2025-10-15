@@ -136,11 +136,6 @@ function App() {
     }
   };
 
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-    setShowCategoryModal(true);
-  };
-
   const filteredTools = searchQuery
     ? TOOLS.filter(tool => 
         tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -153,6 +148,12 @@ function App() {
     : [];
 
   const favoriteTools = TOOLS.filter(tool => favorites.includes(tool.id));
+
+  const filteredCategories = searchQuery
+    ? CATEGORIES.filter(cat =>
+        cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : CATEGORIES;
 
   return (
     <div className="App" data-testid="productivity-app">
