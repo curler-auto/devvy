@@ -469,9 +469,6 @@ function MainApp() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
 
 function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, onCloseOthers, onCloseToRight }) {
   const [isEditing, setIsEditing] = useState(false);
