@@ -921,6 +921,12 @@ button {
   flex-direction: column;
 }
 
+.folder-header-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .folder-header {
   display: flex;
   align-items: center;
@@ -931,10 +937,42 @@ button {
   cursor: pointer;
   transition: background 0.15s ease;
   font-size: 13px;
+  flex: 1;
 }
 
 .folder-header:hover {
   background: #1a1a1a;
+}
+
+.folder-add-button {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.folder-header-wrapper:hover .folder-add-button {
+  opacity: 1;
+}
+
+.folder-add-button:hover {
+  color: #10b981;
+  background: #1a1a1a;
+}
+
+.new-subfolder-input {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  margin-top: 4px;
+  align-items: center;
 }
 
 .folder-content {
@@ -1081,6 +1119,12 @@ button {
   flex-direction: column;
 }
 
+.folder-header-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .folder-header {
   display: flex;
   align-items: center;
@@ -1091,10 +1135,42 @@ button {
   cursor: pointer;
   transition: background 0.15s ease;
   font-size: 13px;
+  flex: 1;
 }
 
 .folder-header:hover {
   background: #1a1a1a;
+}
+
+.folder-add-button {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.folder-header-wrapper:hover .folder-add-button {
+  opacity: 1;
+}
+
+.folder-add-button:hover {
+  color: #10b981;
+  background: #1a1a1a;
+}
+
+.new-subfolder-input {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  margin-top: 4px;
+  align-items: center;
 }
 
 .folder-content {
