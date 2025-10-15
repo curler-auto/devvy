@@ -804,17 +804,6 @@ function JSONBeautifierTool({ tab, tabs, setTabs }) {
   );
 }
 
-      {/* Admin Panel */}
-      {showAdminPanel && (
-        <AdminPanel onClose={() => setShowAdminPanel(false)} />
-      )}
-
-      {/* Upgrade Dialog */}
-      <UpgradeDialog open={showUpgrade} onClose={() => setShowUpgrade(false)} />
-    </div>
-  );
-}
-
 // Main App with Auth Provider
 export default function App() {
   return (
