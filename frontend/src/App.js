@@ -544,6 +544,18 @@ function MainApp() {
 
       {/* Upgrade Dialog */}
       <UpgradeDialog open={showUpgrade} onClose={() => setShowUpgrade(false)} />
+
+      {/* Save to Collection Dialog */}
+      {showSaveDialog && tabToSave && (
+        <SaveToCollectionDialog
+          open={showSaveDialog}
+          onClose={() => {
+            setShowSaveDialog(false);
+            setTabToSave(null);
+          }}
+          tab={tabToSave}
+        />
+      )}
     </div>
   );
 }
