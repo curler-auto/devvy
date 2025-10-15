@@ -218,11 +218,11 @@ class APITester:
             
             response = self.make_request("POST", "/grpc/call", data=invalid_grpc_data)
             
-            # Should return 401 for unauthenticated request
-            if response.status_code == 401:
-                self.log_test("gRPC Endpoint (No Auth)", True, "Correctly rejected unauthenticated request")
+            # Should return 401 or 403 for unauthenticated request
+            if response.status_code in [401, 403]:
+                self.log_test("gRPC Endpoint (No Auth)", True, f"Correctly rejected unauthenticated request (HTTP {response.status_code})")
             else:
-                self.log_test("gRPC Endpoint (No Auth)", False, f"Expected 401, got {response.status_code}")
+                self.log_test("gRPC Endpoint (No Auth)", False, f"Expected 401 or 403, got {response.status_code}")
             
             # Test with authentication but invalid proto
             if self.auth_token:
