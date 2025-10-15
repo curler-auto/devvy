@@ -238,7 +238,7 @@ export default function CollectionsPanel({ onOpenItem }) {
   );
 }
 
-function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle, onOpenItem, getItemsForFolder, expandedFolders, toggleFolder, token, onFolderDeleted }) {
+const FolderItem = memo(function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle, onOpenItem, getItemsForFolder, expandedFolders, toggleFolder, token, onFolderDeleted }) {
   const [showNewSubfolder, setShowNewSubfolder] = useState(false);
   const [newSubfolderName, setNewSubfolderName] = useState('');
   const [showContextMenu, setShowContextMenu] = useState(false);
