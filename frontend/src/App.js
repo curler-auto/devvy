@@ -627,7 +627,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
   );
 }
 
-function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite }) {
+function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium }) {
   const Icon = tool.icon;
   
   return (
@@ -641,7 +641,12 @@ function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite }) {
           <Icon className="w-5 h-5" />
         </div>
         <div className="pane-item-content">
-          <div className="pane-item-name">{tool.name}</div>
+          <div className="pane-item-name">
+            {tool.name}
+            {isPremium && (
+              <Crown className="w-3 h-3 text-amber-500 inline ml-1" />
+            )}
+          </div>
           <div className="pane-item-desc">{tool.description}</div>
         </div>
       </button>
