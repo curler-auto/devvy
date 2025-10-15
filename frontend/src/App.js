@@ -4,12 +4,18 @@ import axios from 'axios';
 import Editor from '@monaco-editor/react';
 import { 
   Menu, X, ChevronRight, Search, Star, Code, FileJson, 
-  Globe, FileSpreadsheet, Copy, Check, AlertCircle, Settings, User
+  Globe, FileSpreadsheet, Copy, Check, AlertCircle, Settings, User,
+  LogOut, Shield, Crown, Lock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider, useAuth } from '@/AuthContext';
+import AuthScreen from '@/components/AuthScreen';
+import AdminPanel from '@/components/AdminPanel';
+import LicenseStatus from '@/components/LicenseStatus';
+import UpgradeDialog from '@/components/UpgradeDialog';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
