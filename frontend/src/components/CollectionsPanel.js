@@ -322,11 +322,11 @@ function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle
   };
 
   useEffect(() => {
+    if (!showContextMenu) return;
+    
     const handleClickOutside = () => setShowContextMenu(false);
-    if (showContextMenu) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, [showContextMenu]);
 
   const subfolders = getSubfolders(folder.id);
