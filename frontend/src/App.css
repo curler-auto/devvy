@@ -281,6 +281,61 @@ body {
   color: #e5e5e5;
 }
 
+.tab-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+  user-select: none;
+}
+
+.tab-name-input {
+  background: #1a1a1a;
+  border: 1px solid #10b981;
+  color: #e5e5e5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+  outline: none;
+  min-width: 80px;
+  max-width: 150px;
+}
+
+/* Context Menu */
+.context-menu {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  min-width: 180px;
+  padding: 4px;
+  overflow: hidden;
+}
+
+.context-menu-item {
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  color: #e5e5e5;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+  display: block;
+}
+
+.context-menu-item:hover {
+  background: #2a2a2a;
+}
+
+.context-menu-divider {
+  height: 1px;
+  background: #2a2a2a;
+  margin: 4px 0;
+}
+
 /* Tool Content */
 .tool-content {
   flex: 1;
