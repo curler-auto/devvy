@@ -269,32 +269,156 @@ function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle
     }
   };
 
+  const handleContextMenu = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenuPos({ x: e.clientX, y: e.clientY });
+    setShowContextMenu(true);
+  };
+
+  const handleDeleteFolder = async () => {
+    if (!window.confirm(`Delete "${folder.name}" and all its contents?`)) return;
+
+    try {
+      await axios.delete(`${API}/folders/${folder.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Folder deleted');
+      setShowContextMenu(false);
+      if (onFolderDeleted) onFolderDeleted();
+    } catch (error) {
+      console.error('Failed to delete folder:', error);
+      toast.error('Failed to delete folder');
+    }
+  };
+
+  const handleRenameFolder = async () => {
+    if (!renameValue.trim()) return;
+
+    try {
+      await axios.put(
+        `${API}/folders/${folder.id}`,
+        {
+          name: renameValue,
+          collection_id: collectionId,
+          parent_folder_id: folder.parent_folder_id
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success('Folder renamed');
+      setShowRename(false);
+      setShowContextMenu(false);
+      window.location.reload(); // Temporary
+    } catch (error) {
+      console.error('Failed to rename folder:', error);
+      toast.error('Failed to rename folder');
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = () => setShowContextMenu(false);
+    if (showContextMenu) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [showContextMenu]);
+
   const subfolders = getSubfolders(folder.id);
 
   return (
     <div className="folder-item">
       <div className="folder-header-wrapper">
-        <div className="folder-header" onClick={onToggle}>
-          {isExpanded ? (
-            <ChevronDown className="w-4 h-4" />
-          ) : (
-            <ChevronRight className="w-4 h-4" />
-          )}
-          <Folder className="w-4 h-4 text-amber-500" />
-          <span>{folder.name}</span>
-        </div>
-        <button
-          className="folder-add-button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowNewSubfolder(!showNewSubfolder);
-          }}
-          title="New Subfolder"
-          data-testid={`new-subfolder-${folder.id}`}
-        >
-          <FolderPlus className="w-3.5 h-3.5" />
-        </button>
+        {showRename ? (
+          <div className="folder-rename-input" onClick={(e) => e.stopPropagation()}>
+            <Input
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleRenameFolder();
+                if (e.key === 'Escape') {
+                  setShowRename(false);
+                  setRenameValue(folder.name);
+                }
+              }}
+              autoFocus
+              size="sm"
+            />
+            <Button size="sm" onClick={handleRenameFolder}>
+              <Check className="w-3 h-3" />
+            </Button>
+          </div>
+        ) : (
+          <>
+            <div 
+              className="folder-header" 
+              onClick={onToggle}
+              onContextMenu={handleContextMenu}
+            >
+              {isExpanded ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+              <Folder className="w-4 h-4 text-amber-500" />
+              <span>{folder.name}</span>
+            </div>
+            <button
+              className="folder-add-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowNewSubfolder(!showNewSubfolder);
+              }}
+              title="New Subfolder"
+              data-testid={`new-subfolder-${folder.id}`}
+            >
+              <FolderPlus className="w-3.5 h-3.5" />
+            </button>
+          </>
+        )}
       </div>
+
+      {/* Context Menu */}
+      {showContextMenu && (
+        <div
+          className="context-menu"
+          style={{
+            position: 'fixed',
+            top: contextMenuPos.y,
+            left: contextMenuPos.x,
+            zIndex: 1000
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            className="context-menu-item"
+            onClick={() => {
+              setShowRename(true);
+              setShowContextMenu(false);
+            }}
+          >
+            <Edit2 className="w-3.5 h-3.5" />
+            Rename Folder
+          </button>
+          <button
+            className="context-menu-item"
+            onClick={() => {
+              setShowNewSubfolder(true);
+              setShowContextMenu(false);
+            }}
+          >
+            <FolderPlus className="w-3.5 h-3.5" />
+            Add Subfolder
+          </button>
+          <div className="context-menu-divider" />
+          <button
+            className="context-menu-item text-red-400"
+            onClick={handleDeleteFolder}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Delete Folder
+          </button>
+        </div>
+      )}
 
       {showNewSubfolder && (
         <div className="new-subfolder-input" onClick={(e) => e.stopPropagation()}>
