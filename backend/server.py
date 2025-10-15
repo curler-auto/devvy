@@ -272,6 +272,171 @@ async def check_tool_access(tool_id: str, current_user: dict = Depends(get_curre
     }
 
 
+# ========== COLLECTIONS ROUTES ==========
+
+@api_router.post("/collections/create", response_model=Collection)
+async def create_collection(collection_data: CollectionCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new collection"""
+    collection = Collection(**collection_data.model_dump(), user_id=current_user['id'])
+    
+    doc = collection.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.collections.insert_one(doc)
+    return collection
+
+@api_router.get("/collections/list")
+async def list_collections(current_user: dict = Depends(get_current_user)):
+    """List all collections for current user"""
+    collections = await db.collections.find(
+        {"user_id": current_user['id']},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    return {"collections": collections}
+
+@api_router.put("/collections/{collection_id}")
+async def update_collection(collection_id: str, updates: CollectionCreate, current_user: dict = Depends(get_current_user)):
+    """Update a collection"""
+    result = await db.collections.update_one(
+        {"id": collection_id, "user_id": current_user['id']},
+        {"$set": updates.model_dump()}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Collection not found")
+    
+    return {"message": "Collection updated"}
+
+@api_router.delete("/collections/{collection_id}")
+async def delete_collection(collection_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a collection and all its folders and items"""
+    # Delete all saved items in this collection
+    await db.saved_items.delete_many({"collection_id": collection_id, "user_id": current_user['id']})
+    
+    # Delete all folders in this collection
+    await db.folders.delete_many({"collection_id": collection_id, "user_id": current_user['id']})
+    
+    # Delete the collection
+    result = await db.collections.delete_one({"id": collection_id, "user_id": current_user['id']})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Collection not found")
+    
+    return {"message": "Collection deleted"}
+
+
+# ========== FOLDERS ROUTES ==========
+
+@api_router.post("/folders/create", response_model=Folder)
+async def create_folder(folder_data: FolderCreate, current_user: dict = Depends(get_current_user)):
+    """Create a new folder in a collection"""
+    folder = Folder(**folder_data.model_dump(), user_id=current_user['id'])
+    
+    doc = folder.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.folders.insert_one(doc)
+    return folder
+
+@api_router.get("/folders/list/{collection_id}")
+async def list_folders(collection_id: str, current_user: dict = Depends(get_current_user)):
+    """List all folders in a collection"""
+    folders = await db.folders.find(
+        {"collection_id": collection_id, "user_id": current_user['id']},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    return {"folders": folders}
+
+@api_router.put("/folders/{folder_id}")
+async def update_folder(folder_id: str, updates: FolderCreate, current_user: dict = Depends(get_current_user)):
+    """Update a folder"""
+    result = await db.folders.update_one(
+        {"id": folder_id, "user_id": current_user['id']},
+        {"$set": updates.model_dump()}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Folder not found")
+    
+    return {"message": "Folder updated"}
+
+@api_router.delete("/folders/{folder_id}")
+async def delete_folder(folder_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a folder and all its items"""
+    # Delete all saved items in this folder
+    await db.saved_items.delete_many({"folder_id": folder_id, "user_id": current_user['id']})
+    
+    # Delete the folder
+    result = await db.folders.delete_one({"id": folder_id, "user_id": current_user['id']})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Folder not found")
+    
+    return {"message": "Folder deleted"}
+
+
+# ========== SAVED ITEMS ROUTES ==========
+
+@api_router.post("/saved-items/create", response_model=SavedItem)
+async def create_saved_item(item_data: SavedItemCreate, current_user: dict = Depends(get_current_user)):
+    """Save a tab/snippet to a collection"""
+    saved_item = SavedItem(**item_data.model_dump(), user_id=current_user['id'])
+    
+    doc = saved_item.model_dump()
+    doc['created_at'] = doc['created_at'].isoformat()
+    
+    await db.saved_items.insert_one(doc)
+    return saved_item
+
+@api_router.get("/saved-items/list/{collection_id}")
+async def list_saved_items(collection_id: str, current_user: dict = Depends(get_current_user)):
+    """List all saved items in a collection"""
+    items = await db.saved_items.find(
+        {"collection_id": collection_id, "user_id": current_user['id']},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    return {"items": items}
+
+@api_router.get("/saved-items/{item_id}")
+async def get_saved_item(item_id: str, current_user: dict = Depends(get_current_user)):
+    """Get a specific saved item"""
+    item = await db.saved_items.find_one(
+        {"id": item_id, "user_id": current_user['id']},
+        {"_id": 0}
+    )
+    
+    if not item:
+        raise HTTPException(status_code=404, detail="Saved item not found")
+    
+    return item
+
+@api_router.put("/saved-items/{item_id}")
+async def update_saved_item(item_id: str, updates: SavedItemCreate, current_user: dict = Depends(get_current_user)):
+    """Update a saved item"""
+    result = await db.saved_items.update_one(
+        {"id": item_id, "user_id": current_user['id']},
+        {"$set": updates.model_dump()}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Saved item not found")
+    
+    return {"message": "Saved item updated"}
+
+@api_router.delete("/saved-items/{item_id}")
+async def delete_saved_item(item_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a saved item"""
+    result = await db.saved_items.delete_one({"id": item_id, "user_id": current_user['id']})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Saved item not found")
+    
+    return {"message": "Saved item deleted"}
+
+
 # ========== ADMIN ROUTES ==========
 
 @api_router.post("/admin/configure-tool")
