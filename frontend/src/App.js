@@ -47,9 +47,7 @@ const TOOLS = [
 ];
 
 function App() {
-  const [sidebarExpanded, setSidebarExpanded] = useState(false);
-  const [showCategoryModal, setShowCategoryModal] = useState(false);
-  const [showToolsModal, setShowToolsModal] = useState(false);
+  const [activePane, setActivePane] = useState('categories'); // 'categories' or 'tools'
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [tabs, setTabs] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
