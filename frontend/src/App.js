@@ -396,36 +396,34 @@ function App() {
   );
 }
 
-function ToolCard({ tool, onOpen, isFavorite, onToggleFavorite }) {
+function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite }) {
   const Icon = tool.icon;
   
   return (
-    <div className="tool-card" data-testid={`tool-card-${tool.id}`}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="tool-icon">
-          <Icon className="w-6 h-6" />
-        </div>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleFavorite(tool.id);
-          }}
-          className={`favorite-button ${isFavorite ? 'active' : ''}`}
-          data-testid={`favorite-button-${tool.id}`}
-        >
-          <Star className="w-4 h-4" fill={isFavorite ? 'currentColor' : 'none'} />
-        </button>
-      </div>
-      <h3 className="text-sm font-semibold mb-1">{tool.name}</h3>
-      <p className="text-xs text-gray-400 mb-3">{tool.description}</p>
-      <Button 
-        size="sm" 
+    <div className="pane-item" data-testid={`tool-pane-item-${tool.id}`}>
+      <button
+        className="w-full flex items-center gap-3 text-left"
         onClick={() => onOpen(tool)}
-        className="w-full"
         data-testid={`open-tool-${tool.id}`}
       >
-        Open Tool
-      </Button>
+        <div className="pane-item-icon">
+          <Icon className="w-5 h-5" />
+        </div>
+        <div className="pane-item-content">
+          <div className="pane-item-name">{tool.name}</div>
+          <div className="pane-item-desc">{tool.description}</div>
+        </div>
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleFavorite(tool.id);
+        }}
+        className={`favorite-button ml-2 flex-shrink-0 ${isFavorite ? 'active' : ''}`}
+        data-testid={`favorite-button-${tool.id}`}
+      >
+        <Star className="w-4 h-4" fill={isFavorite ? 'currentColor' : 'none'} />
+      </button>
     </div>
   );
 }
