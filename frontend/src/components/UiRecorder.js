@@ -179,7 +179,7 @@ export default function UiRecorder({ tab, tabs, setTabs }) {
                 Target URL
               </label>
               <Input
-                placeholder="https://example.com"
+                placeholder={`${window.location.origin}/demo-page.html`}
                 value={targetUrl}
                 onChange={(e) => setTargetUrl(e.target.value)}
                 disabled={isRecording}
