@@ -77,6 +77,27 @@ function MainApp() {
     }
   };
 
+  const loadToolsConfig = async () => {
+    try {
+      const response = await axios.get(`${API}/tools/config`);
+      const configMap = {};
+      response.data.tools.forEach(tool => {
+        configMap[tool.tool_id] = tool;
+      });
+      setToolsConfig(configMap);
+    } catch (error) {
+      console.error('Failed to load tools config:', error);
+    }
+  };
+
+  const checkToolAccess = (toolId) => {
+    const config = toolsConfig[toolId];
+    if (!config || !config.is_premium) {
+      return { hasAccess: true, isPremium: false };
+    }
+    return { hasAccess: isPremium, isPremium: true };
+  };
+
   const toggleFavorite = async (toolId) => {
     try {
       if (favorites.includes(toolId)) {
