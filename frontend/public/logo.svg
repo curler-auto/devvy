@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" rx="100" fill="url(#gradient)"/>
+  
+  <!-- Letter D -->
+  <path d="M140 180h60c55.228 0 100 44.772 100 100s-44.772 100-100 100h-60V180z" 
+        stroke="white" stroke-width="20" fill="none"/>
+  
+  <!-- Code brackets -->
+  <path d="M320 220l40-40m0 200l-40-40" 
+        stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M420 220l-40-40m0 200l40-40" 
+        stroke="white" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Gradient definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

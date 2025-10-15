@@ -103,6 +103,7 @@
   "build": {
     "appId": "com.devvy.studio",
     "productName": "Devvy Studio",
+    "icon": "public/logo.svg",
     "directories": {
       "output": "../dist"
     },
