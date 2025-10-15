@@ -227,14 +227,35 @@ function MainApp() {
           <Code className="w-6 h-6" />
           <span className="text-lg font-semibold">DevTools Suite</span>
         </div>
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" data-testid="settings-button">
-            <Settings className="w-5 h-5" />
-          </Button>
+        <div className="flex items-center gap-3">
+          <LicenseStatus 
+            organization={organization} 
+            onUpgrade={() => setShowUpgrade(true)} 
+          />
+          {isAdmin && (
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setShowAdminPanel(true)}
+              data-testid="admin-button"
+              title="Admin Panel"
+            >
+              <Shield className="w-5 h-5 text-emerald-500" />
+            </Button>
+          )}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-800/50">
             <User className="w-4 h-4" />
-            <span className="text-sm">Developer</span>
+            <span className="text-sm">{user?.email}</span>
           </div>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={logout}
+            data-testid="logout-button"
+            title="Logout"
+          >
+            <LogOut className="w-5 h-5" />
+          </Button>
         </div>
       </div>
 
