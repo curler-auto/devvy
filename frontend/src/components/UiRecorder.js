@@ -201,8 +201,40 @@ export default function UiRecorder({ tab, tabs, setTabs }) {
   };
 
   const copyCode = () => {
-    navigator.clipboard.writeText(generatedCode);
-    toast.success('Code copied to clipboard!');
+    // Try modern Clipboard API first
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(generatedCode)
+        .then(() => {
+          toast.success('Code copied to clipboard!');
+        })
+        .catch(() => {
+          // Fallback to old method
+          fallbackCopyCode();
+        });
+    } else {
+      // Use fallback method
+      fallbackCopyCode();
+    }
+  };
+
+  const fallbackCopyCode = () => {
+    // Create a temporary textarea element
+    const textarea = document.createElement('textarea');
+    textarea.value = generatedCode;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    
+    try {
+      document.execCommand('copy');
+      toast.success('Code copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      toast.error('Failed to copy code. Please select and copy manually.');
+    }
+    
+    document.body.removeChild(textarea);
   };
 
   const downloadCode = () => {
