@@ -299,7 +299,7 @@ export default function UiRecorder({ tab, tabs, setTabs }) {
       </div>
 
       {/* Code Editor Section */}
-      <div className="api-response-section">
+      <div className="api-response-section" style={{ flex: 1, minHeight: '500px' }}>
         <div className="api-response-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span style={{ fontSize: '14px', fontWeight: '600', color: '#e5e5e5' }}>
