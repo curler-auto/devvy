@@ -263,7 +263,13 @@ function MainApp() {
     : TOOLS;
 
   const categoryTools = selectedCategory
-    ? TOOLS.filter(tool => tool.category === selectedCategory.id)
+    ? TOOLS.filter(tool => {
+        const matchesCategory = tool.category === selectedCategory.id;
+        const matchesSearch = !searchQuery || 
+          tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          tool.description.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      })
     : [];
 
   const favoriteTools = TOOLS.filter(tool => favorites.includes(tool.id));
