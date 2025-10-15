@@ -372,6 +372,7 @@ function MainApp() {
                       onOpen={openTool}
                       isFavorite={favorites.includes(tool.id)}
                       onToggleFavorite={toggleFavorite}
+                      isPremium={toolsConfig[tool.id]?.is_premium}
                     />
                   ))}
                 </>
@@ -387,6 +388,7 @@ function MainApp() {
                       onOpen={openTool}
                       isFavorite={favorites.includes(tool.id)}
                       onToggleFavorite={toggleFavorite}
+                      isPremium={toolsConfig[tool.id]?.is_premium}
                     />
                   ))}
                 </>
@@ -402,6 +404,7 @@ function MainApp() {
                       onOpen={openTool}
                       isFavorite={true}
                       onToggleFavorite={toggleFavorite}
+                      isPremium={toolsConfig[tool.id]?.is_premium}
                     />
                   ))}
                 </>
