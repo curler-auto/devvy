@@ -561,6 +561,9 @@ function MainApp() {
                 {tab.id === 'grpc-tester' && (
                   <GrpcTester tab={tab} tabs={tabs} setTabs={setTabs} />
                 )}
+                {tab.id === 'ui-recorder' && (
+                  <UiRecorder tab={tab} tabs={tabs} setTabs={setTabs} />
+                )}
               </div>
             ))}
 
