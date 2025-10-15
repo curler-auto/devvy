@@ -796,4 +796,41 @@ function JSONBeautifierTool({ tab, tabs, setTabs }) {
   );
 }
 
-export default App;
+      {/* Admin Panel */}
+      {showAdminPanel && (
+        <AdminPanel onClose={() => setShowAdminPanel(false)} />
+      )}
+
+      {/* Upgrade Dialog */}
+      <UpgradeDialog open={showUpgrade} onClose={() => setShowUpgrade(false)} />
+    </div>
+  );
+}
+
+// Main App with Auth Provider
+export default function App() {
+  return (
+    <AuthProvider>
+      <AuthWrapper />
+    </AuthProvider>
+  );
+}
+
+function AuthWrapper() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="loading-screen">
+        <Code className="w-16 h-16 animate-pulse text-emerald-500" />
+        <p className="mt-4 text-gray-400">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <AuthScreen />;
+  }
+
+  return <MainApp />;
+}
