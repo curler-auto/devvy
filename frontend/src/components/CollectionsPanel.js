@@ -381,6 +381,53 @@ export default function CollectionsPanel({ onOpenItem }) {
                     <span>{item.name}</span>
                   </div>
                 ))}
+
+                {/* Add Folder Button */}
+                <div style={{ padding: '8px', marginLeft: '8px' }}>
+                  {showNewFolder === collection.id ? (
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <Input
+                        placeholder="Folder name"
+                        value={newFolderName}
+                        onChange={(e) => setNewFolderName(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            createFolder(collection.id);
+                          }
+                        }}
+                        autoFocus
+                        style={{ flex: 1 }}
+                      />
+                      <button
+                        onClick={() => createFolder(collection.id)}
+                        className="context-menu-item"
+                        style={{ padding: '4px 8px' }}
+                      >
+                        <Check className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowNewFolder(null);
+                          setNewFolderName('');
+                        }}
+                        className="context-menu-item"
+                        style={{ padding: '4px 8px' }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setShowNewFolder(collection.id)}
+                      className="context-menu-item"
+                      style={{ width: '100%', justifyContent: 'flex-start' }}
+                      data-testid={`add-folder-${collection.id}`}
+                    >
+                      <FolderPlus className="w-4 h-4" />
+                      <span>Add Folder</span>
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>
