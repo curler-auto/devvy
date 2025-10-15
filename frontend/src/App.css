@@ -842,6 +842,152 @@ button {
   background: #0a0a0a;
 }
 
+/* Collections Panel */
+.collections-panel-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+}
+
+.collections-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.collections-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.collection-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.collection-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #1a1a1a;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  font-size: 14px;
+}
+
+.collection-header:hover {
+  background: #1f2937;
+}
+
+.delete-icon {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.collection-header:hover .delete-icon {
+  opacity: 1;
+}
+
+.delete-icon:hover {
+  color: #ef4444;
+  background: #2a2a2a;
+}
+
+.collection-content {
+  padding-left: 28px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.folder-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.folder-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #0f0f0f;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  font-size: 13px;
+}
+
+.folder-header:hover {
+  background: #1a1a1a;
+}
+
+.folder-content {
+  padding-left: 28px;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.saved-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #0f0f0f;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.saved-item:hover {
+  background: #1a1a1a;
+  color: #e5e5e5;
+}
+
+.empty-collections {
+  padding: 32px 16px;
+  text-align: center;
+}
+
+/* Save to Collection Dialog */
+.save-to-collection-dialog {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  max-width: 450px;
+}
+
+.save-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.create-collection-dialog,
+.create-collection-form {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  max-width: 450px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .json-tool {
