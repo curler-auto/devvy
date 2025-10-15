@@ -326,6 +326,18 @@ function MainApp() {
             >
               <Search className="w-5 h-5" />
             </button>
+            <button
+              className={`icon-pane-item ${activePane === 'collections' ? 'active' : ''}`}
+              onClick={() => {
+                setActivePane('collections');
+                setSelectedCategory(null);
+                setSearchQuery('');
+              }}
+              title="Collections"
+              data-testid="icon-collections"
+            >
+              <Bookmark className="w-5 h-5" />
+            </button>
             {favoriteTools.length > 0 && (
               <button
                 className={`icon-pane-item ${activePane === 'favorites' ? 'active' : ''}`}
