@@ -251,7 +251,7 @@ function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle
   };
 
   const createSubfolder = async (e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
     if (!newSubfolderName.trim()) return;
 
     try {
@@ -267,8 +267,7 @@ function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle
       toast.success('Subfolder created!');
       setNewSubfolderName('');
       setShowNewSubfolder(false);
-      // Reload folders - this should be passed from parent
-      window.location.reload(); // Temporary solution
+      if (onFolderDeleted) onFolderDeleted();
     } catch (error) {
       console.error('Failed to create subfolder:', error);
       toast.error('Failed to create subfolder');
