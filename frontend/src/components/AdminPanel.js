@@ -18,7 +18,7 @@ export default function AdminPanel({ onClose }) {
   const [organizations, setOrganizations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showCreateOrg, setShowCreateOrg] = useState(false);
-  const { getAuthHeader } = useAuth();
+  const { token } = useAuth();
 
   useEffect(() => {
     if (activeTab === 'tools') {
@@ -30,12 +30,16 @@ export default function AdminPanel({ onClose }) {
 
   const loadToolsConfig = async () => {
     try {
+      console.log('Loading tools config with token:', token ? 'Token present' : 'No token');
       const response = await axios.get(`${API}/admin/tools-config`, {
-        headers: getAuthHeader()
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       setToolsConfig(response.data.tools);
     } catch (error) {
       console.error('Failed to load tools config:', error);
+      console.error('Error details:', error.response?.data);
       toast.error('Failed to load tools configuration');
     }
   };
