@@ -5,7 +5,7 @@ import Editor from '@monaco-editor/react';
 import { 
   Menu, X, ChevronRight, Search, Star, Code, FileJson, 
   Globe, FileSpreadsheet, Copy, Check, AlertCircle, Settings, User,
-  LogOut, Shield, Crown, Lock
+  LogOut, Shield, Crown, Lock, Save, Bookmark
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,8 @@ import AuthScreen from '@/components/AuthScreen';
 import AdminPanel from '@/components/AdminPanel';
 import LicenseStatus from '@/components/LicenseStatus';
 import UpgradeDialog from '@/components/UpgradeDialog';
+import CollectionsPanel from '@/components/CollectionsPanel';
+import SaveToCollectionDialog from '@/components/SaveToCollectionDialog';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
