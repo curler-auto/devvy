@@ -356,34 +356,40 @@ function MainApp() {
 
           {/* Second Level - Content Pane */}
           <div className="content-pane">
-            <div className="content-pane-header">
-              <div className="content-pane-title">
-                {activePane === 'categories' && !selectedCategory && 'Categories'}
-                {activePane === 'categories' && selectedCategory && (
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleBackToCategories}
-                      className="text-gray-400 hover:text-white"
-                      data-testid="back-to-categories"
-                    >
-                      <ChevronRight className="w-4 h-4 rotate-180" />
-                    </button>
-                    {selectedCategory.name} Tools
-                  </div>
-                )}
-                {activePane === 'tools' && 'All Tools'}
-                {activePane === 'favorites' && 'Favorites'}
+            {activePane !== 'collections' && (
+              <div className="content-pane-header">
+                <div className="content-pane-title">
+                  {activePane === 'categories' && !selectedCategory && 'Categories'}
+                  {activePane === 'categories' && selectedCategory && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleBackToCategories}
+                        className="text-gray-400 hover:text-white"
+                        data-testid="back-to-categories"
+                      >
+                        <ChevronRight className="w-4 h-4 rotate-180" />
+                      </button>
+                      {selectedCategory.name} Tools
+                    </div>
+                  )}
+                  {activePane === 'tools' && 'All Tools'}
+                  {activePane === 'favorites' && 'Favorites'}
+                </div>
+                <Input
+                  placeholder={`Search ${activePane}...`}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="search-input"
+                  data-testid="pane-search-input"
+                />
               </div>
-              <Input
-                placeholder={`Search ${activePane}...`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="search-input"
-                data-testid="pane-search-input"
-              />
-            </div>
+            )}
 
             <div className="content-pane-body">
+              {/* Show Collections Panel */}
+              {activePane === 'collections' && (
+                <CollectionsPanel onOpenItem={handleOpenSavedItem} />
+              )}
               {/* Show Categories */}
               {activePane === 'categories' && !selectedCategory && (
                 <>
