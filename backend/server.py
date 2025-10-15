@@ -238,6 +238,7 @@ async def get_tools_config():
             {"tool_id": "json-validator", "tool_name": "JSON Validator", "is_premium": False},
             {"tool_id": "api-tester", "tool_name": "REST API Tester", "is_premium": False},
             {"tool_id": "grpc-tester", "tool_name": "gRPC Tester", "is_premium": False},
+            {"tool_id": "ui-recorder", "tool_name": "UI Automation Recorder", "is_premium": False},
         ]
         
         for tool_data in default_tools:
