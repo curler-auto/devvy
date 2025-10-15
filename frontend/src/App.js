@@ -387,67 +387,11 @@ function App() {
                 <Code className="w-24 h-24 mb-6 opacity-30" />
                 <h2 className="text-2xl font-semibold mb-2">Welcome to DevTools Suite</h2>
                 <p className="text-gray-400 mb-6">Select a tool from the sidebar to get started</p>
-                <Button onClick={() => setShowToolsModal(true)} data-testid="browse-tools-empty">
-                  <Search className="w-4 h-4 mr-2" />
-                  Browse All Tools
-                </Button>
               </div>
             )}
           </div>
         </div>
       </div>
-
-      {/* Category Modal */}
-      <Dialog open={showCategoryModal} onOpenChange={setShowCategoryModal}>
-        <DialogContent className="dialog-content" data-testid="category-modal">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {selectedCategory?.icon && <selectedCategory.icon className="w-5 h-5" />}
-              {selectedCategory?.name} Tools
-            </DialogTitle>
-          </DialogHeader>
-          <div className="tools-grid">
-            {categoryTools.map((tool) => (
-              <ToolCard 
-                key={tool.id} 
-                tool={tool} 
-                onOpen={openTool}
-                isFavorite={favorites.includes(tool.id)}
-                onToggleFavorite={toggleFavorite}
-              />
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* All Tools Modal */}
-      <Dialog open={showToolsModal} onOpenChange={setShowToolsModal}>
-        <DialogContent className="dialog-content" data-testid="tools-modal">
-          <DialogHeader>
-            <DialogTitle>All Tools</DialogTitle>
-          </DialogHeader>
-          <div className="mb-4">
-            <Input
-              placeholder="Search tools..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="search-input"
-              data-testid="tool-search-input"
-            />
-          </div>
-          <div className="tools-grid">
-            {filteredTools.map((tool) => (
-              <ToolCard 
-                key={tool.id} 
-                tool={tool} 
-                onOpen={openTool}
-                isFavorite={favorites.includes(tool.id)}
-                onToggleFavorite={toggleFavorite}
-              />
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
