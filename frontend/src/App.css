@@ -422,8 +422,9 @@ body {
   color: #e5e5e5;
   padding: 10px 16px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   transition: border-color 0.15s ease;
+  width: 100%;
 }
 
 .search-input:focus {
@@ -433,6 +434,15 @@ body {
 
 .search-input::placeholder {
   color: #6b7280;
+}
+
+/* Pane item layout fix */
+.pane-item {
+  position: relative;
+}
+
+.pane-item button:first-child {
+  flex: 1;
 }
 
 /* Button overrides for dark theme */
