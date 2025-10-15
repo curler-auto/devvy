@@ -674,8 +674,9 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
         
         # Compile the proto file to get descriptor
         descriptor_set_file = proto_file_path + '.desc'
+        proto_dir = os.path.dirname(proto_file_path)
         compile_result = subprocess.run(
-            ['protoc', f'--descriptor_set_out={descriptor_set_file}', 
+            ['protoc', f'--proto_path={proto_dir}', f'--descriptor_set_out={descriptor_set_file}', 
              f'--include_imports', proto_file_path],
             capture_output=True,
             text=True
