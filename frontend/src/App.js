@@ -470,6 +470,17 @@ function MainApp() {
         </div>
       </div>
 
+      {/* Admin Panel */}
+      {showAdminPanel && (
+        <AdminPanel onClose={() => setShowAdminPanel(false)} />
+      )}
+
+      {/* Upgrade Dialog */}
+      <UpgradeDialog open={showUpgrade} onClose={() => setShowUpgrade(false)} />
+    </div>
+  );
+}
+
 function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, onCloseOthers, onCloseToRight }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
