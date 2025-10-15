@@ -186,10 +186,14 @@ export default function CollectionsPanel({ onOpenItem }) {
                     folder={folder}
                     collectionId={collection.id}
                     items={items}
+                    folders={folders[collection.id] || []}
                     isExpanded={expandedFolders.has(folder.id)}
                     onToggle={() => toggleFolder(folder.id)}
                     onOpenItem={handleOpenItem}
                     getItemsForFolder={getItemsForFolder}
+                    expandedFolders={expandedFolders}
+                    toggleFolder={toggleFolder}
+                    token={token}
                   />
                 ))}
 
