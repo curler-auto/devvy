@@ -313,7 +313,7 @@ function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle
       toast.success('Folder renamed');
       setShowRename(false);
       setShowContextMenu(false);
-      window.location.reload(); // Temporary
+      if (onFolderDeleted) onFolderDeleted();
     } catch (error) {
       console.error('Failed to rename folder:', error);
       toast.error('Failed to rename folder');
