@@ -20,6 +20,8 @@ export default function CollectionsPanel({ onOpenItem }) {
   const [expandedCollections, setExpandedCollections] = useState(new Set());
   const [expandedFolders, setExpandedFolders] = useState(new Set());
   const [showNewCollection, setShowNewCollection] = useState(false);
+  const [showNewFolder, setShowNewFolder] = useState(null); // stores collection ID
+  const [newFolderName, setNewFolderName] = useState('');
   const { token } = useAuth();
 
   useEffect(() => {
