@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Recorder - Recording...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0a0a;
+            color: #e5e5e5;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .header {
+            background: #1a1a1a;
+            padding: 12px 20px;
+            border-bottom: 2px solid #10b981;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .recording-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .recording-dot {
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .event-count {
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .content {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .instructions {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(16, 185, 129, 0.95);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+        }
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        .error-message {
+            padding: 40px;
+            text-align: center;
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="recording-indicator">
+            <div class="recording-dot"></div>
+            <span style="font-weight: 600;">Recording in Progress</span>
+        </div>
+        <div class="event-count" id="eventCount">0 events captured</div>
+    </div>
+    
+    <div class="content">
+        <div class="instructions" id="instructions">
+            Close this window when done recording
+        </div>
+        <iframe id="targetFrame"></iframe>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUrl = urlParams.get('url');
+        const sessionId = urlParams.get('session');
+        const token = urlParams.get('token');
+        const apiUrl = window.location.origin + '/api';
+
+        let eventCount = 0;
+        const events = [];
+
+        function updateEventCount() {
+            document.getElementById('eventCount').textContent = `${eventCount} events captured`;
+        }
+
+        function hideInstructions() {
+            setTimeout(() => {
+                const instructions = document.getElementById('instructions');
+                if (instructions) {
+                    instructions.style.display = 'none';
+                }
+            }, 3000);
+        }
+
+        hideInstructions();
+
+        // Try to load the target URL in iframe
+        const iframe = document.getElementById('targetFrame');
+        
+        iframe.onload = function() {
+            try {
+                // Try to access iframe content
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // Helper to get best selector
+                function getSelector(element) {
+                    if (!element) return '';
+                    if (element.id) return '#' + element.id;
+                    if (element.getAttribute('data-testid')) return '[data-testid="' + element.getAttribute('data-testid') + '"]';
+                    if (element.getAttribute('name')) return '[name="' + element.getAttribute('name') + '"]';
+                    if (element.getAttribute('placeholder')) return '[placeholder="' + element.getAttribute('placeholder') + '"]';
+                    
+                    if (element.tagName === 'BUTTON' || element.tagName === 'A') {
+                        const text = element.textContent.trim().substring(0, 30);
+                        if (text) return element.tagName.toLowerCase() + ':has-text("' + text + '")';
+                    }
+                    
+                    let selector = element.tagName.toLowerCase();
+                    if (element.className && typeof element.className === 'string') {
+                        const classes = element.className.split(' ').filter(c => c.trim());
+                        if (classes.length > 0) selector += '.' + classes[0];
+                    }
+                    return selector;
+                }
+
+                // Capture clicks
+                iframeDoc.addEventListener('click', (e) => {
+                    const selector = getSelector(e.target);
+                    events.push({
+                        type: 'click',
+                        selector: selector,
+                        timestamp: Date.now(),
+                        url: iframe.contentWindow.location.href
+                    });
+                    eventCount++;
+                    updateEventCount();
+                    sendEvents();
+                }, true);
+
+                // Capture input
+                iframeDoc.addEventListener('input', (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                        const selector = getSelector(e.target);
+                        events.push({
+                            type: 'input',
+                            selector: selector,
+                            value: e.target.value,
+                            timestamp: Date.now(),
+                            url: iframe.contentWindow.location.href
+                        });
+                        eventCount++;
+                        updateEventCount();
+                        sendEvents();
+                    }
+                }, true);
+
+                // Capture navigation within iframe
+                let lastUrl = iframe.contentWindow.location.href;
+                setInterval(() => {
+                    try {
+                        const currentUrl = iframe.contentWindow.location.href;
+                        if (currentUrl !== lastUrl) {
+                            events.push({
+                                type: 'navigation',
+                                url: currentUrl,
+                                timestamp: Date.now()
+                            });
+                            lastUrl = currentUrl;
+                            eventCount++;
+                            updateEventCount();
+                            sendEvents();
+                        }
+                    } catch (e) {
+                        // Ignore cross-origin errors
+                    }
+                }, 500);
+
+                console.log('✅ Recorder active - capturing events');
+            } catch (error) {
+                console.error('⚠️ Cannot access iframe content (CORS restriction):', error);
+                document.querySelector('.content').innerHTML = `
+                    <div class="error-message">
+                        <h2>⚠️ Cannot Record This Page</h2>
+                        <p style="margin-top: 16px; color: #9ca3af;">
+                            The target page "${targetUrl}" blocks iframe embedding due to security policies (X-Frame-Options or CSP).
+                        </p>
+                        <p style="margin-top: 12px; color: #9ca3af;">
+                            Try recording on pages that allow embedding, or use:
+                        </p>
+                        <ul style="margin-top: 12px; text-align: left; display: inline-block; color: #10b981;">
+                            <li>Your own website</li>
+                            <li>Example.com</li>
+                            <li>HTTP Bin (httpbin.org)</li>
+                        </ul>
+                    </div>
+                `;
+            }
+        };
+
+        iframe.onerror = function() {
+            document.querySelector('.content').innerHTML = `
+                <div class="error-message">
+                    <h2>⚠️ Failed to Load Page</h2>
+                    <p style="margin-top: 16px; color: #9ca3af;">Could not load "${targetUrl}"</p>
+                </div>
+            `;
+        };
+
+        // Load the target URL
+        iframe.src = targetUrl;
+
+        function sendEvents() {
+            if (events.length === 0) return;
+            
+            fetch(apiUrl + '/recorder/events/' + sessionId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ events: [...events] })
+            }).then(response => {
+                if (response.ok) {
+                    events.length = 0;
+                }
+            }).catch(err => {
+                console.error('Failed to send events:', err);
+            });
+        }
+
+        // Send events periodically
+        setInterval(sendEvents, 2000);
+
+        // Send events before closing
+        window.addEventListener('beforeunload', () => {
+            sendEvents();
+        });
+    </script>
+</body>
+</html>
