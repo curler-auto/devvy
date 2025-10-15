@@ -387,9 +387,9 @@ export default function UiRecorder({ tab, tabs, setTabs }) {
           </div>
         </div>
 
-        <div style={{ flex: 1, overflow: 'hidden' }}>
+        <div style={{ height: '600px', overflow: 'hidden' }}>
           <Editor
-            height="100%"
+            height="600px"
             language={language === 'python' ? 'python' : 'javascript'}
             value={generatedCode || '// Click "Start Recording" to begin capturing UI interactions'}
             theme="vs-dark"
