@@ -116,11 +116,20 @@ function MainApp() {
   };
 
   const openTool = (tool) => {
+    // Check if user has access to this tool
+    const access = checkToolAccess(tool.id);
+    
+    if (access.isPremium && !access.hasAccess) {
+      toast.error('This is a Premium feature. Please upgrade to access.');
+      setShowUpgrade(true);
+      return;
+    }
+
     // Allow multiple instances of the same tool
     const newTab = {
       tabId: `${tool.id}-${Date.now()}`,
       ...tool,
-      customName: null, // For user-renamed tabs
+      customName: null,
       data: {}
     };
     setTabs([...tabs, newTab]);
