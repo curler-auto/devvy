@@ -79,7 +79,11 @@ function MainApp() {
 
   const loadToolsConfig = async () => {
     try {
-      const response = await axios.get(`${API}/tools/config`);
+      const response = await axios.get(`${API}/tools/config`, {
+        headers: token ? {
+          'Authorization': `Bearer ${token}`
+        } : {}
+      });
       const configMap = {};
       response.data.tools.forEach(tool => {
         configMap[tool.tool_id] = tool;
