@@ -51,13 +51,17 @@ const TOOLS = [
   },
 ];
 
-function App() {
-  const [activePane, setActivePane] = useState('categories'); // 'categories' or 'tools'
+function MainApp() {
+  const { user, organization, isLoading, logout, isAdmin, isPremium, getAuthHeader } = useAuth();
+  const [activePane, setActivePane] = useState('categories');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [tabs, setTabs] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [favorites, setFavorites] = useState([]);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [showUpgrade, setShowUpgrade] = useState(false);
+  const [toolsConfig, setToolsConfig] = useState({});
 
   useEffect(() => {
     loadFavorites();
