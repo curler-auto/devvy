@@ -64,6 +64,8 @@ function MainApp() {
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [toolsConfig, setToolsConfig] = useState({});
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [tabToSave, setTabToSave] = useState(null);
 
   useEffect(() => {
     loadFavorites();
