@@ -5,7 +5,7 @@ import Editor from '@monaco-editor/react';
 import { 
   Menu, X, ChevronRight, Search, Star, Code, FileJson, 
   Globe, FileSpreadsheet, Copy, Check, AlertCircle, Settings, User,
-  LogOut, Shield, Crown, Lock, Save, Bookmark
+  LogOut, Shield, Crown, Lock, Save, Bookmark, Key
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,61 +17,43 @@ import SaveToCollectionDialog from '@/components/SaveToCollectionDialog';
 import RestApiTester from '@/components/RestApiTester';
 import GrpcTester from '@/components/GrpcTester';
 import UiRecorder from '@/components/UiRecorder';
+import ActivationDialog from '@/components/ActivationDialog';
+import licenseService from '@/services/licenseService';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-const CATEGORIES = [
-  { id: 'json', name: 'JSON', icon: FileJson },
-  { id: 'api', name: 'API', icon: Globe },
-  { id: 'automation', name: 'Automation', icon: Globe },
-  { id: 'xml', name: 'XML', icon: Code },
-  { id: 'excel', name: 'Excel', icon: FileSpreadsheet },
-];
-
-const TOOLS = [
-  { 
-    id: 'json-beautifier', 
-    name: 'JSON Beautifier', 
-    category: 'json',
-    icon: FileJson,
-    description: 'Format and beautify JSON data'
-  },
-  { 
-    id: 'json-validator', 
-    name: 'JSON Validator', 
-    category: 'json',
-    icon: FileJson,
-    description: 'Validate JSON structure'
-  },
-  { 
-    id: 'api-tester', 
-    name: 'REST API Tester', 
-    category: 'api',
-    icon: Globe,
-    description: 'Test REST API endpoints'
-  },
-  { 
-    id: 'grpc-tester', 
-    name: 'gRPC Tester', 
-    category: 'api',
-    icon: Globe,
-    description: 'Test gRPC services'
-  },
-  { 
-    id: 'ui-recorder', 
-    name: 'UI Automation Recorder', 
-    category: 'automation',
-    icon: Globe,
-    description: 'Record browser interactions and generate Playwright code'
-  },
-];
+// Icon mapping for dynamic tool loading
+const ICON_MAP = {
+  'Braces': FileJson,
+  'Globe': Globe,
+  'Network': Globe,
+  'GitBranch': Code,
+  'Radio': Globe,
+  'Binary': Code,
+  'Link': Globe,
+  'Shield': Shield,
+  'Hash': Code,
+  'Fingerprint': Star,
+  'Search': Search,
+  'GitCompare': Code,
+  'FileText': FileJson,
+  'Database': FileSpreadsheet,
+  'Code': Code,
+  'FileCode': FileJson,
+  'Palette': Star,
+  'Image': FileSpreadsheet,
+  'Clock': Settings,
+  'Zap': Globe,
+  'Sparkles': Star,
+  'FileJson': FileJson,
+  'FileSpreadsheet': FileSpreadsheet,
+};
 
 function MainApp() {
   // Desktop version - no authentication needed
   const user = { name: 'Desktop User' };
   const isAdmin = false;
-  const isPremium = false;
   const [activePane, setActivePane] = useState('categories');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [tabs, setTabs] = useState([]);
@@ -84,10 +66,19 @@ function MainApp() {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [tabToSave, setTabToSave] = useState(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  
+  // License system state
+  const [tools, setTools] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [licenseConfig, setLicenseConfig] = useState(null);
+  const [isActivated, setIsActivated] = useState(false);
+  const [showActivationDialog, setShowActivationDialog] = useState(false);
+  const [isLoadingLicense, setIsLoadingLicense] = useState(true);
 
   useEffect(() => {
     loadFavorites();
     loadToolsConfig();
+    loadLicenseAndTools();
   }, []);
 
   const loadFavorites = async () => {
@@ -116,12 +107,91 @@ function MainApp() {
     }
   };
 
-  const checkToolAccess = (toolId) => {
-    const config = toolsConfig[toolId];
-    if (!config || !config.is_premium) {
-      return { hasAccess: true, isPremium: false };
+  const loadLicenseAndTools = async () => {
+    try {
+      setIsLoadingLicense(true);
+      
+      // Get license configuration
+      const result = await licenseService.getLicenseConfig();
+      
+      if (result.success && result.toolConfig) {
+        const config = result.toolConfig;
+        setLicenseConfig(config);
+        setIsActivated(result.isActivated || false);
+        
+        // Load tools from config
+        if (config.tools && config.tools.length > 0) {
+          const toolsWithIcons = config.tools.map(tool => ({
+            ...tool,
+            icon: ICON_MAP[tool.icon] || FileJson,
+          }));
+          setTools(toolsWithIcons);
+        }
+        
+        // Load categories from config
+        if (config.categories && config.categories.length > 0) {
+          const categoriesWithIcons = config.categories.map(cat => ({
+            ...cat,
+            icon: ICON_MAP[cat.icon] || FileJson,
+          }));
+          setCategories(categoriesWithIcons);
+        }
+        
+        console.log('License loaded:', {
+          isActivated: result.isActivated,
+          licenseType: config.licenseType,
+          toolsCount: config.tools?.length || 0,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load license and tools:', error);
+      toast.error('Failed to load tool configuration');
+    } finally {
+      setIsLoadingLicense(false);
     }
-    return { hasAccess: isPremium, isPremium: true };
+  };
+
+  const checkToolAccess = (tool) => {
+    if (!tool) return { hasAccess: false, isPremium: false, needsActivation: false };
+    
+    // Free tools are always accessible
+    if (tool.tier === 'free') {
+      return { hasAccess: true, isPremium: false, needsActivation: false };
+    }
+    
+    // Premium tools require activation
+    if (tool.tier === 'premium') {
+      if (isActivated && licenseConfig) {
+        // Check if this specific tool is activated
+        const activatedTools = licenseConfig.activatedTools || [];
+        const hasAccess = activatedTools.includes('all') || activatedTools.includes(tool.id);
+        return { hasAccess, isPremium: true, needsActivation: !hasAccess };
+      }
+      return { hasAccess: false, isPremium: true, needsActivation: true };
+    }
+    
+    return { hasAccess: true, isPremium: false, needsActivation: false };
+  };
+
+  const handleActivateLicense = async (activationKey) => {
+    try {
+      const result = await licenseService.activateLicense(activationKey);
+      
+      if (result.success) {
+        toast.success(result.message || 'License activated successfully!');
+        // Reload tools and license
+        await loadLicenseAndTools();
+        return result;
+      } else {
+        return result;
+      }
+    } catch (error) {
+      console.error('Activation error:', error);
+      return {
+        success: false,
+        message: 'Failed to activate license. Please try again.',
+      };
+    }
   };
 
   const toggleFavorite = async (toolId) => {
@@ -143,11 +213,11 @@ function MainApp() {
 
   const openTool = (tool) => {
     // Check if user has access to this tool
-    const access = checkToolAccess(tool.id);
+    const access = checkToolAccess(tool);
     
-    if (access.isPremium && !access.hasAccess) {
-      toast.error('This is a Premium feature. Please upgrade to access.');
-      setShowUpgrade(true);
+    if (access.needsActivation) {
+      toast.error('This is a Premium feature. Please activate your license to access.');
+      setShowActivationDialog(true);
       return;
     }
 
@@ -269,29 +339,30 @@ function MainApp() {
   };
 
   const filteredTools = searchQuery
-    ? TOOLS.filter(tool => 
-        tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tool.description.toLowerCase().includes(searchQuery.toLowerCase())
+    ? tools.filter(tool => 
+        tool.enabled &&
+        (tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.description.toLowerCase().includes(searchQuery.toLowerCase()))
       )
-    : TOOLS;
+    : tools.filter(tool => tool.enabled);
 
   const categoryTools = selectedCategory
-    ? TOOLS.filter(tool => {
+    ? tools.filter(tool => {
         const matchesCategory = tool.category === selectedCategory.id;
         const matchesSearch = !searchQuery || 
           tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           tool.description.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
+        return tool.enabled && matchesCategory && matchesSearch;
       })
     : [];
 
-  const favoriteTools = TOOLS.filter(tool => favorites.includes(tool.id));
+  const favoriteTools = tools.filter(tool => tool.enabled && favorites.includes(tool.id));
 
   const filteredCategories = searchQuery
-    ? CATEGORIES.filter(cat =>
+    ? categories.filter(cat =>
         cat.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : CATEGORIES;
+    : categories;
 
   return (
     <div className="App" data-testid="productivity-app">
@@ -381,6 +452,33 @@ function MainApp() {
                 <Star className="w-5 h-5" />
               </button>
             )}
+            
+            {/* Spacer */}
+            <div className="flex-1"></div>
+            
+            {/* Activate License Button */}
+            {!isActivated && (
+              <button
+                className="icon-pane-item"
+                onClick={() => setShowActivationDialog(true)}
+                title="Activate License"
+                data-testid="icon-activate"
+              >
+                <Key className="w-5 h-5 text-emerald-500" />
+              </button>
+            )}
+            
+            {/* License Status Indicator */}
+            {isActivated && (
+              <button
+                className="icon-pane-item"
+                onClick={() => toast.success(`License Active: ${licenseConfig?.licenseType || 'Unknown'}`)}
+                title={`License Active: ${licenseConfig?.licenseType || 'Unknown'}`}
+                data-testid="icon-license-status"
+              >
+                <Shield className="w-5 h-5 text-emerald-500" />
+              </button>
+            )}
           </div>
 
           {/* Second Level - Content Pane */}
@@ -451,7 +549,7 @@ function MainApp() {
                         <div className="pane-item-content">
                           <div className="pane-item-name">{category.name}</div>
                           <div className="pane-item-desc">
-                            {TOOLS.filter(t => t.category === category.id).length} tools
+                            {tools.filter(t => t.enabled && t.category === category.id).length} tools
                           </div>
                         </div>
                       </button>
@@ -463,48 +561,60 @@ function MainApp() {
               {/* Show Tools in Selected Category */}
               {activePane === 'categories' && selectedCategory && (
                 <>
-                  {categoryTools.map((tool) => (
-                    <ToolPaneItem
-                      key={tool.id}
-                      tool={tool}
-                      onOpen={openTool}
-                      isFavorite={favorites.includes(tool.id)}
-                      onToggleFavorite={toggleFavorite}
-                      isPremium={toolsConfig[tool.id]?.is_premium}
-                    />
-                  ))}
+                  {categoryTools.map((tool) => {
+                    const access = checkToolAccess(tool);
+                    return (
+                      <ToolPaneItem
+                        key={tool.id}
+                        tool={tool}
+                        onOpen={openTool}
+                        isFavorite={favorites.includes(tool.id)}
+                        onToggleFavorite={toggleFavorite}
+                        isPremium={access.isPremium}
+                        isLocked={access.needsActivation}
+                      />
+                    );
+                  })}
                 </>
               )}
 
               {/* Show All Tools */}
               {activePane === 'tools' && (
                 <>
-                  {filteredTools.map((tool) => (
-                    <ToolPaneItem
-                      key={tool.id}
-                      tool={tool}
-                      onOpen={openTool}
-                      isFavorite={favorites.includes(tool.id)}
-                      onToggleFavorite={toggleFavorite}
-                      isPremium={toolsConfig[tool.id]?.is_premium}
-                    />
-                  ))}
+                  {filteredTools.map((tool) => {
+                    const access = checkToolAccess(tool);
+                    return (
+                      <ToolPaneItem
+                        key={tool.id}
+                        tool={tool}
+                        onOpen={openTool}
+                        isFavorite={favorites.includes(tool.id)}
+                        onToggleFavorite={toggleFavorite}
+                        isPremium={access.isPremium}
+                        isLocked={access.needsActivation}
+                      />
+                    );
+                  })}
                 </>
               )}
 
               {/* Show Favorites */}
               {activePane === 'favorites' && (
                 <>
-                  {favoriteTools.map((tool) => (
-                    <ToolPaneItem
-                      key={tool.id}
-                      tool={tool}
-                      onOpen={openTool}
-                      isFavorite={true}
-                      onToggleFavorite={toggleFavorite}
-                      isPremium={toolsConfig[tool.id]?.is_premium}
-                    />
-                  ))}
+                  {favoriteTools.map((tool) => {
+                    const access = checkToolAccess(tool);
+                    return (
+                      <ToolPaneItem
+                        key={tool.id}
+                        tool={tool}
+                        onOpen={openTool}
+                        isFavorite={true}
+                        onToggleFavorite={toggleFavorite}
+                        isPremium={access.isPremium}
+                        isLocked={access.needsActivation}
+                      />
+                    );
+                  })}
                 </>
               )}
             </div>
@@ -582,6 +692,13 @@ function MainApp() {
           tab={tabToSave}
         />
       )}
+
+      {/* Activation Dialog */}
+      <ActivationDialog
+        isOpen={showActivationDialog}
+        onClose={() => setShowActivationDialog(false)}
+        onActivate={handleActivateLicense}
+      />
     </div>
   );
 }
@@ -743,12 +860,12 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
   );
 }
 
-function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium }) {
+function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, isLocked }) {
   const Icon = tool.icon;
   
   return (
     <button
-      className="pane-item"
+      className={`pane-item ${isLocked ? 'opacity-75' : ''}`}
       data-category={tool.category}
       onClick={() => onOpen(tool)}
       data-testid={`tool-pane-item-${tool.id}`}
@@ -757,10 +874,18 @@ function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium })
         <Icon className="w-6 h-6" />
       </div>
       <div className="pane-item-content">
-        <div className="pane-item-name">
-          {tool.name}
-          {isPremium && <Crown className="w-3 h-3 text-amber-500 inline ml-1" />}
+        <div className="pane-item-name flex items-center gap-1">
+          <span>{tool.name}</span>
+          {isPremium && (
+            <Crown className="w-3 h-3 text-amber-500" />
+          )}
+          {isLocked && (
+            <Lock className="w-3 h-3 text-gray-500" />
+          )}
         </div>
+        {tool.description && (
+          <div className="pane-item-desc">{tool.description}</div>
+        )}
       </div>
       {isFavorite && (
         <Star className="w-3 h-3 text-amber-500 absolute top-2 right-2" fill="currentColor" />
