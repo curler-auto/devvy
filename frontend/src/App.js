@@ -81,6 +81,22 @@ function MainApp() {
     loadLicenseAndTools();
   }, []);
 
+  // Keyboard shortcut for save (Cmd+S / Ctrl+S)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Check for Cmd+S (Mac) or Ctrl+S (Windows/Linux)
+      if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+        e.preventDefault();
+        if (activeTab) {
+          handleSaveCurrentTab();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeTab, tabs]);
+
   const loadFavorites = async () => {
     try {
       const response = await axios.get(`${API}/favorites/list`);
@@ -387,16 +403,18 @@ function MainApp() {
           <span className="text-lg font-semibold">Devvy Studio</span>
         </div>
         <div className="flex items-center gap-3">
-          {activeTab && (
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={handleSaveCurrentTab}
-              data-testid="save-tab-button"
-              title="Save to Collection"
-            >
-              <Save className="w-5 h-5 text-gray-400 hover:text-emerald-500" />
-            </Button>
+          {/* License Badge */}
+          {isActivated && licenseConfig ? (
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500/20 to-orange-500/20 border border-amber-500/30">
+              <Crown className="w-4 h-4 text-amber-400" />
+              <span className="text-sm font-semibold text-amber-400 uppercase">
+                {licenseConfig.licenseType === 'pro' ? 'Pro' : 'Premium'}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-800/50 border border-gray-700/50">
+              <span className="text-sm text-gray-400">Community</span>
+            </div>
           )}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-800/50">
             <User className="w-4 h-4" />
@@ -649,6 +667,7 @@ function MainApp() {
                   onDuplicate={() => duplicateTab(tab.tabId)}
                   onCloseOthers={() => closeOtherTabs(tab.tabId)}
                   onCloseToRight={() => closeTabsToRight(tab.tabId)}
+                  onSave={handleSaveCurrentTab}
                 />
               ))}
             </div>
@@ -715,7 +734,7 @@ function MainApp() {
   );
 }
 
-function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, onCloseOthers, onCloseToRight }) {
+function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, onCloseOthers, onCloseToRight, onSave }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -793,6 +812,19 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
           >
             {tab.customName || tab.name}
           </span>
+        )}
+        {isActive && onSave && (
+          <button
+            className="tab-action"
+            onClick={(e) => {
+              e.stopPropagation();
+              onSave();
+            }}
+            title="Save to Collection (Cmd+S)"
+            data-testid={`save-tab-${tab.tabId}`}
+          >
+            <Bookmark className="w-3.5 h-3.5 text-gray-400 hover:text-emerald-500" />
+          </button>
         )}
         <button
           className="tab-close"

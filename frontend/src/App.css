@@ -373,29 +373,35 @@ body {
 
 .tab.active {
   background: #1a1a1a;
-  color: #10b981;
   border-bottom: 2px solid #10b981;
 }
 
+.tab-action,
 .tab-close {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
   background: transparent;
   border: none;
-  color: inherit;
+  color: #9ca3af;
   cursor: pointer;
-  padding: 2px;
-  border-radius: 4px;
-  margin-left: auto;
   opacity: 0;
   transition: opacity 0.15s ease;
 }
 
+.tab:hover .tab-action,
 .tab:hover .tab-close {
   opacity: 1;
 }
 
+.tab.active .tab-action {
+  opacity: 1;
+}
+
+.tab-action:hover,
 .tab-close:hover {
   background: #374151;
   color: #e5e5e5;
