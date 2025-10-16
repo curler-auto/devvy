@@ -70,31 +70,52 @@ class LicenseService {
     try {
       const machineId = await getMachineId();
       
+      // Always load the base config first
+      const baseConfig = await this.getDefaultConfig();
+      
       // Check if there's an activated license for this machine
       const response = await axios.get(`${API_BASE_URL}/api/license/config`, {
         params: { machineId },
       });
 
       if (response.data.success && response.data.toolConfig) {
+        const licenseData = response.data.toolConfig;
+        
+        // Merge license data with base config
+        const mergedConfig = {
+          ...baseConfig,
+          isActivated: licenseData.isActivated || false,
+          licenseType: licenseData.licenseType || 'free',
+          activatedTools: licenseData.activatedTools || [],
+        };
+        
+        console.log('License loaded:', {
+          isActivated: mergedConfig.isActivated,
+          licenseType: mergedConfig.licenseType,
+          toolsCount: mergedConfig.tools?.length || 0,
+        });
+        
         return {
           success: true,
-          toolConfig: response.data.toolConfig,
-          isActivated: true,
+          toolConfig: mergedConfig,
+          isActivated: mergedConfig.isActivated,
         };
       } else {
         // Return default free config
+        console.log('No license found, using default config');
         return {
           success: true,
-          toolConfig: await this.getDefaultConfig(),
+          toolConfig: baseConfig,
           isActivated: false,
         };
       }
     } catch (error) {
       console.error('Error getting license config:', error);
       // Fallback to default config
+      const baseConfig = await this.getDefaultConfig();
       return {
         success: true,
-        toolConfig: await this.getDefaultConfig(),
+        toolConfig: baseConfig,
         isActivated: false,
       };
     }

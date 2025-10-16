@@ -110,9 +110,11 @@ function MainApp() {
   const loadLicenseAndTools = async () => {
     try {
       setIsLoadingLicense(true);
+      console.log('🔄 Loading license and tools...');
       
       // Get license configuration
       const result = await licenseService.getLicenseConfig();
+      console.log('📦 License result:', result);
       
       if (result.success && result.toolConfig) {
         const config = result.toolConfig;
@@ -126,6 +128,9 @@ function MainApp() {
             icon: ICON_MAP[tool.icon] || FileJson,
           }));
           setTools(toolsWithIcons);
+          console.log(`✅ Loaded ${toolsWithIcons.length} tools`);
+        } else {
+          console.warn('⚠️ No tools found in config');
         }
         
         // Load categories from config
@@ -135,17 +140,24 @@ function MainApp() {
             icon: ICON_MAP[cat.icon] || FileJson,
           }));
           setCategories(categoriesWithIcons);
+          console.log(`✅ Loaded ${categoriesWithIcons.length} categories`);
+        } else {
+          console.warn('⚠️ No categories found in config');
         }
         
-        console.log('License loaded:', {
+        console.log('✅ License loaded:', {
           isActivated: result.isActivated,
-          licenseType: config.licenseType,
+          licenseType: config.licenseType || 'free',
           toolsCount: config.tools?.length || 0,
+          categoriesCount: config.categories?.length || 0,
         });
+      } else {
+        console.error('❌ Failed to load config:', result);
+        toast.error('Failed to load tool configuration');
       }
     } catch (error) {
-      console.error('Failed to load license and tools:', error);
-      toast.error('Failed to load tool configuration');
+      console.error('❌ Failed to load license and tools:', error);
+      toast.error('Failed to load tool configuration: ' + error.message);
     } finally {
       setIsLoadingLicense(false);
     }
