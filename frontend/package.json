@@ -64,7 +64,8 @@
     "test": "craco test",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "tauri:install": "./build-and-install.sh"
   },
   "browserslist": {
     "production": [
