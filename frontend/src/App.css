@@ -106,6 +106,45 @@ body {
   color: var(--text-primary);
 }
 
+/* Content Area - Right side */
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Tab Bar */
+.tab-bar {
+  display: flex;
+  flex-direction: row;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-primary);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-primary) var(--bg-secondary);
+  height: 40px;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.tab-bar::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tab-bar::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.tab-bar::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: 2px;
+}
+
 /* First Level - Icon Pane */
 .icon-pane {
   width: 60px;
@@ -185,12 +224,26 @@ body {
   scrollbar-color: var(--border-primary) var(--bg-secondary);
 }
 
-/* Grid layout for categories and tools */
+/* Grid layout for categories and tools - Responsive */
 .content-pane-body.grid-layout {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
   align-content: start;
+  padding: 12px;
+}
+
+/* Responsive grid breakpoints */
+@media (min-width: 400px) {
+  .content-pane-body.grid-layout {
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  }
+}
+
+@media (min-width: 500px) {
+  .content-pane-body.grid-layout {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .content-pane-body::-webkit-scrollbar {
@@ -210,18 +263,27 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 16px 12px;
+  gap: 6px;
+  padding: 12px 8px;
   border-radius: 8px;
   background: transparent;
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 12px;
+  font-size: 11px;
   text-align: center;
   width: 100%;
   position: relative;
+  min-height: 0;
+}
+
+@media (min-width: 500px) {
+  .pane-item {
+    padding: 14px 10px;
+    gap: 8px;
+    font-size: 12px;
+  }
 }
 
 .pane-item:hover {
@@ -239,8 +301,8 @@ body {
 }
 
 .pane-item-icon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -250,6 +312,14 @@ body {
   flex-shrink: 0;
   transition: transform 0.2s ease;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* Larger icons on bigger screens */
+@media (min-width: 500px) {
+  .pane-item-icon {
+    width: 48px;
+    height: 48px;
+  }
 }
 
 /* JSON Beautifier Tool */
@@ -326,25 +396,39 @@ body {
 
 .pane-item-name {
   font-weight: 500;
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  line-height: 1.2;
+}
+
+@media (min-width: 500px) {
+  .pane-item-name {
+    font-size: 11px;
+  }
 }
 
 .pane-item-desc {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-tertiary);
   text-align: center;
-  line-height: 1.3;
+  line-height: 1.2;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+@media (min-width: 500px) {
+  .pane-item-desc {
+    font-size: 10px;
+    line-height: 1.3;
+  }
 }
 
 .tab {
@@ -470,6 +554,8 @@ body {
   background: var(--bg-primary);
   display: flex;
   flex-direction: column;
+  width: 100%;
+  min-height: 0;
 }
 
 /* Empty State */
