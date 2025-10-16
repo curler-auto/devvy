@@ -1,0 +1,227 @@
+{
+  "version": "1.0.0",
+  "tools": [
+    {
+      "id": "json-beautifier",
+      "name": "JSON Beautifier",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Braces",
+      "description": "Format and validate JSON data"
+    },
+    {
+      "id": "rest-api-tester",
+      "name": "REST API Tester",
+      "category": "api-testing",
+      "enabled": true,
+      "tier": "premium",
+      "icon": "Globe",
+      "description": "Test REST APIs like Postman"
+    },
+    {
+      "id": "grpc-tester",
+      "name": "gRPC Tester",
+      "category": "api-testing",
+      "enabled": true,
+      "tier": "premium",
+      "icon": "Network",
+      "description": "Test gRPC services"
+    },
+    {
+      "id": "graphql-playground",
+      "name": "GraphQL Playground",
+      "category": "api-testing",
+      "enabled": true,
+      "tier": "premium",
+      "icon": "GitBranch",
+      "description": "Test GraphQL APIs"
+    },
+    {
+      "id": "websocket-tester",
+      "name": "WebSocket Tester",
+      "category": "api-testing",
+      "enabled": true,
+      "tier": "premium",
+      "icon": "Radio",
+      "description": "Test WebSocket connections"
+    },
+    {
+      "id": "ui-recorder",
+      "name": "UI Recorder",
+      "category": "automation",
+      "enabled": true,
+      "tier": "premium",
+      "icon": "Globe",
+      "description": "Record UI interactions and generate Playwright code"
+    },
+    {
+      "id": "base64-encoder",
+      "name": "Base64 Encoder/Decoder",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Binary",
+      "description": "Encode and decode Base64 strings"
+    },
+    {
+      "id": "url-encoder",
+      "name": "URL Encoder/Decoder",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Link",
+      "description": "Encode and decode URLs"
+    },
+    {
+      "id": "jwt-decoder",
+      "name": "JWT Decoder",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Shield",
+      "description": "Decode and verify JWT tokens"
+    },
+    {
+      "id": "hash-generator",
+      "name": "Hash Generator",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Hash",
+      "description": "Generate MD5, SHA1, SHA256 hashes"
+    },
+    {
+      "id": "uuid-generator",
+      "name": "UUID Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Fingerprint",
+      "description": "Generate UUIDs"
+    },
+    {
+      "id": "regex-tester",
+      "name": "Regex Tester",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Search",
+      "description": "Test regular expressions"
+    },
+    {
+      "id": "diff-checker",
+      "name": "Diff Checker",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "premium",
+      "icon": "GitCompare",
+      "description": "Compare text differences"
+    },
+    {
+      "id": "markdown-preview",
+      "name": "Markdown Preview",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Preview Markdown files"
+    },
+    {
+      "id": "sql-formatter",
+      "name": "SQL Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "premium",
+      "icon": "Database",
+      "description": "Format SQL queries"
+    },
+    {
+      "id": "xml-formatter",
+      "name": "XML Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Format and validate XML"
+    },
+    {
+      "id": "yaml-formatter",
+      "name": "YAML Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Format and validate YAML"
+    },
+    {
+      "id": "color-picker",
+      "name": "Color Picker",
+      "category": "design",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Palette",
+      "description": "Pick and convert colors"
+    },
+    {
+      "id": "image-optimizer",
+      "name": "Image Optimizer",
+      "category": "design",
+      "enabled": true,
+      "tier": "premium",
+      "icon": "Image",
+      "description": "Optimize and compress images"
+    },
+    {
+      "id": "cron-expression",
+      "name": "Cron Expression Builder",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Clock",
+      "description": "Build cron expressions"
+    }
+  ],
+  "categories": [
+    {
+      "id": "formatters",
+      "name": "Formatters & Validators",
+      "icon": "Braces"
+    },
+    {
+      "id": "api-testing",
+      "name": "API Testing",
+      "icon": "Globe"
+    },
+    {
+      "id": "automation",
+      "name": "Automation",
+      "icon": "Zap"
+    },
+    {
+      "id": "encoders",
+      "name": "Encoders & Decoders",
+      "icon": "Binary"
+    },
+    {
+      "id": "security",
+      "name": "Security Tools",
+      "icon": "Shield"
+    },
+    {
+      "id": "generators",
+      "name": "Generators",
+      "icon": "Sparkles"
+    },
+    {
+      "id": "text-tools",
+      "name": "Text Tools",
+      "icon": "FileText"
+    },
+    {
+      "id": "design",
+      "name": "Design Tools",
+      "icon": "Palette"
+    }
+  ]
+}

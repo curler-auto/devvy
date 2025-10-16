@@ -991,6 +991,144 @@ def generate_typescript_code(events, target_url):
     return "\n".join(lines)
 
 
+# ==================== LICENSE API ROUTES (MOCK) ====================
+
+class LicenseActivation(BaseModel):
+    activationKey: str
+    machineId: str
+    machineName: str
+
+class LicenseConfig(BaseModel):
+    toolConfig: dict
+    machineId: str
+    activationKey: str
+    activatedAt: str
+
+@api_router.post("/license/activate")
+async def activate_license(activation: LicenseActivation, db = Depends(get_database)):
+    """
+    Mock license activation endpoint
+    In production, this will validate the key against your licensing server
+    """
+    try:
+        # Mock validation - check activation key format
+        key = activation.activationKey.strip()
+        
+        # Mock: Different keys unlock different tool sets
+        if key.startswith("PRO-"):
+            # Pro license - all tools
+            tool_config = {
+                "version": "1.0.0",
+                "isActivated": True,
+                "licenseType": "pro",
+                "activatedTools": ["all"],
+                "tools": []  # Will be populated from toolconfig.json
+            }
+            message = "Pro license activated successfully!"
+        elif key.startswith("PREMIUM-"):
+            # Premium license - specific premium tools
+            tool_config = {
+                "version": "1.0.0",
+                "isActivated": True,
+                "licenseType": "premium",
+                "activatedTools": ["rest-api-tester", "grpc-tester", "ui-recorder"],
+                "tools": []
+            }
+            message = "Premium license activated successfully!"
+        elif key.startswith("FREE-"):
+            # Free license - just free tools
+            tool_config = {
+                "version": "1.0.0",
+                "isActivated": False,
+                "licenseType": "free",
+                "activatedTools": [],
+                "tools": []
+            }
+            message = "Free license activated"
+        else:
+            return {
+                "success": False,
+                "message": "Invalid activation key. Please check and try again."
+            }
+        
+        # Store in database
+        license_data = {
+            "machine_id": activation.machineId,
+            "machine_name": activation.machineName,
+            "activation_key": activation.activationKey,
+            "tool_config": json.dumps(tool_config),
+            "activated_at": datetime.now(timezone.utc).isoformat()
+        }
+        
+        # Save to database (using tool_configs collection for now)
+        await db.save_tool_config("license_" + activation.machineId, license_data)
+        
+        logger.info(f"License activated for machine: {activation.machineName} ({activation.machineId})")
+        
+        return {
+            "success": True,
+            "toolConfig": tool_config,
+            "message": message
+        }
+        
+    except Exception as e:
+        logger.error(f"License activation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/license/config")
+async def save_license_config(config: LicenseConfig, db = Depends(get_database)):
+    """Save activated license configuration"""
+    try:
+        license_data = {
+            "machine_id": config.machineId,
+            "activation_key": config.activationKey,
+            "tool_config": json.dumps(config.toolConfig),
+            "activated_at": config.activatedAt
+        }
+        
+        await db.save_tool_config("license_" + config.machineId, license_data)
+        
+        return {"success": True, "message": "License configuration saved"}
+    except Exception as e:
+        logger.error(f"Error saving license config: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/license/config")
+async def get_license_config(machineId: str, db = Depends(get_database)):
+    """Get license configuration for a machine"""
+    try:
+        config = await db.get_tool_config("license_" + machineId)
+        
+        if config and "tool_config" in config:
+            tool_config = json.loads(config["tool_config"]) if isinstance(config["tool_config"], str) else config["tool_config"]
+            return {
+                "success": True,
+                "toolConfig": tool_config,
+                "activatedAt": config.get("activated_at")
+            }
+        else:
+            return {
+                "success": False,
+                "message": "No license found for this machine"
+            }
+    except Exception as e:
+        logger.error(f"Error getting license config: {str(e)}")
+        return {
+            "success": False,
+            "message": "No license found"
+        }
+
+@api_router.delete("/license/config")
+async def deactivate_license(machineId: str, db = Depends(get_database)):
+    """Deactivate license for a machine"""
+    try:
+        await db.delete_tool_config("license_" + machineId)
+        return {"success": True, "message": "License deactivated"}
+    except Exception as e:
+        logger.error(f"Error deactivating license: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
