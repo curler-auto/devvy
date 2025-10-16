@@ -52,8 +52,8 @@ body {
 /* Top Bar */
 .top-bar {
   height: 56px;
-  background: linear-gradient(to bottom, #1a1a1a, #141414);
-  border-bottom: 1px solid #2a2a2a;
+  background: linear-gradient(to bottom, var(--bg-tertiary), var(--bg-secondary));
+  border-bottom: 1px solid var(--border-primary);
   padding: 0 20px;
   display: flex;
   align-items: center;
@@ -72,8 +72,8 @@ body {
 /* Sidebar - Two Pane System */
 .sidebar {
   display: flex;
-  background: #141414;
-  border-right: 1px solid #2a2a2a;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-primary);
   flex-shrink: 0;
   transition: all 0.3s ease;
 }
@@ -89,11 +89,11 @@ body {
   top: 8px;
   right: 8px;
   z-index: 10;
-  background: #1f2937;
-  border: 1px solid #374151;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-primary);
   border-radius: 4px;
   padding: 4px;
-  color: #9ca3af;
+  color: var(--text-tertiary);
   cursor: pointer;
   transition: all 0.15s ease;
   display: flex;
@@ -102,15 +102,15 @@ body {
 }
 
 .sidebar-toggle:hover {
-  background: #374151;
-  color: #e5e5e5;
+  background: var(--bg-hover);
+  color: var(--text-primary);
 }
 
 /* First Level - Icon Pane */
 .icon-pane {
   width: 60px;
-  background: #0f0f0f;
-  border-right: 1px solid #2a2a2a;
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-primary);
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -126,20 +126,20 @@ body {
   border-radius: 8px;
   background: transparent;
   border: none;
-  color: #6b7280;
+  color: var(--text-tertiary);
   cursor: pointer;
   transition: all 0.15s ease;
   position: relative;
 }
 
 .icon-pane-item:hover {
-  background: #1f2937;
-  color: #e5e5e5;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
 }
 
 .icon-pane-item.active {
-  background: #1f2937;
-  color: #10b981;
+  background: var(--bg-elevated);
+  color: var(--accent-primary);
 }
 
 .icon-pane-item.active::before {
@@ -148,14 +148,14 @@ body {
   left: -8px;
   width: 3px;
   height: 24px;
-  background: #10b981;
+  background: var(--accent-primary);
   border-radius: 0 2px 2px 0;
 }
 
 /* Second Level - Content Pane */
 .content-pane {
   width: 400px;
-  background: #141414;
+  background: var(--bg-secondary);
   display: flex;
   flex-direction: column;
   overflow: hidden;
