@@ -18,7 +18,9 @@ import RestApiTester from '@/components/RestApiTester';
 import GrpcTester from '@/components/GrpcTester';
 import UiRecorder from '@/components/UiRecorder';
 import ActivationDialog from '@/components/ActivationDialog';
+import SettingsModal from '@/components/SettingsModal';
 import licenseService from '@/services/licenseService';
+import { applyTheme, getStoredTheme } from '@/themes';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -74,8 +76,13 @@ function MainApp() {
   const [isActivated, setIsActivated] = useState(false);
   const [showActivationDialog, setShowActivationDialog] = useState(false);
   const [isLoadingLicense, setIsLoadingLicense] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
+    // Apply saved theme on startup
+    const savedTheme = getStoredTheme();
+    applyTheme(savedTheme);
+    
     loadFavorites();
     loadToolsConfig();
     loadLicenseAndTools();
@@ -412,14 +419,19 @@ function MainApp() {
               </span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-800/50 border border-gray-700/50">
-              <span className="text-sm text-gray-400">Community</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-tertiary)] border border-[var(--border-primary)]">
+              <span className="text-sm text-[var(--text-tertiary)]">Community</span>
             </div>
           )}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-800/50">
-            <User className="w-4 h-4" />
-            <span className="text-sm">Desktop User</span>
-          </div>
+          
+          {/* Settings Button */}
+          <button
+            onClick={() => setShowSettings(true)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-tertiary)] border border-[var(--border-primary)] hover:border-[var(--border-focus)] transition-colors"
+            title="Settings"
+          >
+            <Settings className="w-4 h-4 text-[var(--text-secondary)]" />
+          </button>
         </div>
       </div>
 
@@ -729,6 +741,12 @@ function MainApp() {
         isOpen={showActivationDialog}
         onClose={() => setShowActivationDialog(false)}
         onActivate={handleActivateLicense}
+      />
+
+      {/* Settings Modal */}
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
       />
     </div>
   );
