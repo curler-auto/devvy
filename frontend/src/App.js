@@ -19,8 +19,11 @@ import GrpcTester from '@/components/GrpcTester';
 import UiRecorder from '@/components/UiRecorder';
 import ActivationDialog from '@/components/ActivationDialog';
 import SettingsModal from '@/components/SettingsModal';
+import ToolWrapper from '@/components/ToolWrapper';
 import licenseService from '@/services/licenseService';
 import { applyTheme, getStoredTheme, getMonacoTheme } from '@/themes';
+import { isToolRegistered } from '@/tools';
+import upgradeService from '@/services/upgradeService';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -87,10 +90,42 @@ function MainApp() {
     setCurrentTheme(savedTheme);
     setEditorTheme(getMonacoTheme(savedTheme));
     
+    // Check for upgrade
+    checkForUpgrade();
+    
     loadFavorites();
     loadToolsConfig();
     loadLicenseAndTools();
   }, []);
+  
+  // Check if this is an upgrade and show notification
+  const checkForUpgrade = () => {
+    try {
+      const upgradeStatus = upgradeService.checkUpgradeStatus();
+      
+      if (upgradeStatus.isUpgrade) {
+        // Show upgrade notification
+        toast.success(
+          `Upgraded to version ${upgradeStatus.currentVersion}`, 
+          { 
+            description: 'Your license and data have been preserved.',
+            duration: 5000
+          }
+        );
+      } else if (upgradeStatus.isFirstRun) {
+        // Show welcome message for first run
+        toast.info(
+          'Welcome to Devvy Studio!', 
+          { 
+            description: 'Select a tool from the sidebar to get started.',
+            duration: 5000
+          }
+        );
+      }
+    } catch (error) {
+      console.error('Error checking for upgrade:', error);
+    }
+  };
 
   // Listen for theme changes
   useEffect(() => {
@@ -388,33 +423,43 @@ function MainApp() {
     setTabs([...tabs, newTab]);
     setActiveTab(newTab.tabId);
     toast.success(`Opened: ${savedItem.name}`);
-  };
+  }
 
+  // Filter tools based on search query and enabled status
+  // Strictly enforce the enabled flag from toolconfig.json
+  const enabledTools = tools.filter(tool => tool.enabled === true);
+  
   const filteredTools = searchQuery
-    ? tools.filter(tool => 
-        tool.enabled &&
-        (tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tool.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    ? enabledTools.filter(tool => 
+        tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.description.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : tools.filter(tool => tool.enabled);
+    : enabledTools;
 
   const categoryTools = selectedCategory
-    ? tools.filter(tool => {
+    ? enabledTools.filter(tool => {
         const matchesCategory = tool.category === selectedCategory.id;
         const matchesSearch = !searchQuery || 
           tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           tool.description.toLowerCase().includes(searchQuery.toLowerCase());
-        return tool.enabled && matchesCategory && matchesSearch;
+        return matchesCategory && matchesSearch;
       })
     : [];
 
-  const favoriteTools = tools.filter(tool => tool.enabled && favorites.includes(tool.id));
+  const favoriteTools = enabledTools.filter(tool => favorites.includes(tool.id));
 
+  // Filter out categories with no enabled tools
+  const categoriesWithTools = categories.filter(category => {
+    // Check if this category has any enabled tools
+    return enabledTools.some(tool => tool.category === category.id);
+  });
+  
+  // Then apply search filter if needed
   const filteredCategories = searchQuery
-    ? categories.filter(cat =>
+    ? categoriesWithTools.filter(cat =>
         cat.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    : categories;
+    : categoriesWithTools;
 
   return (
     <div className="App" data-testid="productivity-app">
@@ -707,25 +752,44 @@ function MainApp() {
             {tabs.map((tab) => (
               <div
                 key={tab.tabId}
-                style={{ display: activeTab === tab.tabId ? 'block' : 'none' }}
+                style={{ display: activeTab === tab.tabId ? 'block' : 'none', height: '100%' }}
               >
-                {tab.id === 'json-beautifier' && (
-                  <JSONBeautifierTool tab={tab} tabs={tabs} setTabs={setTabs} editorTheme={editorTheme} />
-                )}
-                {tab.id === 'json-validator' && (
-                  <div className="p-8 text-center text-gray-400">
-                    <AlertCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <p>JSON Validator - Coming Soon</p>
-                  </div>
-                )}
-                {tab.id === 'api-tester' && (
-                  <RestApiTester tab={tab} tabs={tabs} setTabs={setTabs} />
-                )}
-                {tab.id === 'grpc-tester' && (
-                  <GrpcTester tab={tab} tabs={tabs} setTabs={setTabs} />
-                )}
-                {tab.id === 'ui-recorder' && (
-                  <UiRecorder tab={tab} tabs={tabs} setTabs={setTabs} />
+                {/* Use ToolWrapper for tools registered in the tool registry */}
+                {isToolRegistered(tab.id) ? (
+                  <ToolWrapper
+                    toolId={tab.id}
+                    tab={tab}
+                    tabs={tabs}
+                    setTabs={setTabs}
+                    editorTheme={editorTheme}
+                  />
+                ) : (
+                  /* Fallback for legacy tools not yet migrated */
+                  <>
+                    {tab.id === 'json-validator' && (
+                      <div className="p-8 text-center text-gray-400">
+                        <AlertCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                        <p>JSON Validator - Coming Soon</p>
+                      </div>
+                    )}
+                    {tab.id === 'api-tester' && (
+                      <RestApiTester tab={tab} tabs={tabs} setTabs={setTabs} />
+                    )}
+                    {tab.id === 'grpc-tester' && (
+                      <GrpcTester tab={tab} tabs={tabs} setTabs={setTabs} />
+                    )}
+                    {tab.id === 'ui-recorder' && (
+                      <UiRecorder tab={tab} tabs={tabs} setTabs={setTabs} />
+                    )}
+                    {/* Default fallback for unimplemented tools */}
+                    {!['json-validator', 'api-tester', 'grpc-tester', 'ui-recorder'].includes(tab.id) && (
+                      <div className="p-8 text-center text-gray-400">
+                        <AlertCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                        <p>{tab.name} - Coming Soon</p>
+                        <p className="text-xs mt-2">This tool hasn't been implemented yet</p>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             ))}
@@ -764,6 +828,10 @@ function MainApp() {
       <SettingsModal
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
+        tabs={tabs}
+        setTabs={setTabs}
+        favorites={favorites}
+        setFavorites={setFavorites}
       />
     </div>
   );
@@ -970,135 +1038,6 @@ function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, i
         <Star className="w-3 h-3 text-amber-500 absolute top-2 right-2" fill="currentColor" />
       )}
     </button>
-  );
-}
-
-function JSONBeautifierTool({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
-  const [inputJSON, setInputJSON] = useState(tab.data.input || '');
-  const [outputJSON, setOutputJSON] = useState(tab.data.output || '');
-  const [isValid, setIsValid] = useState(true);
-  const [error, setError] = useState(null);
-  const [copied, setCopied] = useState(false);
-
-  const beautifyJSON = async () => {
-    try {
-      const response = await axios.post(`${API}/beautify`, {
-        json_string: inputJSON,
-        indent: 2
-      });
-
-      setOutputJSON(response.data.beautified);
-      setIsValid(response.data.valid);
-      setError(response.data.error);
-
-      // Update tab data
-      const updatedTabs = tabs.map(t => 
-        t.tabId === tab.tabId 
-          ? { ...t, data: { input: inputJSON, output: response.data.beautified } }
-          : t
-      );
-      setTabs(updatedTabs);
-
-      if (response.data.valid) {
-        toast.success('JSON beautified successfully!');
-      } else {
-        toast.error('Invalid JSON format');
-      }
-    } catch (err) {
-      console.error('Beautify error:', err);
-      toast.error('Failed to beautify JSON');
-    }
-  };
-
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(outputJSON);
-      setCopied(true);
-      toast.success('Copied to clipboard!');
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Copy error:', err);
-      toast.error('Failed to copy');
-    }
-  };
-
-  return (
-    <div className="json-tool" data-testid="json-beautifier">
-      <div className="json-panel">
-        <div className="panel-header">
-          <h3>Input JSON</h3>
-          <Button 
-            onClick={beautifyJSON} 
-            size="sm"
-            data-testid="beautify-button"
-          >
-            <Code className="w-4 h-4 mr-2" />
-            Beautify
-          </Button>
-        </div>
-        <div className="editor-container">
-          <Editor
-            height="100%"
-            defaultLanguage="json"
-            theme={editorTheme}
-            value={inputJSON}
-            onChange={(value) => setInputJSON(value || '')}
-            options={{
-              minimap: { enabled: false },
-              fontSize: 14,
-              lineNumbers: 'on',
-              scrollBeyondLastLine: false,
-              automaticLayout: true,
-              tabSize: 2,
-            }}
-          />
-        </div>
-      </div>
-
-      <div className="json-panel">
-        <div className="panel-header">
-          <div className="flex items-center gap-2">
-            <h3>Output</h3>
-            {!isValid && error && (
-              <span className="text-xs text-red-400 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" />
-                {error}
-              </span>
-            )}
-          </div>
-          <Button 
-            onClick={copyToClipboard}
-            size="sm"
-            variant="outline"
-            disabled={!outputJSON}
-            data-testid="copy-button"
-          >
-            {copied ? (
-              <><Check className="w-4 h-4 mr-2" /> Copied</>
-            ) : (
-              <><Copy className="w-4 h-4 mr-2" /> Copy</>
-            )}
-          </Button>
-        </div>
-        <div className="editor-container">
-          <Editor
-            height="100%"
-            defaultLanguage="json"
-            theme={editorTheme}
-            value={outputJSON}
-            options={{
-              minimap: { enabled: false },
-              fontSize: 14,
-              lineNumbers: 'on',
-              scrollBeyondLastLine: false,
-              readOnly: true,
-              automaticLayout: true,
-              tabSize: 2,
-            }}
-          />
-        </div>
-      </div>
-    </div>
   );
 }
 

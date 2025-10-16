@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { X, Palette, Check, Settings as SettingsIcon, Bell, Shield } from 'lucide-react';
+import { X, Palette, Check, Settings as SettingsIcon, Bell, Shield, Database } from 'lucide-react';
+import DataExportImport from './DataExportImport';
 import { THEMES, applyTheme, getStoredTheme } from '../themes';
 
-const SettingsModal = ({ isOpen, onClose }) => {
+const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites }) => {
   const [selectedTheme, setSelectedTheme] = useState(getStoredTheme());
   const [activeTab, setActiveTab] = useState('appearance');
 
@@ -20,8 +21,9 @@ const SettingsModal = ({ isOpen, onClose }) => {
   const darkThemes = Object.values(THEMES).filter(t => t.type === 'dark');
   const lightThemes = Object.values(THEMES).filter(t => t.type === 'light');
 
-  const tabs = [
+  const settingsTabs = [
     { id: 'appearance', name: 'Appearance', icon: Palette },
+    { id: 'data', name: 'Data & Backup', icon: Database },
     { id: 'general', name: 'General', icon: SettingsIcon },
     { id: 'notifications', name: 'Notifications', icon: Bell },
     { id: 'security', name: 'Security', icon: Shield },
@@ -48,7 +50,7 @@ const SettingsModal = ({ isOpen, onClose }) => {
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar Tabs */}
           <div className="w-48 border-r border-[var(--border-primary)] p-4 space-y-1">
-            {tabs.map((tab) => {
+            {settingsTabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
@@ -144,6 +146,15 @@ const SettingsModal = ({ isOpen, onClose }) => {
                   Coming soon...
                 </div>
               </div>
+            )}
+            
+            {activeTab === 'data' && (
+              <DataExportImport 
+                tabs={tabs} 
+                setTabs={setTabs} 
+                favorites={favorites} 
+                setFavorites={setFavorites} 
+              />
             )}
           </div>
         </div>

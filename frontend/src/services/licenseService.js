@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getMachineId, getMachineName } from '../utils/machineId';
+import upgradeService from './upgradeService';
 
 const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://127.0.0.1:8001';
 
@@ -26,6 +27,15 @@ class LicenseService {
       if (response.data.success) {
         // Store the activated config in database
         await this.saveActivatedConfig(response.data.toolConfig, machineId, activationKey);
+        
+        // Store license data locally for upgrade preservation
+        upgradeService.storeLicenseData({
+          activationKey,
+          isActivated: true,
+          licenseType: response.data.toolConfig.licenseType || 'premium',
+          activatedAt: new Date().toISOString()
+        });
+        
         return {
           success: true,
           toolConfig: response.data.toolConfig,
@@ -68,10 +78,24 @@ class LicenseService {
    */
   async getLicenseConfig() {
     try {
+      // Check if this is an upgrade or fresh install
+      const upgradeStatus = upgradeService.handleUpgrade();
+      console.log('🔄 Upgrade status:', upgradeStatus);
+      
       const machineId = await getMachineId();
       
       // Always load the base config first
       const baseConfig = await this.getDefaultConfig();
+      
+      // For fresh installs, don't even try to get license data
+      if (upgradeStatus.isFreshInstall) {
+        console.log('🆕 Fresh install - using default config');
+        return {
+          success: true,
+          toolConfig: baseConfig,
+          isActivated: false,
+        };
+      }
       
       // Check if there's an activated license for this machine
       const response = await axios.get(`${API_BASE_URL}/api/license/config`, {
@@ -89,10 +113,16 @@ class LicenseService {
           activatedTools: licenseData.activatedTools || [],
         };
         
-        console.log('License loaded:', {
+        console.log('License loaded from server:', {
           isActivated: mergedConfig.isActivated,
           licenseType: mergedConfig.licenseType,
           toolsCount: mergedConfig.tools?.length || 0,
+        });
+        
+        // Store license data for future upgrades
+        upgradeService.storeLicenseData({
+          isActivated: mergedConfig.isActivated,
+          licenseType: mergedConfig.licenseType,
         });
         
         return {
@@ -100,15 +130,51 @@ class LicenseService {
           toolConfig: mergedConfig,
           isActivated: mergedConfig.isActivated,
         };
-      } else {
-        // Return default free config
-        console.log('No license found, using default config');
-        return {
-          success: true,
-          toolConfig: baseConfig,
-          isActivated: false,
-        };
+      } else if (upgradeStatus.isUpgrade && upgradeStatus.preserveLicense) {
+        // If this is an upgrade, try to use preserved license data
+        const preservedLicense = upgradeService.getPreservedLicenseData();
+        
+        if (preservedLicense && preservedLicense.isActivated) {
+          console.log('📦 Using preserved license data after upgrade:', preservedLicense);
+          
+          // If we have an activation key, try to reactivate
+          if (preservedLicense.activationKey) {
+            try {
+              console.log('🔄 Auto-reactivating license after upgrade...');
+              const reactivationResult = await this.activateLicense(preservedLicense.activationKey);
+              
+              if (reactivationResult.success) {
+                console.log('✅ License auto-reactivated after upgrade');
+                return reactivationResult;
+              }
+            } catch (reactivateError) {
+              console.error('Failed to auto-reactivate license:', reactivateError);
+            }
+          }
+          
+          // If reactivation failed or no key, use preserved data with base config
+          const mergedConfig = {
+            ...baseConfig,
+            isActivated: preservedLicense.isActivated,
+            licenseType: preservedLicense.licenseType || 'free',
+          };
+          
+          return {
+            success: true,
+            toolConfig: mergedConfig,
+            isActivated: mergedConfig.isActivated,
+            isPreservedLicense: true,
+          };
+        }
       }
+      
+      // Return default free config if no license found
+      console.log('No license found, using default config');
+      return {
+        success: true,
+        toolConfig: baseConfig,
+        isActivated: false,
+      };
     } catch (error) {
       console.error('Error getting license config:', error);
       // Fallback to default config
