@@ -83,7 +83,7 @@ function MainApp() {
   const [toolsConfig, setToolsConfig] = useState({});
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [tabToSave, setTabToSave] = useState(null);
-  // const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     loadFavorites();
@@ -168,12 +168,11 @@ function MainApp() {
 
   const handleBackToCategories = () => {
     setSelectedCategory(null);
-    // setIsSidebarCollapsed(true);
   };
 
-  // const toggleSidebar = () => {
-  //   setIsSidebarCollapsed(!isSidebarCollapsed);
-  // };
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
 
   const closeTab = (tabId, e) => {
     e?.stopPropagation();
@@ -325,7 +324,7 @@ function MainApp() {
 
       <div className="main-container">
         {/* Two-Pane Sidebar */}
-        <div className="sidebar" data-testid="sidebar">
+        <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`} data-testid="sidebar">
           {/* First Level - Icon Pane */}
           <div className="icon-pane">
             <button
@@ -334,6 +333,7 @@ function MainApp() {
                 setActivePane('categories');
                 setSelectedCategory(null);
                 setSearchQuery('');
+                setIsSidebarCollapsed(false);
               }}
               title="Categories"
               data-testid="icon-categories"
@@ -346,6 +346,7 @@ function MainApp() {
                 setActivePane('tools');
                 setSelectedCategory(null);
                 setSearchQuery('');
+                setIsSidebarCollapsed(false);
               }}
               title="All Tools"
               data-testid="icon-tools"
@@ -358,6 +359,7 @@ function MainApp() {
                 setActivePane('collections');
                 setSelectedCategory(null);
                 setSearchQuery('');
+                setIsSidebarCollapsed(false);
               }}
               title="Collections"
               data-testid="icon-collections"
@@ -371,6 +373,7 @@ function MainApp() {
                   setActivePane('favorites');
                   setSelectedCategory(null);
                   setSearchQuery('');
+                  setIsSidebarCollapsed(false);
                 }}
                 title="Favorites"
                 data-testid="icon-favorites"
@@ -382,6 +385,15 @@ function MainApp() {
 
           {/* Second Level - Content Pane */}
           <div className="content-pane">
+            {/* Collapse Toggle */}
+            <button
+              onClick={toggleSidebar}
+              className="sidebar-toggle"
+              title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+            >
+              <ChevronRight className={`w-3 h-3 transition-transform ${isSidebarCollapsed ? '' : 'rotate-180'}`} />
+            </button>
+            
             {activePane !== 'collections' && (
               <div className="content-pane-header">
                 <div className="content-pane-title">

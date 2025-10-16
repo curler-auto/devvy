@@ -204,7 +204,16 @@ function createMenu() {
   Menu.setApplicationMenu(menu);
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  // Set dock icon on macOS
+  if (process.platform === 'darwin') {
+    const iconPath = path.join(__dirname, '../assets/icon.png');
+    if (fs.existsSync(iconPath)) {
+      app.dock.setIcon(iconPath);
+    }
+  }
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   // Kill backend process

@@ -57,10 +57,26 @@ body {
   border-right: none;
 }
 
-.toggle-sidebar {
-  margin-bottom: 8px;
-  border-bottom: 1px solid #2a2a2a;
-  padding-bottom: 8px;
+.sidebar-toggle {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 4px;
+  padding: 4px;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-toggle:hover {
+  background: #374151;
+  color: #e5e5e5;
 }
 
 /* First Level - Icon Pane */
@@ -116,6 +132,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 
 .content-pane-header {
