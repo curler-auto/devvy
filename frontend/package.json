@@ -60,7 +60,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "GENERATE_SOURCEMAP=false craco build",
     "test": "craco test",
     "electron": "electron ../electron/main.js",
     "electron:dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron ../electron/main.js\"",
@@ -105,24 +105,21 @@
     "productName": "Devvy Studio",
     "icon": "public/icon-512.png",
     "directories": {
-      "output": "../dist"
     },
     "files": [
       "build/**/*",
       "public/electron.js",
       "public/preload.js",
+      "assets/icon.png",
       "../backend/dist/devtools-backend*",
       "!../backend/__pycache__",
       "!../backend/.env*",
-      "!../backend/venv",
-      "!../backend/.venv"
+      "!../backend/*.pyc",
+      "!build/**/*.map",
+      "!build/**/*.LICENSE.txt"
     ],
-    "extraResources": [
-      {
-        "from": "../backend",
-        "to": "backend",
-        "filter": ["**/*", "!__pycache__", "!*.pyc", "!venv", "!.venv", "!.env*"]
-      }
+    "asarUnpack": [
+      "../backend/dist/devtools-backend*"
     ],
     "win": {
       "target": "nsis",
@@ -131,8 +128,12 @@
     "mac": {
       "target": "dmg",
       "icon": "../assets/icon.icns",
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "compression": "maximum",
+      "minimumSystemVersion": "10.13"
     },
+    "compression": "maximum",
+    "removePackageScripts": true,
     "linux": {
       "target": "AppImage",
       "icon": "../assets/icon.png",
