@@ -20,7 +20,7 @@ import UiRecorder from '@/components/UiRecorder';
 import ActivationDialog from '@/components/ActivationDialog';
 import SettingsModal from '@/components/SettingsModal';
 import licenseService from '@/services/licenseService';
-import { applyTheme, getStoredTheme } from '@/themes';
+import { applyTheme, getStoredTheme, getMonacoTheme } from '@/themes';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -77,15 +77,32 @@ function MainApp() {
   const [showActivationDialog, setShowActivationDialog] = useState(false);
   const [isLoadingLicense, setIsLoadingLicense] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState(getStoredTheme());
+  const [editorTheme, setEditorTheme] = useState(getMonacoTheme(getStoredTheme()));
 
   useEffect(() => {
     // Apply saved theme on startup
     const savedTheme = getStoredTheme();
     applyTheme(savedTheme);
+    setCurrentTheme(savedTheme);
+    setEditorTheme(getMonacoTheme(savedTheme));
     
     loadFavorites();
     loadToolsConfig();
     loadLicenseAndTools();
+  }, []);
+
+  // Listen for theme changes
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const newTheme = getStoredTheme();
+      setCurrentTheme(newTheme);
+      setEditorTheme(getMonacoTheme(newTheme));
+    };
+
+    // Check for theme changes every 100ms (when settings modal updates theme)
+    const interval = setInterval(handleThemeChange, 100);
+    return () => clearInterval(interval);
   }, []);
 
   // Keyboard shortcut for save (Cmd+S / Ctrl+S)
@@ -693,7 +710,7 @@ function MainApp() {
                 style={{ display: activeTab === tab.tabId ? 'block' : 'none' }}
               >
                 {tab.id === 'json-beautifier' && (
-                  <JSONBeautifierTool tab={tab} tabs={tabs} setTabs={setTabs} />
+                  <JSONBeautifierTool tab={tab} tabs={tabs} setTabs={setTabs} editorTheme={editorTheme} />
                 )}
                 {tab.id === 'json-validator' && (
                   <div className="p-8 text-center text-gray-400">
@@ -956,7 +973,7 @@ function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, i
   );
 }
 
-function JSONBeautifierTool({ tab, tabs, setTabs }) {
+function JSONBeautifierTool({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   const [inputJSON, setInputJSON] = useState(tab.data.input || '');
   const [outputJSON, setOutputJSON] = useState(tab.data.output || '');
   const [isValid, setIsValid] = useState(true);
@@ -1023,7 +1040,7 @@ function JSONBeautifierTool({ tab, tabs, setTabs }) {
           <Editor
             height="100%"
             defaultLanguage="json"
-            theme="vs-dark"
+            theme={editorTheme}
             value={inputJSON}
             onChange={(value) => setInputJSON(value || '')}
             options={{
@@ -1067,7 +1084,7 @@ function JSONBeautifierTool({ tab, tabs, setTabs }) {
           <Editor
             height="100%"
             defaultLanguage="json"
-            theme="vs-dark"
+            theme={editorTheme}
             value={outputJSON}
             options={{
               minimap: { enabled: false },

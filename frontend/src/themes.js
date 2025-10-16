@@ -196,6 +196,19 @@ export const THEMES = {
   }
 };
 
+// Monaco Editor theme mapping
+export const getMonacoTheme = (themeId) => {
+  const theme = THEMES[themeId];
+  if (!theme) return 'vs-dark';
+  
+  // Map our themes to Monaco's built-in themes
+  if (theme.type === 'light') {
+    return 'vs'; // Monaco's light theme
+  } else {
+    return 'vs-dark'; // Monaco's dark theme
+  }
+};
+
 export const applyTheme = (themeId) => {
   const theme = THEMES[themeId];
   if (!theme) return;
