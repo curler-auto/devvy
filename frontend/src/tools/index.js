@@ -54,6 +54,7 @@ import SSHKeyGenerator from './SSHKeyGenerator';
 import SSLCertGenerator from './SSLCertGenerator';
 import TOTPGenerator from './TOTPGenerator';
 import ShellExecutor from './ShellExecutor';
+import CronManager from './CronManager';
 
 /**
  * Tool Components Registry
@@ -99,6 +100,7 @@ export const TOOL_COMPONENTS = {
   'ssl-cert-generator': SSLCertGenerator,
   'totp-generator': TOTPGenerator,
   'shell-executor': ShellExecutor,
+  'cron-manager': CronManager,
 };
 
 /**

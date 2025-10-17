@@ -137,6 +137,15 @@
       "description": "Execute bash/shell scripts with real-time output"
     },
     {
+      "id": "cron-manager",
+      "name": "Cron Manager",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Clock",
+      "description": "Manage cron jobs with live countdown to next run"
+    },
+    {
       "id": "regex-tester",
       "name": "Regex Tester",
       "category": "text-tools",

@@ -1258,6 +1258,87 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# ========== CRON MANAGER ==========
+
+# In-memory storage for cron jobs (in production, use database)
+cron_jobs_storage = {}
+
+class CronJob(BaseModel):
+    id: Optional[str] = None
+    name: str
+    expression: str
+    command: str
+    enabled: bool = True
+    description: Optional[str] = None
+    lastRun: Optional[str] = None
+    createdAt: Optional[str] = None
+
+class CronJobCreate(BaseModel):
+    name: str
+    expression: str
+    command: str
+    enabled: bool = True
+    description: Optional[str] = None
+
+@api_router.post("/cron/create", response_model=CronJob)
+async def create_cron_job(job_data: CronJobCreate):
+    """Create a new cron job"""
+    job_id = str(uuid.uuid4())
+    job = CronJob(
+        **job_data.model_dump(),
+        id=job_id,
+        createdAt=datetime.now(timezone.utc).isoformat()
+    )
+    cron_jobs_storage[job_id] = job.model_dump()
+    return job
+
+@api_router.get("/cron/list")
+async def list_cron_jobs():
+    """List all cron jobs"""
+    return {"jobs": list(cron_jobs_storage.values())}
+
+@api_router.get("/cron/{job_id}", response_model=CronJob)
+async def get_cron_job(job_id: str):
+    """Get a specific cron job"""
+    if job_id not in cron_jobs_storage:
+        raise HTTPException(status_code=404, detail="Cron job not found")
+    return cron_jobs_storage[job_id]
+
+@api_router.put("/cron/{job_id}", response_model=CronJob)
+async def update_cron_job(job_id: str, job_data: CronJobCreate):
+    """Update a cron job"""
+    if job_id not in cron_jobs_storage:
+        raise HTTPException(status_code=404, detail="Cron job not found")
+    
+    existing = cron_jobs_storage[job_id]
+    updated = CronJob(
+        **job_data.model_dump(),
+        id=job_id,
+        createdAt=existing.get('createdAt'),
+        lastRun=existing.get('lastRun')
+    )
+    cron_jobs_storage[job_id] = updated.model_dump()
+    return updated
+
+@api_router.delete("/cron/{job_id}")
+async def delete_cron_job(job_id: str):
+    """Delete a cron job"""
+    if job_id not in cron_jobs_storage:
+        raise HTTPException(status_code=404, detail="Cron job not found")
+    del cron_jobs_storage[job_id]
+    return {"message": "Cron job deleted"}
+
+@api_router.patch("/cron/{job_id}/toggle", response_model=CronJob)
+async def toggle_cron_job(job_id: str):
+    """Toggle cron job enabled/disabled"""
+    if job_id not in cron_jobs_storage:
+        raise HTTPException(status_code=404, detail="Cron job not found")
+    
+    job = cron_jobs_storage[job_id]
+    job['enabled'] = not job.get('enabled', True)
+    cron_jobs_storage[job_id] = job
+    return CronJob(**job)
+
 # ========== SHELL SCRIPT EXECUTOR ==========
 
 class ScriptExecuteRequest(BaseModel):
