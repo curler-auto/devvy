@@ -328,7 +328,7 @@ export default function CollectionsPanel({ onOpenItem }) {
               ) : (
                 <ChevronRight className="w-4 h-4" />
               )}
-              <FolderOpen className="w-4 h-4 text-emerald-500" />
+              <FolderOpen className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
               <span className="flex-1">{collection.name}</span>
               <button
                 onClick={(e) => {
@@ -382,7 +382,7 @@ export default function CollectionsPanel({ onOpenItem }) {
                     onClick={() => handleOpenItem(item.id)}
                     data-testid={`saved-item-${item.id}`}
                   >
-                    <FileText className="w-4 h-4 text-gray-400" />
+                    <FileText className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
                     <span>{item.name}</span>
                   </div>
                 ))}
@@ -440,8 +440,8 @@ export default function CollectionsPanel({ onOpenItem }) {
 
         {collections.length === 0 && (
           <div className="empty-collections">
-            <p className="text-sm text-gray-500">No collections yet</p>
-            <p className="text-xs text-gray-600 mt-1">Create one to save your work</p>
+            <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>No collections yet</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-tertiary)' }}>Create one to save your work</p>
           </div>
         )}
       </div>
@@ -591,7 +591,7 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
               ) : (
                 <ChevronRight className="w-4 h-4" />
               )}
-              <Folder className="w-4 h-4 text-amber-500" />
+              <Folder className="w-4 h-4" style={{ color: 'var(--accent-secondary, #f59e0b)' }} />
               <span>{folder.name}</span>
             </div>
             <button
@@ -643,7 +643,8 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
           </button>
           <div className="context-menu-divider" />
           <button
-            className="context-menu-item text-red-400"
+            className="context-menu-item"
+            style={{ color: '#ef4444' }}
             onClick={(e) => handleDeleteFolder(e)}
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -700,7 +701,7 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
               onClick={() => onOpenItem(item.id)}
               data-testid={`saved-item-${item.id}`}
             >
-              <FileText className="w-4 h-4 text-gray-400" />
+              <FileText className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
               <span>{item.name}</span>
             </div>
           ))}
