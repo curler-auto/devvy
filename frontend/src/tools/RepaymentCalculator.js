@@ -203,40 +203,67 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
     toast.success('JSON file downloaded');
   };
 
-  // Chart configuration
+  // Chart configuration with modern color scheme
   const getChartOption = () => {
     if (!schedule.length) return {};
 
+    // Get computed CSS variables for theme colors
+    const getThemeColor = (varName) => {
+      if (typeof window !== 'undefined') {
+        return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      }
+      return '#000';
+    };
+
     return {
+      backgroundColor: 'transparent',
       title: {
         text: 'Principal vs Interest Over Time',
         left: 'center',
+        top: 10,
         textStyle: {
-          color: 'var(--text-primary)'
+          color: getThemeColor('--text-primary') || '#1f2937',
+          fontSize: 16,
+          fontWeight: 600,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
         }
       },
       tooltip: {
         trigger: 'axis',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        borderColor: '#e5e7eb',
+        borderWidth: 1,
+        textStyle: {
+          color: '#1f2937',
+          fontSize: 13,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+        },
+        padding: 12,
         formatter: (params) => {
           const period = params[0].axisValue;
-          let result = `<strong>Period ${period}</strong><br/>`;
+          let result = `<div style="font-weight: 600; margin-bottom: 8px; color: #111827;">Period ${period}</div>`;
           params.forEach(param => {
-            result += `${param.marker} ${param.seriesName}: ${formatCurrency(param.value)}<br/>`;
+            result += `<div style="margin: 4px 0;">${param.marker} <span style="font-weight: 500;">${param.seriesName}:</span> <span style="font-weight: 600;">${formatCurrency(param.value)}</span></div>`;
           });
           return result;
         }
       },
       legend: {
         data: ['Principal', 'Interest', 'Balance'],
-        top: 30,
+        top: 40,
         textStyle: {
-          color: 'var(--text-primary)'
-        }
+          color: getThemeColor('--text-primary') || '#1f2937',
+          fontSize: 13,
+          fontWeight: 500,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+        },
+        itemGap: 20
       },
       grid: {
         left: '3%',
         right: '4%',
-        bottom: '3%',
+        bottom: '5%',
+        top: '80px',
         containLabel: true
       },
       xAxis: {
@@ -244,25 +271,56 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
         boundaryGap: false,
         data: schedule.map(row => row.period),
         name: 'Payment Period',
+        nameLocation: 'middle',
+        nameGap: 30,
         nameTextStyle: {
-          color: 'var(--text-secondary)'
+          color: getThemeColor('--text-secondary') || '#6b7280',
+          fontSize: 12,
+          fontWeight: 500,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#e5e7eb'
+          }
         },
         axisLabel: {
-          color: 'var(--text-secondary)'
+          color: getThemeColor('--text-secondary') || '#6b7280',
+          fontSize: 11,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+        },
+        splitLine: {
+          show: false
         }
       },
       yAxis: {
         type: 'value',
         name: 'Amount (₹)',
         nameTextStyle: {
-          color: 'var(--text-secondary)'
+          color: getThemeColor('--text-secondary') || '#6b7280',
+          fontSize: 12,
+          fontWeight: 500,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+        },
+        axisLine: {
+          lineStyle: {
+            color: '#e5e7eb'
+          }
         },
         axisLabel: {
-          color: 'var(--text-secondary)',
+          color: getThemeColor('--text-secondary') || '#6b7280',
+          fontSize: 11,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
           formatter: (value) => {
             if (value >= 100000) return `₹${(value / 100000).toFixed(1)}L`;
             if (value >= 1000) return `₹${(value / 1000).toFixed(1)}K`;
             return `₹${value}`;
+          }
+        },
+        splitLine: {
+          lineStyle: {
+            color: '#f3f4f6',
+            type: 'dashed'
           }
         }
       },
@@ -272,23 +330,105 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
           type: 'line',
           data: schedule.map(row => row.principal.toFixed(2)),
           smooth: true,
-          itemStyle: { color: '#10b981' },
-          areaStyle: { opacity: 0.3 }
+          symbol: 'circle',
+          symbolSize: 6,
+          lineStyle: {
+            width: 3,
+            shadowColor: 'rgba(16, 185, 129, 0.3)',
+            shadowBlur: 10,
+            shadowOffsetY: 5
+          },
+          itemStyle: { 
+            color: '#10b981',
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          areaStyle: { 
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(16, 185, 129, 0.4)' },
+                { offset: 1, color: 'rgba(16, 185, 129, 0.05)' }
+              ]
+            }
+          },
+          emphasis: {
+            focus: 'series',
+            itemStyle: {
+              shadowBlur: 10,
+              shadowColor: 'rgba(16, 185, 129, 0.5)'
+            }
+          }
         },
         {
           name: 'Interest',
           type: 'line',
           data: schedule.map(row => row.interest.toFixed(2)),
           smooth: true,
-          itemStyle: { color: '#ef4444' },
-          areaStyle: { opacity: 0.3 }
+          symbol: 'circle',
+          symbolSize: 6,
+          lineStyle: {
+            width: 3,
+            shadowColor: 'rgba(239, 68, 68, 0.3)',
+            shadowBlur: 10,
+            shadowOffsetY: 5
+          },
+          itemStyle: { 
+            color: '#ef4444',
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          areaStyle: { 
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(239, 68, 68, 0.4)' },
+                { offset: 1, color: 'rgba(239, 68, 68, 0.05)' }
+              ]
+            }
+          },
+          emphasis: {
+            focus: 'series',
+            itemStyle: {
+              shadowBlur: 10,
+              shadowColor: 'rgba(239, 68, 68, 0.5)'
+            }
+          }
         },
         {
           name: 'Balance',
           type: 'line',
           data: schedule.map(row => row.balance.toFixed(2)),
           smooth: true,
-          itemStyle: { color: '#3b82f6' }
+          symbol: 'circle',
+          symbolSize: 6,
+          lineStyle: {
+            width: 3,
+            type: 'solid',
+            shadowColor: 'rgba(59, 130, 246, 0.3)',
+            shadowBlur: 10,
+            shadowOffsetY: 5
+          },
+          itemStyle: { 
+            color: '#3b82f6',
+            borderColor: '#fff',
+            borderWidth: 2
+          },
+          emphasis: {
+            focus: 'series',
+            itemStyle: {
+              shadowBlur: 10,
+              shadowColor: 'rgba(59, 130, 246, 0.5)'
+            }
+          }
         }
       ]
     };
