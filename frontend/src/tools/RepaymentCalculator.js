@@ -471,13 +471,13 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
                 type="number"
                 value={loanTerm}
                 onChange={(e) => setLoanTerm(e.target.value)}
-                className="flex-1 px-4 py-2 border rounded bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)] text-lg font-semibold"
+                className="w-24 px-3 py-2 border rounded bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)] text-lg font-semibold"
                 min="1"
               />
               <select
                 value={termUnit}
                 onChange={(e) => setTermUnit(e.target.value)}
-                className="px-4 py-2 border rounded bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
+                className="flex-1 px-3 py-2 border rounded bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
               >
                 <option value="months">Months</option>
                 <option value="years">Years</option>
