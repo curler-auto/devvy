@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calculator, Download, DollarSign, Calendar, Percent, TrendingUp } from 'lucide-react';
+import { Calculator, Download, DollarSign, Calendar, Percent, TrendingUp, FileSpreadsheet, FileJson } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import ReactECharts from 'echarts-for-react';
+import * as XLSX from 'xlsx';
 
 /**
  * Repayment Schedule Calculator
@@ -118,42 +120,178 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
     }
   };
 
-  // Format currency
+  // Format currency in INR
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR',
+      maximumFractionDigits: 2
     }).format(amount);
   };
 
-  // Export to CSV
-  const exportToCSV = () => {
-    const headers = ['Period', 'Date', 'Payment', 'Principal', 'Interest', 'Balance'];
-    const rows = schedule.map(row => [
-      row.period,
-      row.date,
-      row.payment.toFixed(2),
-      row.principal.toFixed(2),
-      row.interest.toFixed(2),
-      row.balance.toFixed(2)
-    ]);
+  // Export to Excel
+  const exportToExcel = () => {
+    const worksheetData = [
+      ['Loan Repayment Schedule'],
+      [''],
+      ['Loan Amount:', formatCurrency(summary.totalPrincipal)],
+      ['Interest Rate:', `${interestRate}%`],
+      ['Loan Term:', `${loanTerm} ${termUnit}`],
+      ['Payment Frequency:', paymentFrequency],
+      ['Payment Amount:', formatCurrency(summary.monthlyPayment)],
+      ['Total Interest:', formatCurrency(summary.totalInterest)],
+      ['Total Payment:', formatCurrency(summary.totalPayment)],
+      [''],
+      ['Period', 'Date', 'Payment', 'Principal', 'Interest', 'Balance'],
+      ...schedule.map(row => [
+        row.period,
+        row.date,
+        row.payment.toFixed(2),
+        row.principal.toFixed(2),
+        row.interest.toFixed(2),
+        row.balance.toFixed(2)
+      ])
+    ];
 
-    const csv = [
-      headers.join(','),
-      ...rows.map(row => row.join(','))
-    ].join('\n');
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Repayment Schedule');
+    
+    XLSX.writeFile(workbook, `repayment-schedule-${Date.now()}.xlsx`);
+    toast.success('Excel file downloaded');
+  };
 
-    const blob = new Blob([csv], { type: 'text/csv' });
+  // Export to JSON
+  const exportToJSON = () => {
+    const exportData = {
+      loanDetails: {
+        loanAmount: parseFloat(loanAmount),
+        interestRate: parseFloat(interestRate),
+        loanTerm: parseInt(loanTerm),
+        termUnit,
+        paymentFrequency,
+        startDate
+      },
+      summary: {
+        paymentAmount: summary.monthlyPayment,
+        totalPayments: summary.numberOfPayments,
+        totalPrincipal: summary.totalPrincipal,
+        totalInterest: summary.totalInterest,
+        totalPayment: summary.totalPayment
+      },
+      schedule: schedule.map(row => ({
+        period: row.period,
+        date: row.date,
+        payment: parseFloat(row.payment.toFixed(2)),
+        principal: parseFloat(row.principal.toFixed(2)),
+        interest: parseFloat(row.interest.toFixed(2)),
+        balance: parseFloat(row.balance.toFixed(2))
+      })),
+      exportedAt: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `repayment-schedule-${Date.now()}.csv`;
+    link.download = `repayment-schedule-${Date.now()}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    toast.success('Schedule exported');
+    toast.success('JSON file downloaded');
+  };
+
+  // Chart configuration
+  const getChartOption = () => {
+    if (!schedule.length) return {};
+
+    return {
+      title: {
+        text: 'Principal vs Interest Over Time',
+        left: 'center',
+        textStyle: {
+          color: 'var(--text-primary)'
+        }
+      },
+      tooltip: {
+        trigger: 'axis',
+        formatter: (params) => {
+          const period = params[0].axisValue;
+          let result = `<strong>Period ${period}</strong><br/>`;
+          params.forEach(param => {
+            result += `${param.marker} ${param.seriesName}: ${formatCurrency(param.value)}<br/>`;
+          });
+          return result;
+        }
+      },
+      legend: {
+        data: ['Principal', 'Interest', 'Balance'],
+        top: 30,
+        textStyle: {
+          color: 'var(--text-primary)'
+        }
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: schedule.map(row => row.period),
+        name: 'Payment Period',
+        nameTextStyle: {
+          color: 'var(--text-secondary)'
+        },
+        axisLabel: {
+          color: 'var(--text-secondary)'
+        }
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Amount (₹)',
+        nameTextStyle: {
+          color: 'var(--text-secondary)'
+        },
+        axisLabel: {
+          color: 'var(--text-secondary)',
+          formatter: (value) => {
+            if (value >= 100000) return `₹${(value / 100000).toFixed(1)}L`;
+            if (value >= 1000) return `₹${(value / 1000).toFixed(1)}K`;
+            return `₹${value}`;
+          }
+        }
+      },
+      series: [
+        {
+          name: 'Principal',
+          type: 'line',
+          data: schedule.map(row => row.principal.toFixed(2)),
+          smooth: true,
+          itemStyle: { color: '#10b981' },
+          areaStyle: { opacity: 0.3 }
+        },
+        {
+          name: 'Interest',
+          type: 'line',
+          data: schedule.map(row => row.interest.toFixed(2)),
+          smooth: true,
+          itemStyle: { color: '#ef4444' },
+          areaStyle: { opacity: 0.3 }
+        },
+        {
+          name: 'Balance',
+          type: 'line',
+          data: schedule.map(row => row.balance.toFixed(2)),
+          smooth: true,
+          itemStyle: { color: '#3b82f6' }
+        }
+      ]
+    };
   };
 
   return (
@@ -168,10 +306,16 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
         </div>
         <div className="flex gap-2">
           {schedule.length > 0 && (
-            <Button onClick={exportToCSV} size="sm" variant="outline">
-              <Download className="w-4 h-4 mr-2" />
-              Export CSV
-            </Button>
+            <>
+              <Button onClick={exportToExcel} size="sm" variant="outline" className="text-green-600 hover:text-green-700">
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                Export Excel
+              </Button>
+              <Button onClick={exportToJSON} size="sm" variant="outline" className="text-blue-600 hover:text-blue-700">
+                <FileJson className="w-4 h-4 mr-2" />
+                Export JSON
+              </Button>
+            </>
           )}
           <Button onClick={calculateSchedule} size="sm" className="bg-[var(--accent-primary)] text-white">
             <Calculator className="w-4 h-4 mr-2" />
@@ -312,15 +456,28 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
           )}
         </div>
 
-        {/* Right Panel - Schedule Table */}
-        <div className="flex-1 flex flex-col border border-[var(--border-primary)] rounded-lg bg-[var(--bg-secondary)] overflow-hidden">
-          <div className="p-3 border-b border-[var(--border-primary)] bg-[var(--bg-tertiary)]">
-            <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-              Amortization Schedule {schedule.length > 0 && `(${schedule.length} payments)`}
-            </h3>
-          </div>
-          
-          {schedule.length === 0 ? (
+        {/* Right Panel - Chart & Schedule */}
+        <div className="flex-1 flex flex-col gap-4 overflow-hidden">
+          {/* Chart */}
+          {schedule.length > 0 && (
+            <div className="h-80 border border-[var(--border-primary)] rounded-lg bg-[var(--bg-secondary)] p-4">
+              <ReactECharts 
+                option={getChartOption()} 
+                style={{ height: '100%', width: '100%' }}
+                opts={{ renderer: 'svg' }}
+              />
+            </div>
+          )}
+
+          {/* Schedule Table */}
+          <div className="flex-1 flex flex-col border border-[var(--border-primary)] rounded-lg bg-[var(--bg-secondary)] overflow-hidden">
+            <div className="p-3 border-b border-[var(--border-primary)] bg-[var(--bg-tertiary)]">
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">
+                Amortization Schedule {schedule.length > 0 && `(${schedule.length} payments)`}
+              </h3>
+            </div>
+            
+            {schedule.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
               <TrendingUp className="w-16 h-16 text-[var(--text-secondary)] mb-4" />
               <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
@@ -369,6 +526,7 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
               </table>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>
