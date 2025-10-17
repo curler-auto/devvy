@@ -1756,6 +1756,165 @@ async def upload_s3_object(
         logger.error(f"S3 upload error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ========== DOCKER UI ==========
+
+@api_router.get("/docker/containers")
+async def list_docker_containers():
+    """List all Docker containers"""
+    try:
+        import docker
+        client = docker.from_env()
+        
+        containers = []
+        for container in client.containers.list(all=True):
+            containers.append({
+                'id': container.id,
+                'name': container.name,
+                'image': container.image.tags[0] if container.image.tags else container.image.id[:12],
+                'state': container.status,
+                'created': container.attrs['Created']
+            })
+        
+        return {"containers": containers}
+    except Exception as e:
+        logger.error(f"Docker containers list error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/docker/images")
+async def list_docker_images():
+    """List all Docker images"""
+    try:
+        import docker
+        client = docker.from_env()
+        
+        images = []
+        for image in client.images.list():
+            images.append({
+                'id': image.id,
+                'tags': image.tags,
+                'size': image.attrs.get('Size', 0)
+            })
+        
+        return {"images": images}
+    except Exception as e:
+        logger.error(f"Docker images list error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/docker/containers/{container_id}/start")
+async def start_docker_container(container_id: str):
+    """Start a Docker container"""
+    try:
+        import docker
+        client = docker.from_env()
+        container = client.containers.get(container_id)
+        container.start()
+        return {"message": "Container started"}
+    except Exception as e:
+        logger.error(f"Docker start error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/docker/containers/{container_id}/stop")
+async def stop_docker_container(container_id: str):
+    """Stop a Docker container"""
+    try:
+        import docker
+        client = docker.from_env()
+        container = client.containers.get(container_id)
+        container.stop()
+        return {"message": "Container stopped"}
+    except Exception as e:
+        logger.error(f"Docker stop error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/docker/containers/{container_id}")
+async def remove_docker_container(container_id: str):
+    """Remove a Docker container"""
+    try:
+        import docker
+        client = docker.from_env()
+        container = client.containers.get(container_id)
+        container.remove(force=True)
+        return {"message": "Container removed"}
+    except Exception as e:
+        logger.error(f"Docker remove error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/docker/containers/{container_id}/logs")
+async def get_docker_logs(container_id: str):
+    """Get container logs"""
+    try:
+        import docker
+        client = docker.from_env()
+        container = client.containers.get(container_id)
+        logs = container.logs(tail=1000).decode('utf-8')
+        return {"logs": logs}
+    except Exception as e:
+        logger.error(f"Docker logs error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/docker/images/{image_id}")
+async def remove_docker_image(image_id: str):
+    """Remove a Docker image"""
+    try:
+        import docker
+        client = docker.from_env()
+        client.images.remove(image_id, force=True)
+        return {"message": "Image removed"}
+    except Exception as e:
+        logger.error(f"Docker image remove error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+class DockerBuildRequest(BaseModel):
+    dockerfile: str
+    imageName: str
+    context: Optional[str] = None
+
+@api_router.post("/docker/build")
+async def build_docker_image(request: DockerBuildRequest):
+    """Build a Docker image"""
+    try:
+        import docker
+        import io
+        
+        client = docker.from_env()
+        
+        # Create Dockerfile in memory
+        dockerfile_content = request.dockerfile.encode('utf-8')
+        fileobj = io.BytesIO(dockerfile_content)
+        
+        # Build image
+        image, build_logs = client.images.build(
+            fileobj=fileobj,
+            tag=request.imageName,
+            rm=True
+        )
+        
+        # Collect build output
+        output = []
+        for log in build_logs:
+            if 'stream' in log:
+                output.append(log['stream'])
+        
+        return {"output": ''.join(output), "imageId": image.id}
+    except Exception as e:
+        logger.error(f"Docker build error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+class DockerPullRequest(BaseModel):
+    image: str
+
+@api_router.post("/docker/pull")
+async def pull_docker_image(request: DockerPullRequest):
+    """Pull a Docker image"""
+    try:
+        import docker
+        client = docker.from_env()
+        client.images.pull(request.image)
+        return {"message": "Image pulled"}
+    except Exception as e:
+        logger.error(f"Docker pull error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     global db_instance

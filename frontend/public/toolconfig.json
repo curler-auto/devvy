@@ -155,6 +155,33 @@
       "description": "Browse AWS S3 buckets with LocalStack support"
     },
     {
+      "id": "swagger-payload-builder",
+      "name": "Swagger Payload Builder",
+      "category": "api-testing",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileJson",
+      "description": "Generate request payloads from Swagger/OpenAPI specs"
+    },
+    {
+      "id": "repayment-calculator",
+      "name": "Repayment Calculator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Calculator",
+      "description": "Calculate loan repayment schedules with amortization"
+    },
+    {
+      "id": "docker-ui",
+      "name": "Docker UI",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Container",
+      "description": "Manage Docker containers, images, and builds"
+    },
+    {
       "id": "regex-tester",
       "name": "Regex Tester",
       "category": "text-tools",

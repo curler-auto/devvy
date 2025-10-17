@@ -56,6 +56,9 @@ import TOTPGenerator from './TOTPGenerator';
 import ShellExecutor from './ShellExecutor';
 import CronManager from './CronManager';
 import S3Visualizer from './S3Visualizer';
+import SwaggerPayloadBuilder from './SwaggerPayloadBuilder';
+import RepaymentCalculator from './RepaymentCalculator';
+import DockerUI from './DockerUI';
 
 /**
  * Tool Components Registry
@@ -103,6 +106,9 @@ export const TOOL_COMPONENTS = {
   'shell-executor': ShellExecutor,
   'cron-manager': CronManager,
   's3-visualizer': S3Visualizer,
+  'swagger-payload-builder': SwaggerPayloadBuilder,
+  'repayment-calculator': RepaymentCalculator,
+  'docker-ui': DockerUI,
 };
 
 /**
