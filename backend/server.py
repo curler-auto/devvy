@@ -20,7 +20,7 @@ from auth import (
     create_access_token, decode_token, Collection, CollectionCreate,
     Folder, FolderCreate, SavedItem, SavedItemCreate
 )
-from db_service import get_db
+from database import get_db_instance as get_db
 
 
 ROOT_DIR = Path(__file__).parent
