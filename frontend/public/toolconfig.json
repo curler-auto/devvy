@@ -538,6 +538,16 @@
       "id": "converters",
       "name": "Converters",
       "icon": "RefreshCw"
+    },
+    {
+      "id": "devops",
+      "name": "DevOps Tools",
+      "icon": "Terminal"
+    },
+    {
+      "id": "utilities",
+      "name": "Utilities",
+      "icon": "Wrench"
     }
   ]
 }

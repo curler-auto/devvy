@@ -623,6 +623,8 @@ function MainApp() {
                   placeholder={
                     activePane === 'categories' && selectedCategory
                       ? `Search ${selectedCategory.name} tools...`
+                      : activePane === 'tools'
+                      ? `Search ${enabledTools.length} tools...`
                       : `Search ${activePane}...`
                   }
                   value={searchQuery}
