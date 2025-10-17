@@ -58,6 +58,18 @@ async def get_database():
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> dict:
     db = await get_database()
     token = credentials.credentials
+    
+    # Handle desktop mode with fake token
+    if token == 'desktop-token':
+        # Return a fake desktop user
+        return {
+            'id': 'desktop-user',
+            'email': 'desktop@devtools.local',
+            'name': 'Desktop User',
+            'role': 'user',
+            'organization_id': 'desktop-org'
+        }
+    
     payload = decode_token(token)
     if payload is None:
         raise HTTPException(status_code=401, detail="Invalid or expired token")

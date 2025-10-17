@@ -714,34 +714,44 @@ function NewCollectionDialog({ onClose, onCreate }) {
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="create-collection-dialog">
+      <DialogContent className="bg-[var(--bg-primary)] border-[var(--border-primary)]">
         <DialogHeader>
-          <DialogTitle>New Collection</DialogTitle>
+          <DialogTitle className="text-[var(--text-primary)]">New Collection</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="create-collection-form">
-          <div className="form-group">
-            <label className="form-label">Collection Name</label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+              Collection Name
+            </label>
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="My API Requests"
               required
               autoFocus
+              className="bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
             />
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Description (optional)</label>
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+              Description (optional)
+            </label>
             <Input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Collection description"
+              className="bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
             />
           </div>
 
           <div className="flex gap-2 mt-6">
-            <Button type="submit" className="flex-1">Create</Button>
-            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" className="flex-1 bg-[var(--accent-primary)] text-white hover:bg-[var(--accent-primary)]/90">
+              Create
+            </Button>
+            <Button type="button" variant="outline" onClick={onClose} className="border-[var(--border-primary)] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)]">
+              Cancel
+            </Button>
           </div>
         </form>
       </DialogContent>
