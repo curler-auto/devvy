@@ -296,52 +296,37 @@ async def check_tool_access(tool_id: str, current_user: dict = Depends(get_curre
 # ========== COLLECTIONS ROUTES ==========
 
 @api_router.post("/collections/create", response_model=Collection)
-async def create_collection(collection_data: CollectionCreate, current_user: dict = Depends(get_current_user)):
+async def create_collection(collection_data: CollectionCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Create a new collection"""
-    collection = Collection(**collection_data.model_dump(), user_id=current_user['id'])
+    collection_dict = collection_data.model_dump()
+    collection_dict['created_at'] = datetime.now(timezone.utc)
     
-    doc = collection.model_dump()
-    doc['created_at'] = doc['created_at'].isoformat()
-    
-    await db.collections.insert_one(doc)
-    return collection
+    result = await db.create_collection(current_user['id'], collection_dict)
+    return Collection(**result)
 
 @api_router.get("/collections/list")
-async def list_collections(current_user: dict = Depends(get_current_user)):
+async def list_collections(current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """List all collections for current user"""
-    collections = await db.collections.find(
-        {"user_id": current_user['id']},
-        {"_id": 0}
-    ).to_list(1000)
-    
+    collections = await db.get_collections(current_user['id'])
     return {"collections": collections}
 
 @api_router.put("/collections/{collection_id}")
-async def update_collection(collection_id: str, updates: CollectionCreate, current_user: dict = Depends(get_current_user)):
+async def update_collection(collection_id: str, updates: CollectionCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Update a collection"""
-    result = await db.collections.update_one(
-        {"id": collection_id, "user_id": current_user['id']},
-        {"$set": updates.model_dump()}
-    )
+    update_data = updates.model_dump()
+    result = await db.update_collection(collection_id, current_user['id'], update_data)
     
-    if result.modified_count == 0:
+    if not result:
         raise HTTPException(status_code=404, detail="Collection not found")
     
     return {"message": "Collection updated"}
 
 @api_router.delete("/collections/{collection_id}")
-async def delete_collection(collection_id: str, current_user: dict = Depends(get_current_user)):
+async def delete_collection(collection_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Delete a collection and all its folders and items"""
-    # Delete all saved items in this collection
-    await db.saved_items.delete_many({"collection_id": collection_id, "user_id": current_user['id']})
+    result = await db.delete_collection(collection_id, current_user['id'])
     
-    # Delete all folders in this collection
-    await db.folders.delete_many({"collection_id": collection_id, "user_id": current_user['id']})
-    
-    # Delete the collection
-    result = await db.collections.delete_one({"id": collection_id, "user_id": current_user['id']})
-    
-    if result.deleted_count == 0:
+    if not result:
         raise HTTPException(status_code=404, detail="Collection not found")
     
     return {"message": "Collection deleted"}
