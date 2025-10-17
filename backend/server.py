@@ -1917,9 +1917,14 @@ async def pull_docker_image(request: DockerPullRequest):
 async def startup_db_client():
     """Initialize database on startup"""
     global db_instance
-    if db_instance is None:
-        db_instance = await get_db()
-        logger.info("Database initialized successfully")
+    try:
+        if db_instance is None:
+            logger.info("Initializing database...")
+            db_instance = await get_db()
+            logger.info(f"Database initialized successfully: {type(db_instance)}")
+    except Exception as e:
+        logger.error(f"Failed to initialize database: {e}")
+        raise
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

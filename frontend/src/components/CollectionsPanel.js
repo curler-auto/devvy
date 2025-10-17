@@ -10,8 +10,10 @@ import {
 import { useAuth } from '@/AuthContextDesktop';
 import { toast } from 'sonner';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8000';
 const API = `${BACKEND_URL}/api`;
+
+console.log('CollectionsPanel - BACKEND_URL:', BACKEND_URL, 'API:', API);
 
 export default function CollectionsPanel({ onOpenItem }) {
   const [collections, setCollections] = useState([]);
@@ -86,17 +88,20 @@ export default function CollectionsPanel({ onOpenItem }) {
 
   const createCollection = async (name, description) => {
     try {
-      await axios.post(
+      console.log('Creating collection:', { name, description, url: `${API}/collections/create`, token });
+      const response = await axios.post(
         `${API}/collections/create`,
         { name, description },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      console.log('Collection created successfully:', response.data);
       toast.success('Collection created!');
       loadCollections();
       setShowNewCollection(false);
     } catch (error) {
       console.error('Failed to create collection:', error);
-      toast.error('Failed to create collection');
+      console.error('Error details:', error.response?.data, error.response?.status);
+      toast.error(`Failed to create collection: ${error.response?.data?.detail || error.message}`);
     }
   };
 
