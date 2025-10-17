@@ -1853,6 +1853,95 @@ button {
   border-color: rgba(255, 255, 255, 0.06) !important;
 }
 
+/* Light theme overrides for Collections Panel */
+[data-theme="light"] .collections-panel-container {
+  background: #ffffff !important;
+}
+
+[data-theme="light"] .collections-header {
+  border-bottom-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+[data-theme="light"] .collection-header {
+  background: #f9fafb !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+[data-theme="light"] .collection-header:hover {
+  background: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+}
+
+[data-theme="light"] .collection-header span {
+  color: #111827 !important;
+}
+
+[data-theme="light"] .folder-header {
+  background: #f9fafb !important;
+  border-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+[data-theme="light"] .folder-header:hover {
+  background: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+}
+
+[data-theme="light"] .folder-header span {
+  color: #111827 !important;
+}
+
+[data-theme="light"] .saved-item {
+  background: #f9fafb !important;
+  border-color: #e5e7eb !important;
+  color: #6b7280 !important;
+}
+
+[data-theme="light"] .saved-item:hover {
+  background: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+  color: #111827 !important;
+}
+
+[data-theme="light"] .saved-item span {
+  color: #111827 !important;
+}
+
+[data-theme="light"] .context-menu {
+  background: #ffffff;
+  border-color: #e5e7eb;
+}
+
+[data-theme="light"] .context-menu-item {
+  color: #111827;
+}
+
+[data-theme="light"] .context-menu-item:hover {
+  background: #f3f4f6;
+}
+
+[data-theme="light"] .delete-icon {
+  color: #6b7280;
+}
+
+[data-theme="light"] .delete-icon:hover {
+  background: #f3f4f6;
+}
+
+[data-theme="light"] .folder-add-button {
+  color: #6b7280;
+}
+
+[data-theme="light"] .folder-add-button:hover {
+  background: #f3f4f6;
+}
+
+[data-theme="light"] .empty-collections {
+  color: #6b7280;
+}
+
 /* Light theme overrides */
 [data-theme="light"] .timestamp-converter .border,
 [data-theme="light"] .hash-generator .border,
