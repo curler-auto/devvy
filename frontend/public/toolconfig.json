@@ -128,6 +128,15 @@
       "description": "Generate Time-based One-Time Passwords (2FA codes)"
     },
     {
+      "id": "shell-executor",
+      "name": "Shell Script Executor",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Terminal",
+      "description": "Execute bash/shell scripts with real-time output"
+    },
+    {
       "id": "regex-tester",
       "name": "Regex Tester",
       "category": "text-tools",

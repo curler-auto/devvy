@@ -6,10 +6,12 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Optional
+from typing import List, Optional, Dict
 import uuid
 from datetime import datetime, timezone, timedelta
 import json
+import subprocess
+import tempfile
 from auth import (
     User, UserCreate, UserLogin, Token, Organization, OrganizationCreate,
     ToolConfig, ToolConfigUpdate, get_password_hash, verify_password,
@@ -1255,6 +1257,77 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# ========== SHELL SCRIPT EXECUTOR ==========
+
+class ScriptExecuteRequest(BaseModel):
+    script: str
+    workingDir: Optional[str] = None
+    env: Optional[Dict[str, str]] = None
+
+class ScriptExecuteResponse(BaseModel):
+    output: str
+    exitCode: int
+    executionTime: float
+
+@api_router.post("/execute-script", response_model=ScriptExecuteResponse)
+async def execute_script(request: ScriptExecuteRequest):
+    """
+    Execute a shell script and return output
+    Security: Runs in isolated process with timeout
+    """
+    import time
+    start_time = time.time()
+    
+    try:
+        # Create temporary script file
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.sh', delete=False) as f:
+            f.write(request.script)
+            script_path = f.name
+        
+        # Make script executable
+        os.chmod(script_path, 0o755)
+        
+        # Prepare environment
+        env = os.environ.copy()
+        if request.env:
+            env.update(request.env)
+        
+        # Execute script with timeout
+        try:
+            result = subprocess.run(
+                ['/bin/bash', script_path],
+                cwd=request.workingDir if request.workingDir else None,
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=300  # 5 minute timeout
+            )
+            
+            output = result.stdout
+            if result.stderr:
+                output += f"\n--- STDERR ---\n{result.stderr}"
+            
+            execution_time = time.time() - start_time
+            
+            return ScriptExecuteResponse(
+                output=output,
+                exitCode=result.returncode,
+                executionTime=execution_time
+            )
+            
+        except subprocess.TimeoutExpired:
+            raise HTTPException(status_code=408, detail="Script execution timed out (5 minutes)")
+        finally:
+            # Clean up temp file
+            try:
+                os.unlink(script_path)
+            except:
+                pass
+                
+    except Exception as e:
+        logger.error(f"Script execution error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

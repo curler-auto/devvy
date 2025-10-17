@@ -53,6 +53,7 @@ import MarkdownVisualizer from './MarkdownVisualizer';
 import SSHKeyGenerator from './SSHKeyGenerator';
 import SSLCertGenerator from './SSLCertGenerator';
 import TOTPGenerator from './TOTPGenerator';
+import ShellExecutor from './ShellExecutor';
 
 /**
  * Tool Components Registry
@@ -97,6 +98,7 @@ export const TOOL_COMPONENTS = {
   'ssh-key-generator': SSHKeyGenerator,
   'ssl-cert-generator': SSLCertGenerator,
   'totp-generator': TOTPGenerator,
+  'shell-executor': ShellExecutor,
 };
 
 /**
