@@ -1,5 +1,6 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Header
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Header, UploadFile, File as FastAPIFile
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 import os
@@ -12,6 +13,7 @@ from datetime import datetime, timezone, timedelta
 import json
 import subprocess
 import tempfile
+import io
 from auth import (
     User, UserCreate, UserLogin, Token, Organization, OrganizationCreate,
     ToolConfig, ToolConfigUpdate, get_password_hash, verify_password,
@@ -1408,6 +1410,350 @@ async def execute_script(request: ScriptExecuteRequest):
                 
     except Exception as e:
         logger.error(f"Script execution error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ========== ENVIRONMENT VARIABLES ==========
+
+# In-memory storage for environment variables (in production, use database)
+env_variables_storage = {}
+
+class EnvVariable(BaseModel):
+    key: str
+    value: str
+
+@api_router.post("/env/set")
+async def set_env_variable(var: EnvVariable):
+    """Set an environment variable"""
+    env_variables_storage[var.key] = var.value
+    return {"message": "Environment variable set"}
+
+@api_router.get("/env/get/{key}")
+async def get_env_variable(key: str):
+    """Get an environment variable"""
+    if key not in env_variables_storage:
+        raise HTTPException(status_code=404, detail="Variable not found")
+    return {"key": key, "value": env_variables_storage[key]}
+
+@api_router.get("/env/get-all")
+async def get_all_env_variables():
+    """Get all environment variables"""
+    return {"variables": env_variables_storage}
+
+@api_router.delete("/env/delete/{key}")
+async def delete_env_variable(key: str):
+    """Delete an environment variable"""
+    if key in env_variables_storage:
+        del env_variables_storage[key]
+    return {"message": "Environment variable deleted"}
+
+# ========== AWS S3 VISUALIZER ==========
+
+class S3Config(BaseModel):
+    endpoint: Optional[str] = None
+    accessKeyId: str
+    secretAccessKey: str
+    region: str = "us-east-1"
+    useLocalStack: bool = False
+
+class S3ListObjectsRequest(BaseModel):
+    bucket: str
+    prefix: Optional[str] = ""
+    endpoint: Optional[str] = None
+    accessKeyId: str
+    secretAccessKey: str
+    region: str = "us-east-1"
+
+class S3DownloadRequest(BaseModel):
+    bucket: str
+    key: str
+    endpoint: Optional[str] = None
+    accessKeyId: str
+    secretAccessKey: str
+    region: str = "us-east-1"
+
+@api_router.post("/s3/list-buckets")
+async def list_s3_buckets(config: S3Config):
+    """List all S3 buckets"""
+    try:
+        import boto3
+        from botocore.config import Config as BotoConfig
+        
+        # Configure S3 client
+        s3_config = BotoConfig(
+            region_name=config.region,
+            signature_version='s3v4'
+        )
+        
+        client_kwargs = {
+            'aws_access_key_id': config.accessKeyId,
+            'aws_secret_access_key': config.secretAccessKey,
+            'config': s3_config
+        }
+        
+        if config.endpoint:
+            client_kwargs['endpoint_url'] = config.endpoint
+        
+        s3 = boto3.client('s3', **client_kwargs)
+        
+        response = s3.list_buckets()
+        buckets = [
+            {
+                'name': bucket['Name'],
+                'creationDate': bucket['CreationDate'].isoformat()
+            }
+            for bucket in response.get('Buckets', [])
+        ]
+        
+        return {"buckets": buckets}
+    except Exception as e:
+        logger.error(f"S3 list buckets error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/s3/list-objects")
+async def list_s3_objects(request: S3ListObjectsRequest):
+    """List objects in an S3 bucket"""
+    try:
+        import boto3
+        from botocore.config import Config as BotoConfig
+        
+        s3_config = BotoConfig(
+            region_name=request.region,
+            signature_version='s3v4'
+        )
+        
+        client_kwargs = {
+            'aws_access_key_id': request.accessKeyId,
+            'aws_secret_access_key': request.secretAccessKey,
+            'config': s3_config
+        }
+        
+        if request.endpoint:
+            client_kwargs['endpoint_url'] = request.endpoint
+        
+        s3 = boto3.client('s3', **client_kwargs)
+        
+        # List objects with delimiter to get folders
+        response = s3.list_objects_v2(
+            Bucket=request.bucket,
+            Prefix=request.prefix or '',
+            Delimiter='/'
+        )
+        
+        objects = []
+        
+        # Add folders
+        for prefix in response.get('CommonPrefixes', []):
+            folder_name = prefix['Prefix'].replace(request.prefix or '', '').rstrip('/')
+            if folder_name:
+                objects.append({
+                    'key': prefix['Prefix'],
+                    'name': folder_name,
+                    'isFolder': True
+                })
+        
+        # Add files
+        for obj in response.get('Contents', []):
+            # Skip the prefix itself
+            if obj['Key'] == request.prefix:
+                continue
+            
+            file_name = obj['Key'].replace(request.prefix or '', '')
+            if file_name:
+                objects.append({
+                    'key': obj['Key'],
+                    'name': file_name,
+                    'size': obj['Size'],
+                    'lastModified': obj['LastModified'].isoformat(),
+                    'isFolder': False
+                })
+        
+        return {"objects": objects}
+    except Exception as e:
+        logger.error(f"S3 list objects error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/s3/download")
+async def download_s3_object(request: S3DownloadRequest):
+    """Download an object from S3"""
+    try:
+        import boto3
+        from botocore.config import Config as BotoConfig
+        
+        s3_config = BotoConfig(
+            region_name=request.region,
+            signature_version='s3v4'
+        )
+        
+        client_kwargs = {
+            'aws_access_key_id': request.accessKeyId,
+            'aws_secret_access_key': request.secretAccessKey,
+            'config': s3_config
+        }
+        
+        if request.endpoint:
+            client_kwargs['endpoint_url'] = request.endpoint
+        
+        s3 = boto3.client('s3', **client_kwargs)
+        
+        # Get object
+        response = s3.get_object(Bucket=request.bucket, Key=request.key)
+        
+        # Stream the file
+        return StreamingResponse(
+            io.BytesIO(response['Body'].read()),
+            media_type=response.get('ContentType', 'application/octet-stream'),
+            headers={
+                'Content-Disposition': f'attachment; filename="{request.key.split("/")[-1]}"'
+            }
+        )
+    except Exception as e:
+        logger.error(f"S3 download error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/s3/preview")
+async def preview_s3_object(request: S3DownloadRequest):
+    """Preview an object from S3 (text files only)"""
+    try:
+        import boto3
+        from botocore.config import Config as BotoConfig
+        
+        s3_config = BotoConfig(
+            region_name=request.region,
+            signature_version='s3v4'
+        )
+        
+        client_kwargs = {
+            'aws_access_key_id': request.accessKeyId,
+            'aws_secret_access_key': request.secretAccessKey,
+            'config': s3_config
+        }
+        
+        if request.endpoint:
+            client_kwargs['endpoint_url'] = request.endpoint
+        
+        s3 = boto3.client('s3', **client_kwargs)
+        
+        # Get object
+        response = s3.get_object(Bucket=request.bucket, Key=request.key)
+        content = response['Body'].read()
+        
+        # Try to decode as text
+        try:
+            text_content = content.decode('utf-8')
+            # Limit preview to first 10000 characters
+            if len(text_content) > 10000:
+                text_content = text_content[:10000] + '\n\n... (truncated)'
+            return {"content": text_content}
+        except:
+            return {"content": "[Binary file - cannot preview]"}
+    except Exception as e:
+        logger.error(f"S3 preview error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/s3/delete")
+async def delete_s3_object(request: S3DownloadRequest):
+    """Delete an object from S3"""
+    try:
+        import boto3
+        from botocore.config import Config as BotoConfig
+        
+        s3_config = BotoConfig(
+            region_name=request.region,
+            signature_version='s3v4'
+        )
+        
+        client_kwargs = {
+            'aws_access_key_id': request.accessKeyId,
+            'aws_secret_access_key': request.secretAccessKey,
+            'config': s3_config
+        }
+        
+        if request.endpoint:
+            client_kwargs['endpoint_url'] = request.endpoint
+        
+        s3 = boto3.client('s3', **client_kwargs)
+        
+        # Delete object
+        s3.delete_object(Bucket=request.bucket, Key=request.key)
+        
+        return {"message": "Object deleted"}
+    except Exception as e:
+        logger.error(f"S3 delete error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/s3/presigned-url")
+async def get_presigned_url(request: S3DownloadRequest):
+    """Generate a presigned URL for an S3 object"""
+    try:
+        import boto3
+        from botocore.config import Config as BotoConfig
+        
+        s3_config = BotoConfig(
+            region_name=request.region,
+            signature_version='s3v4'
+        )
+        
+        client_kwargs = {
+            'aws_access_key_id': request.accessKeyId,
+            'aws_secret_access_key': request.secretAccessKey,
+            'config': s3_config
+        }
+        
+        if request.endpoint:
+            client_kwargs['endpoint_url'] = request.endpoint
+        
+        s3 = boto3.client('s3', **client_kwargs)
+        
+        # Generate presigned URL (valid for 1 hour)
+        url = s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': request.bucket, 'Key': request.key},
+            ExpiresIn=3600
+        )
+        
+        return {"url": url}
+    except Exception as e:
+        logger.error(f"S3 presigned URL error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/s3/upload")
+async def upload_s3_object(
+    file: UploadFile = FastAPIFile(...),
+    config: str = None,
+    bucket: str = None,
+    prefix: str = None
+):
+    """Upload a file to S3"""
+    try:
+        import boto3
+        from botocore.config import Config as BotoConfig
+        
+        # Parse config
+        config_data = json.loads(config) if config else {}
+        
+        s3_config = BotoConfig(
+            region_name=config_data.get('region', 'us-east-1'),
+            signature_version='s3v4'
+        )
+        
+        client_kwargs = {
+            'aws_access_key_id': config_data.get('accessKeyId'),
+            'aws_secret_access_key': config_data.get('secretAccessKey'),
+            'config': s3_config
+        }
+        
+        if config_data.get('endpoint'):
+            client_kwargs['endpoint_url'] = config_data['endpoint']
+        
+        s3 = boto3.client('s3', **client_kwargs)
+        
+        # Upload file
+        key = f"{prefix or ''}{file.filename}"
+        s3.upload_fileobj(file.file, bucket, key)
+        
+        return {"message": "File uploaded", "key": key}
+    except Exception as e:
+        logger.error(f"S3 upload error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.on_event("shutdown")

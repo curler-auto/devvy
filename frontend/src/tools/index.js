@@ -55,6 +55,7 @@ import SSLCertGenerator from './SSLCertGenerator';
 import TOTPGenerator from './TOTPGenerator';
 import ShellExecutor from './ShellExecutor';
 import CronManager from './CronManager';
+import S3Visualizer from './S3Visualizer';
 
 /**
  * Tool Components Registry
@@ -101,6 +102,7 @@ export const TOOL_COMPONENTS = {
   'totp-generator': TOTPGenerator,
   'shell-executor': ShellExecutor,
   'cron-manager': CronManager,
+  's3-visualizer': S3Visualizer,
 };
 
 /**

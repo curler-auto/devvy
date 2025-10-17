@@ -146,6 +146,15 @@
       "description": "Manage cron jobs with live countdown to next run"
     },
     {
+      "id": "s3-visualizer",
+      "name": "S3 Visualizer",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Database",
+      "description": "Browse AWS S3 buckets with LocalStack support"
+    },
+    {
       "id": "regex-tester",
       "name": "Regex Tester",
       "category": "text-tools",
