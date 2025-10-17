@@ -1913,6 +1913,14 @@ async def pull_docker_image(request: DockerPullRequest):
         logger.error(f"Docker pull error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.on_event("startup")
+async def startup_db_client():
+    """Initialize database on startup"""
+    global db_instance
+    if db_instance is None:
+        db_instance = await get_db()
+        logger.info("Database initialized successfully")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     global db_instance
