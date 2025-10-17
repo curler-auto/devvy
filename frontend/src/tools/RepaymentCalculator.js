@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calculator, Download, DollarSign, Calendar, Percent, TrendingUp, FileSpreadsheet, FileJson } from 'lucide-react';
+import { Calculator, Download, DollarSign, Calendar, Percent, TrendingUp, FileSpreadsheet, FileJson, BarChart3, Table2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ReactECharts from 'echarts-for-react';
@@ -19,6 +19,7 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
   
   const [schedule, setSchedule] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [showChart, setShowChart] = useState(false); // Toggle between chart and summary
 
   // Update tab data
   useEffect(() => {
@@ -203,11 +204,10 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
     toast.success('JSON file downloaded');
   };
 
-  // Chart configuration with modern color scheme
+  // Chart configuration with subtle, minimalistic design
   const getChartOption = () => {
     if (!schedule.length) return {};
 
-    // Get computed CSS variables for theme colors
     const getThemeColor = (varName) => {
       if (typeof window !== 'undefined') {
         return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
@@ -218,76 +218,81 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
     return {
       backgroundColor: 'transparent',
       title: {
-        text: 'Principal vs Interest Over Time',
+        text: 'Amortization Trend',
         left: 'center',
-        top: 10,
+        top: 5,
         textStyle: {
-          color: getThemeColor('--text-primary') || '#1f2937',
-          fontSize: 16,
-          fontWeight: 600,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+          color: getThemeColor('--text-primary') || '#374151',
+          fontSize: 14,
+          fontWeight: 400,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
         }
       },
       tooltip: {
         trigger: 'axis',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backgroundColor: 'rgba(255, 255, 255, 0.96)',
         borderColor: '#e5e7eb',
         borderWidth: 1,
         textStyle: {
-          color: '#1f2937',
-          fontSize: 13,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+          color: '#4b5563',
+          fontSize: 12,
+          fontWeight: 400,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
         },
-        padding: 12,
+        padding: 10,
         formatter: (params) => {
           const period = params[0].axisValue;
-          let result = `<div style="font-weight: 600; margin-bottom: 8px; color: #111827;">Period ${period}</div>`;
+          let result = `<div style="font-weight: 500; margin-bottom: 6px; color: #1f2937; font-size: 11px;">Period ${period}</div>`;
           params.forEach(param => {
-            result += `<div style="margin: 4px 0;">${param.marker} <span style="font-weight: 500;">${param.seriesName}:</span> <span style="font-weight: 600;">${formatCurrency(param.value)}</span></div>`;
+            result += `<div style="margin: 3px 0; font-size: 11px;">${param.marker} ${param.seriesName}: ${formatCurrency(param.value)}</div>`;
           });
           return result;
         }
       },
       legend: {
         data: ['Principal', 'Interest', 'Balance'],
-        top: 40,
+        top: 28,
         textStyle: {
-          color: getThemeColor('--text-primary') || '#1f2937',
-          fontSize: 13,
-          fontWeight: 500,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+          color: getThemeColor('--text-secondary') || '#6b7280',
+          fontSize: 11,
+          fontWeight: 400,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
         },
-        itemGap: 20
+        itemGap: 16,
+        itemWidth: 20,
+        itemHeight: 10
       },
       grid: {
         left: '3%',
-        right: '4%',
-        bottom: '5%',
-        top: '80px',
+        right: '3%',
+        bottom: '8%',
+        top: '65px',
         containLabel: true
       },
       xAxis: {
         type: 'category',
         boundaryGap: false,
         data: schedule.map(row => row.period),
-        name: 'Payment Period',
+        name: 'Period',
         nameLocation: 'middle',
-        nameGap: 30,
+        nameGap: 25,
         nameTextStyle: {
-          color: getThemeColor('--text-secondary') || '#6b7280',
-          fontSize: 12,
-          fontWeight: 500,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+          color: getThemeColor('--text-secondary') || '#9ca3af',
+          fontSize: 11,
+          fontWeight: 400,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
         },
         axisLine: {
           lineStyle: {
-            color: '#e5e7eb'
+            color: '#e5e7eb',
+            width: 1
           }
         },
         axisLabel: {
-          color: getThemeColor('--text-secondary') || '#6b7280',
-          fontSize: 11,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+          color: getThemeColor('--text-secondary') || '#9ca3af',
+          fontSize: 10,
+          fontWeight: 400,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
         },
         splitLine: {
           show: false
@@ -297,20 +302,19 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
         type: 'value',
         name: 'Amount (₹)',
         nameTextStyle: {
-          color: getThemeColor('--text-secondary') || '#6b7280',
-          fontSize: 12,
-          fontWeight: 500,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+          color: getThemeColor('--text-secondary') || '#9ca3af',
+          fontSize: 11,
+          fontWeight: 400,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
         },
         axisLine: {
-          lineStyle: {
-            color: '#e5e7eb'
-          }
+          show: false
         },
         axisLabel: {
-          color: getThemeColor('--text-secondary') || '#6b7280',
-          fontSize: 11,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          color: getThemeColor('--text-secondary') || '#9ca3af',
+          fontSize: 10,
+          fontWeight: 400,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
           formatter: (value) => {
             if (value >= 100000) return `₹${(value / 100000).toFixed(1)}L`;
             if (value >= 1000) return `₹${(value / 1000).toFixed(1)}K`;
@@ -320,7 +324,8 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
         splitLine: {
           lineStyle: {
             color: '#f3f4f6',
-            type: 'dashed'
+            type: 'solid',
+            width: 1
           }
         }
       },
@@ -330,18 +335,10 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
           type: 'line',
           data: schedule.map(row => row.principal.toFixed(2)),
           smooth: true,
-          symbol: 'circle',
-          symbolSize: 6,
+          symbol: 'none',
           lineStyle: {
-            width: 3,
-            shadowColor: 'rgba(16, 185, 129, 0.3)',
-            shadowBlur: 10,
-            shadowOffsetY: 5
-          },
-          itemStyle: { 
-            color: '#10b981',
-            borderColor: '#fff',
-            borderWidth: 2
+            width: 2,
+            color: '#8b5cf6'
           },
           areaStyle: { 
             color: {
@@ -351,16 +348,9 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
               x2: 0,
               y2: 1,
               colorStops: [
-                { offset: 0, color: 'rgba(16, 185, 129, 0.4)' },
-                { offset: 1, color: 'rgba(16, 185, 129, 0.05)' }
+                { offset: 0, color: 'rgba(139, 92, 246, 0.15)' },
+                { offset: 1, color: 'rgba(139, 92, 246, 0.02)' }
               ]
-            }
-          },
-          emphasis: {
-            focus: 'series',
-            itemStyle: {
-              shadowBlur: 10,
-              shadowColor: 'rgba(16, 185, 129, 0.5)'
             }
           }
         },
@@ -369,18 +359,10 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
           type: 'line',
           data: schedule.map(row => row.interest.toFixed(2)),
           smooth: true,
-          symbol: 'circle',
-          symbolSize: 6,
+          symbol: 'none',
           lineStyle: {
-            width: 3,
-            shadowColor: 'rgba(239, 68, 68, 0.3)',
-            shadowBlur: 10,
-            shadowOffsetY: 5
-          },
-          itemStyle: { 
-            color: '#ef4444',
-            borderColor: '#fff',
-            borderWidth: 2
+            width: 2,
+            color: '#f59e0b'
           },
           areaStyle: { 
             color: {
@@ -390,16 +372,9 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
               x2: 0,
               y2: 1,
               colorStops: [
-                { offset: 0, color: 'rgba(239, 68, 68, 0.4)' },
-                { offset: 1, color: 'rgba(239, 68, 68, 0.05)' }
+                { offset: 0, color: 'rgba(245, 158, 11, 0.15)' },
+                { offset: 1, color: 'rgba(245, 158, 11, 0.02)' }
               ]
-            }
-          },
-          emphasis: {
-            focus: 'series',
-            itemStyle: {
-              shadowBlur: 10,
-              shadowColor: 'rgba(239, 68, 68, 0.5)'
             }
           }
         },
@@ -408,26 +383,11 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
           type: 'line',
           data: schedule.map(row => row.balance.toFixed(2)),
           smooth: true,
-          symbol: 'circle',
-          symbolSize: 6,
+          symbol: 'none',
           lineStyle: {
-            width: 3,
-            type: 'solid',
-            shadowColor: 'rgba(59, 130, 246, 0.3)',
-            shadowBlur: 10,
-            shadowOffsetY: 5
-          },
-          itemStyle: { 
-            color: '#3b82f6',
-            borderColor: '#fff',
-            borderWidth: 2
-          },
-          emphasis: {
-            focus: 'series',
-            itemStyle: {
-              shadowBlur: 10,
-              shadowColor: 'rgba(59, 130, 246, 0.5)'
-            }
+            width: 2,
+            color: '#6366f1',
+            type: 'solid'
           }
         }
       ]
@@ -466,7 +426,7 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
 
       <div className="flex-1 flex gap-6 overflow-hidden">
         {/* Left Panel - Input */}
-        <div className="w-96 flex flex-col gap-4">
+        <div className="w-80 flex flex-col gap-3">
           {/* Loan Amount */}
           <div>
             <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
@@ -556,75 +516,99 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
             />
           </div>
 
-          {/* Summary */}
-          {summary && (
-            <div className="mt-4 p-4 border-2 border-[var(--accent-primary)] rounded-lg bg-[var(--accent-primary)]/5">
-              <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-3">Summary</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">Payment Amount:</span>
-                  <span className="text-sm font-bold text-[var(--text-primary)]">
-                    {formatCurrency(summary.monthlyPayment)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">Total Payments:</span>
-                  <span className="text-sm font-semibold text-[var(--text-primary)]">
-                    {summary.numberOfPayments}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">Total Principal:</span>
-                  <span className="text-sm font-semibold text-[var(--text-primary)]">
-                    {formatCurrency(summary.totalPrincipal)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-[var(--text-secondary)]">Total Interest:</span>
-                  <span className="text-sm font-semibold text-red-500">
-                    {formatCurrency(summary.totalInterest)}
-                  </span>
-                </div>
-                <div className="flex justify-between pt-2 border-t border-[var(--border-primary)]">
-                  <span className="text-sm font-semibold text-[var(--text-primary)]">Total Payment:</span>
-                  <span className="text-lg font-bold text-[var(--accent-primary)]">
-                    {formatCurrency(summary.totalPayment)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Right Panel - Chart & Schedule */}
+        {/* Right Panel - Summary/Chart + Table */}
         <div className="flex-1 flex flex-col gap-4 overflow-hidden">
-          {/* Chart */}
-          {schedule.length > 0 && (
-            <div className="h-80 border border-[var(--border-primary)] rounded-lg bg-[var(--bg-secondary)] p-4">
-              <ReactECharts 
-                option={getChartOption()} 
-                style={{ height: '100%', width: '100%' }}
-                opts={{ renderer: 'svg' }}
-              />
+          {/* Summary or Chart - Flippable */}
+          {summary && (
+            <div className="h-64 border border-[var(--border-primary)] rounded-lg bg-[var(--bg-secondary)] overflow-hidden">
+              {!showChart ? (
+                /* Summary View */
+                <div className="h-full p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-normal text-[var(--text-secondary)]">Loan Summary</h3>
+                    <button
+                      onClick={() => setShowChart(true)}
+                      className="p-1.5 hover:bg-[var(--bg-tertiary)] rounded transition-colors"
+                      title="Show Chart"
+                    >
+                      <BarChart3 className="w-4 h-4 text-[var(--text-secondary)]" />
+                    </button>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-normal text-[var(--text-secondary)]">Payment Amount</span>
+                      <span className="text-sm font-medium text-[var(--text-primary)]">
+                        {formatCurrency(summary.monthlyPayment)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-normal text-[var(--text-secondary)]">Total Payments</span>
+                      <span className="text-sm font-medium text-[var(--text-primary)]">
+                        {summary.numberOfPayments}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-normal text-[var(--text-secondary)]">Total Principal</span>
+                      <span className="text-sm font-medium text-[var(--text-primary)]">
+                        {formatCurrency(summary.totalPrincipal)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-normal text-[var(--text-secondary)]">Total Interest</span>
+                      <span className="text-sm font-medium text-amber-600">
+                        {formatCurrency(summary.totalInterest)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center pt-3 border-t border-[var(--border-primary)]">
+                      <span className="text-xs font-medium text-[var(--text-primary)]">Total Payment</span>
+                      <span className="text-base font-medium text-[var(--text-primary)]">
+                        {formatCurrency(summary.totalPayment)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Chart View */
+                <div className="h-full p-3">
+                  <div className="flex items-center justify-end mb-2">
+                    <button
+                      onClick={() => setShowChart(false)}
+                      className="p-1.5 hover:bg-[var(--bg-tertiary)] rounded transition-colors"
+                      title="Show Summary"
+                    >
+                      <Table2 className="w-4 h-4 text-[var(--text-secondary)]" />
+                    </button>
+                  </div>
+                  <div className="h-[calc(100%-40px)]">
+                    <ReactECharts 
+                      option={getChartOption()} 
+                      style={{ height: '100%', width: '100%' }}
+                      opts={{ renderer: 'svg' }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
           {/* Schedule Table */}
           <div className="flex-1 flex flex-col border border-[var(--border-primary)] rounded-lg bg-[var(--bg-secondary)] overflow-hidden">
-            <div className="p-3 border-b border-[var(--border-primary)] bg-[var(--bg-tertiary)]">
-              <h3 className="text-sm font-semibold text-[var(--text-primary)]">
-                Amortization Schedule {schedule.length > 0 && `(${schedule.length} payments)`}
+            <div className="px-4 py-2.5 border-b border-[var(--border-primary)] bg-[var(--bg-tertiary)]">
+              <h3 className="text-xs font-normal text-[var(--text-secondary)]">
+                Payment Schedule {schedule.length > 0 && `· ${schedule.length} payments`}
               </h3>
             </div>
             
             {schedule.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-              <TrendingUp className="w-16 h-16 text-[var(--text-secondary)] mb-4" />
-              <h3 className="text-lg font-semibold text-[var(--text-primary)] mb-2">
+              <TrendingUp className="w-12 h-12 text-[var(--text-secondary)] opacity-40 mb-3" />
+              <h3 className="text-sm font-normal text-[var(--text-primary)] mb-1">
                 No Schedule Generated
               </h3>
-              <p className="text-sm text-[var(--text-secondary)]">
-                Enter loan details and click "Calculate" to generate the repayment schedule
+              <p className="text-xs font-normal text-[var(--text-secondary)]">
+                Enter loan details and click "Calculate"
               </p>
             </div>
           ) : (
@@ -632,32 +616,32 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
               <table className="w-full text-sm">
                 <thead className="sticky top-0 bg-[var(--bg-tertiary)] border-b border-[var(--border-primary)]">
                   <tr>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-[var(--text-primary)]">#</th>
-                    <th className="px-3 py-2 text-left text-xs font-semibold text-[var(--text-primary)]">Date</th>
-                    <th className="px-3 py-2 text-right text-xs font-semibold text-[var(--text-primary)]">Payment</th>
-                    <th className="px-3 py-2 text-right text-xs font-semibold text-[var(--text-primary)]">Principal</th>
-                    <th className="px-3 py-2 text-right text-xs font-semibold text-[var(--text-primary)]">Interest</th>
-                    <th className="px-3 py-2 text-right text-xs font-semibold text-[var(--text-primary)]">Balance</th>
+                    <th className="px-3 py-2 text-left text-xs font-normal text-[var(--text-secondary)]">#</th>
+                    <th className="px-3 py-2 text-left text-xs font-normal text-[var(--text-secondary)]">Date</th>
+                    <th className="px-3 py-2 text-right text-xs font-normal text-[var(--text-secondary)]">Payment</th>
+                    <th className="px-3 py-2 text-right text-xs font-normal text-[var(--text-secondary)]">Principal</th>
+                    <th className="px-3 py-2 text-right text-xs font-normal text-[var(--text-secondary)]">Interest</th>
+                    <th className="px-3 py-2 text-right text-xs font-normal text-[var(--text-secondary)]">Balance</th>
                   </tr>
                 </thead>
                 <tbody>
                   {schedule.map((row, idx) => (
                     <tr 
                       key={idx}
-                      className="border-b border-[var(--border-primary)] hover:bg-[var(--bg-tertiary)] transition-colors"
+                      className="border-b border-[var(--border-primary)] hover:bg-[var(--bg-tertiary)]/50 transition-colors"
                     >
-                      <td className="px-3 py-2 text-[var(--text-secondary)]">{row.period}</td>
-                      <td className="px-3 py-2 text-[var(--text-primary)] font-mono text-xs">{row.date}</td>
-                      <td className="px-3 py-2 text-right text-[var(--text-primary)] font-semibold">
+                      <td className="px-3 py-2 text-xs text-[var(--text-secondary)]">{row.period}</td>
+                      <td className="px-3 py-2 text-xs text-[var(--text-primary)] font-mono">{row.date}</td>
+                      <td className="px-3 py-2 text-right text-xs font-normal text-[var(--text-primary)]">
                         {formatCurrency(row.payment)}
                       </td>
-                      <td className="px-3 py-2 text-right text-green-600 font-medium">
+                      <td className="px-3 py-2 text-right text-xs font-normal text-violet-600">
                         {formatCurrency(row.principal)}
                       </td>
-                      <td className="px-3 py-2 text-right text-red-500 font-medium">
+                      <td className="px-3 py-2 text-right text-xs font-normal text-amber-600">
                         {formatCurrency(row.interest)}
                       </td>
-                      <td className="px-3 py-2 text-right text-[var(--text-primary)] font-bold">
+                      <td className="px-3 py-2 text-right text-xs font-medium text-[var(--text-primary)]">
                         {formatCurrency(row.balance)}
                       </td>
                     </tr>
