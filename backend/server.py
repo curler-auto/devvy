@@ -347,69 +347,40 @@ async def delete_collection(collection_id: str, current_user: dict = Depends(get
 
 # ========== FOLDERS ROUTES ==========
 
-@api_router.post("/folders/create", response_model=Folder)
-async def create_folder(folder_data: FolderCreate, current_user: dict = Depends(get_current_user)):
+@api_router.post("/folders/create")
+async def create_folder(folder_data: FolderCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Create a new folder in a collection"""
-    folder = Folder(**folder_data.model_dump(), user_id=current_user['id'])
+    folder_dict = folder_data.model_dump()
+    folder_dict['user_id'] = current_user['id']
+    folder_dict['created_at'] = datetime.now(timezone.utc)
     
-    doc = folder.model_dump()
-    doc['created_at'] = doc['created_at'].isoformat()
-    
-    await db.folders.insert_one(doc)
-    return folder
+    result = await db.create_folder(folder_dict)
+    return result
 
 @api_router.get("/folders/list/{collection_id}")
-async def list_folders(collection_id: str, current_user: dict = Depends(get_current_user)):
+async def list_folders(collection_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """List all folders in a collection"""
-    folders = await db.folders.find(
-        {"collection_id": collection_id, "user_id": current_user['id']},
-        {"_id": 0}
-    ).to_list(1000)
-    
+    folders = await db.get_folders(collection_id, current_user['id'])
     return {"folders": folders}
 
 @api_router.put("/folders/{folder_id}")
-async def update_folder(folder_id: str, updates: FolderCreate, current_user: dict = Depends(get_current_user)):
+async def update_folder(folder_id: str, updates: FolderCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Update a folder"""
-    result = await db.folders.update_one(
-        {"id": folder_id, "user_id": current_user['id']},
-        {"$set": updates.model_dump()}
-    )
+    update_data = updates.model_dump()
+    result = await db.update_folder(folder_id, current_user['id'], update_data)
     
-    if result.modified_count == 0:
+    if not result:
         raise HTTPException(status_code=404, detail="Folder not found")
     
     return {"message": "Folder updated"}
 
 @api_router.delete("/folders/{folder_id}")
-async def delete_folder(folder_id: str, current_user: dict = Depends(get_current_user)):
+async def delete_folder(folder_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Delete a folder and all its items and subfolders recursively"""
+    result = await db.delete_folder(folder_id, current_user['id'])
     
-    # Recursive function to delete folder and all descendants
-    async def delete_folder_recursive(fid: str):
-        # Find all subfolders
-        subfolders = await db.folders.find(
-            {"parent_folder_id": fid, "user_id": current_user['id']},
-            {"_id": 0}
-        ).to_list(1000)
-        
-        # Recursively delete subfolders
-        for subfolder in subfolders:
-            await delete_folder_recursive(subfolder['id'])
-        
-        # Delete all saved items in this folder
-        await db.saved_items.delete_many({"folder_id": fid, "user_id": current_user['id']})
-        
-        # Delete the folder itself
-        await db.folders.delete_one({"id": fid, "user_id": current_user['id']})
-    
-    # Check if folder exists
-    folder = await db.folders.find_one({"id": folder_id, "user_id": current_user['id']}, {"_id": 0})
-    if not folder:
+    if not result:
         raise HTTPException(status_code=404, detail="Folder not found")
-    
-    # Delete recursively
-    await delete_folder_recursive(folder_id)
     
     return {"message": "Folder deleted"}
 

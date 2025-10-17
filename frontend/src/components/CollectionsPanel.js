@@ -32,7 +32,9 @@ export default function CollectionsPanel({ onOpenItem }) {
 
   const loadCollections = async () => {
     try {
-      const response = await axios.get(`${API}/collections/list`);
+      const response = await axios.get(`${API}/collections/list`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setCollections(response.data.collections);
     } catch (error) {
       console.error('Failed to load collections:', error);
@@ -41,7 +43,9 @@ export default function CollectionsPanel({ onOpenItem }) {
 
   const loadFolders = async (collectionId) => {
     try {
-      const response = await axios.get(`${API}/folders/${collectionId}`);
+      const response = await axios.get(`${API}/folders/list/${collectionId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setFolders(prev => ({ ...prev, [collectionId]: response.data.folders }));
     } catch (error) {
       console.error('Failed to load folders:', error);
