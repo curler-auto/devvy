@@ -1097,6 +1097,7 @@ button {
   flex-direction: column;
   height: 100%;
   padding: 16px;
+  background: var(--bg-primary);
 }
 
 .collections-header {
@@ -1105,7 +1106,8 @@ button {
   justify-content: space-between;
   margin-bottom: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid var(--border-primary);
+  color: var(--text-primary);
 }
 
 .collections-list {
@@ -1126,21 +1128,24 @@ button {
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
-  background: #1a1a1a;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: all 0.15s ease;
   font-size: 14px;
+  color: var(--text-primary);
 }
 
 .collection-header:hover {
-  background: #1f2937;
+  background: var(--bg-tertiary);
+  border-color: var(--border-secondary);
 }
 
 .delete-icon {
   background: transparent;
   border: none;
-  color: #6b7280;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
@@ -1154,7 +1159,7 @@ button {
 
 .delete-icon:hover {
   color: #ef4444;
-  background: #2a2a2a;
+  background: var(--bg-tertiary);
 }
 
 .collection-content {
@@ -1181,22 +1186,25 @@ button {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: #0f0f0f;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: all 0.15s ease;
   font-size: 13px;
   flex: 1;
+  color: var(--text-primary);
 }
 
 .folder-header:hover {
-  background: #1a1a1a;
+  background: var(--bg-tertiary);
+  border-color: var(--border-secondary);
 }
 
 .folder-add-button {
   background: transparent;
   border: none;
-  color: #6b7280;
+  color: var(--text-secondary);
   cursor: pointer;
   padding: 6px;
   border-radius: 4px;
@@ -1212,8 +1220,8 @@ button {
 }
 
 .folder-add-button:hover {
-  color: #10b981;
-  background: #1a1a1a;
+  color: var(--accent-primary);
+  background: var(--bg-tertiary);
 }
 
 .new-subfolder-input {
@@ -1245,22 +1253,25 @@ button {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: #0f0f0f;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
   font-size: 13px;
-  color: #9ca3af;
+  color: var(--text-secondary);
 }
 
 .saved-item:hover {
-  background: #1a1a1a;
-  color: #e5e5e5;
+  background: var(--bg-tertiary);
+  border-color: var(--border-secondary);
+  color: var(--text-primary);
 }
 
 .empty-collections {
   padding: 32px 16px;
   text-align: center;
+  color: var(--text-secondary);
 }
 
 /* Save to Collection Dialog */
