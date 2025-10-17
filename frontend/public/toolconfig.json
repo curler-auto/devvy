@@ -119,6 +119,15 @@
       "description": "Generate UUIDs/GUIDs in various formats"
     },
     {
+      "id": "totp-generator",
+      "name": "TOTP Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Clock",
+      "description": "Generate Time-based One-Time Passwords (2FA codes)"
+    },
+    {
       "id": "regex-tester",
       "name": "Regex Tester",
       "category": "text-tools",

@@ -52,6 +52,7 @@ import RegexTester from './RegexTester';
 import MarkdownVisualizer from './MarkdownVisualizer';
 import SSHKeyGenerator from './SSHKeyGenerator';
 import SSLCertGenerator from './SSLCertGenerator';
+import TOTPGenerator from './TOTPGenerator';
 
 /**
  * Tool Components Registry
@@ -95,6 +96,7 @@ export const TOOL_COMPONENTS = {
   'markdown-preview': MarkdownVisualizer,
   'ssh-key-generator': SSHKeyGenerator,
   'ssl-cert-generator': SSLCertGenerator,
+  'totp-generator': TOTPGenerator,
 };
 
 /**
