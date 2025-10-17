@@ -59,7 +59,7 @@
       "id": "base64-encoder",
       "name": "Base64 Encoder/Decoder",
       "category": "encoders",
-      "enabled": false,
+      "enabled": true,
       "tier": "free",
       "icon": "Binary",
       "description": "Encode and decode Base64 strings"
@@ -75,39 +75,66 @@
     },
     {
       "id": "jwt-decoder",
-      "name": "JWT Decoder",
+      "name": "JWT Encoder/Decoder",
       "category": "security",
-      "enabled": false,
+      "enabled": true,
       "tier": "free",
       "icon": "Shield",
-      "description": "Decode and verify JWT tokens"
+      "description": "Encode and decode JWT tokens"
+    },
+    {
+      "id": "string-operations",
+      "name": "String Profiler",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Type",
+      "description": "Comprehensive string analysis and manipulation tool"
+    },
+    {
+      "id": "timestamp-converter",
+      "name": "Timestamp Converter",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Clock",
+      "description": "Convert between Unix timestamps and human-readable dates"
     },
     {
       "id": "hash-generator",
       "name": "Hash Generator",
       "category": "security",
-      "enabled": false,
+      "enabled": true,
       "tier": "free",
       "icon": "Hash",
-      "description": "Generate MD5, SHA1, SHA256 hashes"
+      "description": "Generate and verify hashes (MD5, SHA-1, SHA-256, SHA-512)"
     },
     {
       "id": "uuid-generator",
       "name": "UUID Generator",
       "category": "generators",
-      "enabled": false,
+      "enabled": true,
       "tier": "free",
       "icon": "Fingerprint",
-      "description": "Generate UUIDs"
+      "description": "Generate UUIDs/GUIDs in various formats"
     },
     {
       "id": "regex-tester",
       "name": "Regex Tester",
       "category": "text-tools",
-      "enabled": false,
+      "enabled": true,
       "tier": "free",
       "icon": "Search",
-      "description": "Test regular expressions"
+      "description": "Test and debug regular expressions"
+    },
+    {
+      "id": "qr-code-generator",
+      "name": "QR Code Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "QrCode",
+      "description": "Generate customizable QR codes"
     },
     {
       "id": "diff-checker",
@@ -120,12 +147,12 @@
     },
     {
       "id": "markdown-preview",
-      "name": "Markdown Preview",
+      "name": "Markdown Visualizer",
       "category": "text-tools",
-      "enabled": false,
+      "enabled": true,
       "tier": "free",
       "icon": "FileText",
-      "description": "Preview Markdown files"
+      "description": "Preview and edit Markdown with live rendering"
     },
     {
       "id": "sql-formatter",
@@ -180,6 +207,222 @@
       "tier": "free",
       "icon": "Clock",
       "description": "Build cron expressions"
+    },
+    {
+      "id": "ssh-key-generator",
+      "name": "SSH Key Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Key",
+      "description": "Generate and verify SSH key pairs"
+    },
+    {
+      "id": "ssl-cert-generator",
+      "name": "SSL Certificate Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Shield",
+      "description": "Generate self-signed SSL/TLS certificates"
+    },
+    {
+      "id": "toml-formatter",
+      "name": "TOML Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Format and validate TOML"
+    },
+    {
+      "id": "json-compare",
+      "name": "JSON Compare",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitCompare",
+      "description": "Compare two JSON documents and highlight differences"
+    },
+    {
+      "id": "json-path-finder",
+      "name": "JSON Path Finder",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Search",
+      "description": "Find and extract JSON paths"
+    },
+    {
+      "id": "json-path-extract",
+      "name": "JSON Path Extract",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Scissors",
+      "description": "Extract data from JSON using JSONPath expressions"
+    },
+    {
+      "id": "json-tree-view",
+      "name": "JSON Tree View",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitBranch",
+      "description": "Visualize JSON data in a collapsible tree structure"
+    },
+    {
+      "id": "json-aggregator",
+      "name": "JSON Aggregator",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Layers",
+      "description": "Combine multiple JSON objects into arrays or merge objects"
+    },
+    {
+      "id": "json-filter",
+      "name": "JSON Filter",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Filter",
+      "description": "Filter JSON data based on various conditions"
+    },
+    {
+      "id": "random-json-generator",
+      "name": "Random JSON Generator",
+      "category": "generators",
+      "enabled": false,
+      "tier": "free",
+      "icon": "Shuffle",
+      "description": "Generate random JSON data with customizable structure (Legacy - use Data Generator instead)"
+    },
+    {
+      "id": "flatten-json",
+      "name": "Flatten JSON",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowDown",
+      "description": "Convert nested JSON objects to flat structures with path-based keys"
+    },
+    {
+      "id": "unflatten-json",
+      "name": "Unflatten JSON",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowUp",
+      "description": "Convert flat JSON objects with path-based keys to nested structures"
+    },
+    {
+      "id": "random-xml-generator",
+      "name": "Random XML Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Shuffle",
+      "description": "Generate random XML data with customizable structure"
+    },
+    {
+      "id": "faker-tool",
+      "name": "Faker Data Generator",
+      "category": "generators",
+      "enabled": false,
+      "tier": "free",
+      "icon": "Database",
+      "description": "Generate random fake data using Faker.js library (Legacy - use Data Generator instead)"
+    },
+    {
+      "id": "data-generator",
+      "name": "Data Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Database",
+      "description": "Generate data in multiple formats (Basic, JSON, CSV, XML, YAML, TOML, SQL) with Faker.js"
+    },
+    {
+      "id": "yaml-to-json",
+      "name": "YAML to JSON",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert YAML to JSON format"
+    },
+    {
+      "id": "json-to-yaml",
+      "name": "JSON to YAML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert JSON to YAML format"
+    },
+    {
+      "id": "json-to-xml",
+      "name": "JSON to XML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert JSON to XML format"
+    },
+    {
+      "id": "xml-to-json",
+      "name": "XML to JSON",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert XML to JSON format"
+    },
+    {
+      "id": "yaml-to-toml",
+      "name": "YAML to TOML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert YAML to TOML format"
+    },
+    {
+      "id": "toml-to-yaml",
+      "name": "TOML to YAML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert TOML to YAML format"
+    },
+    {
+      "id": "json-to-toml",
+      "name": "JSON to TOML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert JSON to TOML format"
+    },
+    {
+      "id": "toml-to-json",
+      "name": "TOML to JSON",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert TOML to JSON format"
+    },
+    {
+      "id": "json-schema-validator",
+      "name": "JSON Schema Validator",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "CheckSquare",
+      "description": "Validate JSON data against a JSON Schema"
     }
   ],
   "categories": [
@@ -222,6 +465,16 @@
       "id": "design",
       "name": "Design Tools",
       "icon": "Palette"
+    },
+    {
+      "id": "json",
+      "name": "JSON Tools",
+      "icon": "Braces"
+    },
+    {
+      "id": "converters",
+      "name": "Converters",
+      "icon": "RefreshCw"
     }
   ]
 }

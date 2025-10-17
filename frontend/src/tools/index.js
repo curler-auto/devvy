@@ -16,12 +16,42 @@
  */
 
 import JSONBeautifier from './JSONBeautifier';
-// Import other tools here as they are created
-// import JSONValidator from './JSONValidator';
-// import Base64Encoder from './Base64Encoder';
-// import URLEncoder from './URLEncoder';
-// import RestApiTester from './RestApiTester';
-// etc...
+import YAMLFormatter from './YAMLFormatter';
+import XMLFormatter from './XMLFormatter';
+import TOMLFormatter from './TOMLFormatter';
+import JSONCompare from './JSONCompare';
+import JSONPathFinder from './JSONPathFinder';
+import JSONPathExtract from './JSONPathExtract';
+import JSONTreeView from './JSONTreeView';
+import JSONAggregator from './JSONAggregator';
+import JSONFilter from './JSONFilter';
+import RandomJSONGenerator from './RandomJSONGenerator';
+import FlattenJSON from './FlattenJSON';
+import UnflattenJSON from './UnflattenJSON';
+import RandomXMLGenerator from './RandomXMLGenerator';
+import FakerTool from './FakerTool';
+import DataGenerator from './DataGenerator';
+import YAMLToJSON from './YAMLToJSON';
+import JSONToYAML from './JSONToYAML';
+import JSONToXML from './JSONToXML';
+import XMLToJSON from './XMLToJSON';
+import YAMLToTOML from './YAMLToTOML';
+import TOMLToYAML from './TOMLToYAML';
+import JSONToTOML from './JSONToTOML';
+import TOMLToJSON from './TOMLToJSON';
+import SQLFormatter from './SQLFormatter';
+import JSONSchemaValidator from './JSONSchemaValidator';
+import TimestampConverter from './TimestampConverter';
+import HashGenerator from './HashGenerator';
+import UUIDGenerator from './UUIDGenerator';
+import JWTDecoder from './JWTDecoder';
+import Base64Tool from './Base64Tool';
+import StringOperations from './StringOperations';
+import QRCodeGenerator from './QRCodeGenerator';
+import RegexTester from './RegexTester';
+import MarkdownVisualizer from './MarkdownVisualizer';
+import SSHKeyGenerator from './SSHKeyGenerator';
+import SSLCertGenerator from './SSLCertGenerator';
 
 /**
  * Tool Components Registry
@@ -29,27 +59,42 @@ import JSONBeautifier from './JSONBeautifier';
  */
 export const TOOL_COMPONENTS = {
   'json-beautifier': JSONBeautifier,
-  // Add more tools here:
-  // 'json-validator': JSONValidator,
-  // 'base64-encoder': Base64Encoder,
-  // 'url-encoder': URLEncoder,
-  // 'rest-api-tester': RestApiTester,
-  // 'grpc-tester': GrpcTester,
-  // 'graphql-playground': GraphQLPlayground,
-  // 'websocket-tester': WebSocketTester,
-  // 'ui-recorder': UiRecorder,
-  // 'diff-checker': DiffChecker,
-  // 'jwt-decoder': JWTDecoder,
-  // 'hash-generator': HashGenerator,
-  // 'uuid-generator': UUIDGenerator,
-  // 'regex-tester': RegexTester,
-  // 'markdown-preview': MarkdownPreview,
-  // 'xml-formatter': XMLFormatter,
-  // 'yaml-formatter': YAMLFormatter,
-  // 'sql-formatter': SQLFormatter,
-  // 'color-picker': ColorPicker,
-  // 'cron-builder': CronBuilder,
-  // 'image-optimizer': ImageOptimizer,
+  'yaml-formatter': YAMLFormatter,
+  'xml-formatter': XMLFormatter,
+  'toml-formatter': TOMLFormatter,
+  'json-compare': JSONCompare,
+  'json-path-finder': JSONPathFinder,
+  'json-path-extract': JSONPathExtract,
+  'json-tree-view': JSONTreeView,
+  'json-aggregator': JSONAggregator,
+  'json-filter': JSONFilter,
+  'random-json-generator': RandomJSONGenerator,
+  'flatten-json': FlattenJSON,
+  'unflatten-json': UnflattenJSON,
+  'random-xml-generator': RandomXMLGenerator,
+  'faker-tool': FakerTool,
+  'data-generator': DataGenerator,
+  'yaml-to-json': YAMLToJSON,
+  'json-to-yaml': JSONToYAML,
+  'json-to-xml': JSONToXML,
+  'xml-to-json': XMLToJSON,
+  'yaml-to-toml': YAMLToTOML,
+  'toml-to-yaml': TOMLToYAML,
+  'json-to-toml': JSONToTOML,
+  'toml-to-json': TOMLToJSON,
+  'sql-formatter': SQLFormatter,
+  'json-schema-validator': JSONSchemaValidator,
+  'timestamp-converter': TimestampConverter,
+  'hash-generator': HashGenerator,
+  'uuid-generator': UUIDGenerator,
+  'jwt-decoder': JWTDecoder,
+  'base64-encoder': Base64Tool,
+  'string-operations': StringOperations,
+  'qr-code-generator': QRCodeGenerator,
+  'regex-tester': RegexTester,
+  'markdown-preview': MarkdownVisualizer,
+  'ssh-key-generator': SSHKeyGenerator,
+  'ssl-cert-generator': SSLCertGenerator,
 };
 
 /**
@@ -104,13 +149,17 @@ export const isToolRegistered = (toolId) => {
  */
 export const TOOL_CATEGORIES = {
   JSON: 'json',
+  XML: 'xml',
+  YAML: 'yaml',
+  TOML: 'toml',
   API: 'api',
   AUTOMATION: 'automation',
   ENCODING: 'encoding',
-  FORMATTING: 'formatting',
+  FORMATTERS: 'formatters',
   UTILITIES: 'utilities',
   TESTING: 'testing',
-  CONVERSION: 'conversion',
+  CONVERTERS: 'converters',
+  GENERATORS: 'generators',
 };
 
 /**

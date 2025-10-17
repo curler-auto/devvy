@@ -1129,6 +1129,115 @@ async def deactivate_license(machineId: str, db = Depends(get_database)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# JWT Encoding Models
+class JWTEncodeRequest(BaseModel):
+    algorithm: str = Field(..., description="JWT algorithm (HS256, HS384, HS512, RS256, RS384, RS512, ES256, ES384, ES512, PS256, PS384, PS512)")
+    secret: str = Field(..., description="Secret key for HMAC or private key for RSA/ECDSA")
+    payload: dict = Field(..., description="JWT payload claims")
+
+class JWTEncodeResponse(BaseModel):
+    token: str
+    algorithm: str
+    
+@api_router.post("/tools/jwt/encode", response_model=JWTEncodeResponse)
+async def encode_jwt(request: JWTEncodeRequest):
+    """
+    Encode a JWT token with proper cryptographic signing.
+    Supports all standard JWT algorithms.
+    """
+    try:
+        import jwt as pyjwt
+        
+        # Map algorithm names
+        algorithm = request.algorithm.upper()
+        
+        # Validate algorithm
+        valid_algorithms = ['HS256', 'HS384', 'HS512', 'RS256', 'RS384', 'RS512', 
+                           'ES256', 'ES384', 'ES512', 'PS256', 'PS384', 'PS512']
+        if algorithm not in valid_algorithms:
+            raise HTTPException(status_code=400, detail=f"Unsupported algorithm: {algorithm}")
+        
+        # Encode the JWT
+        token = pyjwt.encode(
+            request.payload,
+            request.secret,
+            algorithm=algorithm
+        )
+        
+        return JWTEncodeResponse(
+            token=token,
+            algorithm=algorithm
+        )
+    except ImportError:
+        raise HTTPException(
+            status_code=500, 
+            detail="PyJWT library not installed. Run: pip install pyjwt[crypto]"
+        )
+    except Exception as e:
+        logger.error(f"JWT encoding error: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Failed to encode JWT: {str(e)}")
+
+
+# JWT Verification Models
+class JWTVerifyRequest(BaseModel):
+    token: str = Field(..., description="JWT token to verify")
+    secret: str = Field(..., description="Secret key or public key for verification")
+    algorithm: Optional[str] = Field(None, description="Algorithm to use (if not specified, will use token header)")
+
+class JWTVerifyResponse(BaseModel):
+    valid: bool
+    message: str
+    header: Optional[dict] = None
+    payload: Optional[dict] = None
+    
+@api_router.post("/tools/jwt/verify", response_model=JWTVerifyResponse)
+async def verify_jwt(request: JWTVerifyRequest):
+    """
+    Verify a JWT token signature with proper cryptographic validation.
+    """
+    try:
+        import jwt as pyjwt
+        
+        # First decode without verification to get the algorithm
+        unverified_header = pyjwt.get_unverified_header(request.token)
+        algorithm = request.algorithm or unverified_header.get('alg')
+        
+        # Verify and decode the JWT
+        decoded = pyjwt.decode(
+            request.token,
+            request.secret,
+            algorithms=[algorithm]
+        )
+        
+        return JWTVerifyResponse(
+            valid=True,
+            message="Signature verified successfully!",
+            header=unverified_header,
+            payload=decoded
+        )
+    except pyjwt.ExpiredSignatureError:
+        return JWTVerifyResponse(
+            valid=False,
+            message="Token signature is valid but token has expired"
+        )
+    except pyjwt.InvalidSignatureError:
+        return JWTVerifyResponse(
+            valid=False,
+            message="Invalid signature - token has been tampered with or wrong secret key"
+        )
+    except pyjwt.DecodeError as e:
+        return JWTVerifyResponse(
+            valid=False,
+            message=f"Failed to decode token: {str(e)}"
+        )
+    except Exception as e:
+        logger.error(f"JWT verification error: {str(e)}")
+        return JWTVerifyResponse(
+            valid=False,
+            message=f"Verification failed: {str(e)}"
+        )
+
+
 # Include the router in the main app
 app.include_router(api_router)
 

@@ -227,20 +227,28 @@ body {
 /* Grid layout for categories and tools - Responsive */
 .content-pane-body.grid-layout {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
   align-content: start;
   padding: 12px;
+  overflow-y: auto;
 }
 
 /* Responsive grid breakpoints */
 @media (min-width: 400px) {
   .content-pane-body.grid-layout {
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
   }
 }
 
 @media (min-width: 500px) {
+  .content-pane-body.grid-layout {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media (min-width: 700px) {
   .content-pane-body.grid-layout {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -263,7 +271,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 12px 8px;
   border-radius: 8px;
   background: transparent;
@@ -275,7 +283,9 @@ body {
   text-align: center;
   width: 100%;
   position: relative;
-  min-height: 0;
+  min-height: 85px;
+  overflow: visible;
+  box-sizing: border-box;
 }
 
 @media (min-width: 500px) {
@@ -303,6 +313,8 @@ body {
 .pane-item-icon {
   width: 40px;
   height: 40px;
+  min-width: 40px;
+  min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -319,6 +331,8 @@ body {
   .pane-item-icon {
     width: 48px;
     height: 48px;
+    min-width: 48px;
+    min-height: 48px;
   }
 }
 
@@ -385,24 +399,27 @@ body {
   background: linear-gradient(135deg, #ec4899, #db2777);
   box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
 }
-
 .pane-item-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   width: 100%;
+  overflow: visible;
+  flex: 1;
 }
 
 .pane-item-name {
   font-weight: 500;
   font-size: 10px;
   color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  line-height: 1.2;
+  text-align: center;
+  line-height: 1.4;
+  word-break: break-word;
+  width: 100%;
+  display: block;
+  overflow-wrap: break-word;
+  max-height: none;
 }
 
 @media (min-width: 500px) {
@@ -421,6 +438,7 @@ body {
   text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -1782,4 +1800,163 @@ button {
 .grpc-select:focus {
   outline: none;
   border-color: #10b981;
+}
+
+/* Tool Section Borders - Lighter and more subtle */
+.timestamp-converter .border,
+.hash-generator .border,
+.uuid-generator .border,
+.jwt-decoder .border,
+.base64-tool .border,
+.string-operations .border,
+.qr-code-generator .border,
+.regex-tester .border,
+.markdown-visualizer .border,
+.ssh-key-generator .border,
+.ssl-cert-generator .border,
+.json-compare-tool .border,
+.json-beautifier .border,
+.yaml-formatter .border,
+.xml-formatter .border,
+.toml-formatter .border,
+.json-path-finder .border,
+.json-path-extract .border,
+.json-tree-view .border,
+.json-aggregator .border,
+.json-filter .border,
+.random-json-generator .border,
+.flatten-json .border,
+.unflatten-json .border,
+.random-xml-generator .border,
+.faker-tool .border,
+.yaml-to-json .border,
+.json-to-yaml .border,
+.json-to-xml .border,
+.xml-to-json .border,
+.yaml-to-toml .border,
+.toml-to-yaml .border,
+.json-to-toml .border,
+.toml-to-json .border,
+.sql-formatter .border,
+.json-schema-validator .border {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Light theme overrides */
+[data-theme="light"] .timestamp-converter .border,
+[data-theme="light"] .hash-generator .border,
+[data-theme="light"] .uuid-generator .border,
+[data-theme="light"] .jwt-decoder .border,
+[data-theme="light"] .base64-tool .border,
+[data-theme="light"] .string-operations .border,
+[data-theme="light"] .qr-code-generator .border,
+[data-theme="light"] .regex-tester .border,
+[data-theme="light"] .markdown-visualizer .border,
+[data-theme="light"] .ssh-key-generator .border,
+[data-theme="light"] .ssl-cert-generator .border,
+[data-theme="light"] .json-compare-tool .border,
+[data-theme="light"] .json-beautifier .border,
+[data-theme="light"] .yaml-formatter .border,
+[data-theme="light"] .xml-formatter .border,
+[data-theme="light"] .toml-formatter .border,
+[data-theme="light"] .json-path-finder .border,
+[data-theme="light"] .json-path-extract .border,
+[data-theme="light"] .json-tree-view .border,
+[data-theme="light"] .json-aggregator .border,
+[data-theme="light"] .json-filter .border,
+[data-theme="light"] .random-json-generator .border,
+[data-theme="light"] .flatten-json .border,
+[data-theme="light"] .unflatten-json .border,
+[data-theme="light"] .random-xml-generator .border,
+[data-theme="light"] .faker-tool .border,
+[data-theme="light"] .yaml-to-json .border,
+[data-theme="light"] .json-to-yaml .border,
+[data-theme="light"] .json-to-xml .border,
+[data-theme="light"] .xml-to-json .border,
+[data-theme="light"] .yaml-to-toml .border,
+[data-theme="light"] .toml-to-yaml .border,
+[data-theme="light"] .json-to-toml .border,
+[data-theme="light"] .toml-to-json .border,
+[data-theme="light"] .sql-formatter .border,
+[data-theme="light"] .json-schema-validator .border {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Nested borders within sections */
+.timestamp-converter .border .border,
+.hash-generator .border .border,
+.uuid-generator .border .border,
+.jwt-decoder .border .border,
+.base64-tool .border .border,
+.string-operations .border .border,
+.qr-code-generator .border .border,
+.regex-tester .border .border,
+.markdown-visualizer .border .border,
+.ssh-key-generator .border .border,
+.ssl-cert-generator .border .border,
+.json-compare-tool .border .border,
+.json-beautifier .border .border,
+.yaml-formatter .border .border,
+.xml-formatter .border .border,
+.toml-formatter .border .border,
+.json-path-finder .border .border,
+.json-path-extract .border .border,
+.json-tree-view .border .border,
+.json-aggregator .border .border,
+.json-filter .border .border,
+.random-json-generator .border .border,
+.flatten-json .border .border,
+.unflatten-json .border .border,
+.random-xml-generator .border .border,
+.faker-tool .border .border,
+.yaml-to-json .border .border,
+.json-to-yaml .border .border,
+.json-to-xml .border .border,
+.xml-to-json .border .border,
+.yaml-to-toml .border .border,
+.toml-to-yaml .border .border,
+.json-to-toml .border .border,
+.toml-to-json .border .border,
+.sql-formatter .border .border,
+.json-schema-validator .border .border {
+  border-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+[data-theme="light"] .timestamp-converter .border .border,
+[data-theme="light"] .hash-generator .border .border,
+[data-theme="light"] .uuid-generator .border .border,
+[data-theme="light"] .jwt-decoder .border .border,
+[data-theme="light"] .base64-tool .border .border,
+[data-theme="light"] .string-operations .border .border,
+[data-theme="light"] .qr-code-generator .border .border,
+[data-theme="light"] .regex-tester .border .border,
+[data-theme="light"] .markdown-visualizer .border .border,
+[data-theme="light"] .ssh-key-generator .border .border,
+[data-theme="light"] .ssl-cert-generator .border .border,
+[data-theme="light"] .json-compare-tool .border .border,
+[data-theme="light"] .json-beautifier .border .border,
+[data-theme="light"] .yaml-formatter .border .border,
+[data-theme="light"] .xml-formatter .border .border,
+[data-theme="light"] .toml-formatter .border .border,
+[data-theme="light"] .json-path-finder .border .border,
+[data-theme="light"] .json-path-extract .border .border,
+[data-theme="light"] .json-tree-view .border .border,
+[data-theme="light"] .json-aggregator .border .border,
+[data-theme="light"] .json-filter .border .border,
+[data-theme="light"] .random-json-generator .border .border,
+[data-theme="light"] .flatten-json .border .border,
+[data-theme="light"] .unflatten-json .border .border,
+[data-theme="light"] .random-xml-generator .border .border,
+[data-theme="light"] .faker-tool .border .border,
+[data-theme="light"] .yaml-to-json .border .border,
+[data-theme="light"] .json-to-yaml .border .border,
+[data-theme="light"] .json-to-xml .border .border,
+[data-theme="light"] .xml-to-json .border .border,
+[data-theme="light"] .yaml-to-toml .border .border,
+[data-theme="light"] .toml-to-yaml .border .border,
+[data-theme="light"] .json-to-toml .border .border,
+[data-theme="light"] .toml-to-json .border .border,
+[data-theme="light"] .sql-formatter .border .border,
+[data-theme="light"] .json-schema-validator .border .border {
+  border-color: rgba(0, 0, 0, 0.06) !important;
 }

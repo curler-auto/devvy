@@ -5,7 +5,7 @@ import Editor from '@monaco-editor/react';
 import { 
   Menu, X, ChevronRight, Search, Star, Code, FileJson, 
   Globe, FileSpreadsheet, Copy, Check, AlertCircle, Settings, User,
-  LogOut, Shield, Crown, Lock, Save, Bookmark, Key
+  LogOut, Shield, Crown, Lock, Save, Bookmark, Key, QrCode, Type, RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -53,6 +53,10 @@ const ICON_MAP = {
   'Sparkles': Star,
   'FileJson': FileJson,
   'FileSpreadsheet': FileSpreadsheet,
+  'QrCode': QrCode,
+  'Type': Type,
+  'Key': Key,
+  'RefreshCw': RefreshCw,
 };
 
 function MainApp() {
@@ -1016,12 +1020,13 @@ function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, i
       data-category={tool.category}
       onClick={() => onOpen(tool)}
       data-testid={`tool-pane-item-${tool.id}`}
+      title={tool.description || tool.name}
     >
       <div className="pane-item-icon">
         <Icon className="w-6 h-6" />
       </div>
       <div className="pane-item-content">
-        <div className="pane-item-name flex items-center gap-1">
+        <div className="pane-item-name flex items-center justify-center gap-1">
           <span>{tool.name}</span>
           {isPremium && (
             <Crown className="w-3 h-3 text-amber-500" />
@@ -1030,9 +1035,6 @@ function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, i
             <Lock className="w-3 h-3 text-gray-500" />
           )}
         </div>
-        {tool.description && (
-          <div className="pane-item-desc">{tool.description}</div>
-        )}
       </div>
       {isFavorite && (
         <Star className="w-3 h-3 text-amber-500 absolute top-2 right-2" fill="currentColor" />
