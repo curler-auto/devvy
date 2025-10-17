@@ -307,14 +307,14 @@ async def check_tool_access(tool_id: str, current_user: dict = Depends(get_curre
 
 # ========== COLLECTIONS ROUTES ==========
 
-@api_router.post("/collections/create", response_model=Collection)
+@api_router.post("/collections/create")
 async def create_collection(collection_data: CollectionCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Create a new collection"""
     collection_dict = collection_data.model_dump()
     collection_dict['created_at'] = datetime.now(timezone.utc)
     
     result = await db.create_collection(current_user['id'], collection_dict)
-    return Collection(**result)
+    return result
 
 @api_router.get("/collections/list")
 async def list_collections(current_user: dict = Depends(get_current_user), db = Depends(get_database)):
@@ -322,16 +322,17 @@ async def list_collections(current_user: dict = Depends(get_current_user), db = 
     collections = await db.get_collections(current_user['id'])
     return {"collections": collections}
 
-@api_router.put("/collections/{collection_id}")
-async def update_collection(collection_id: str, updates: CollectionCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
-    """Update a collection"""
-    update_data = updates.model_dump()
-    result = await db.update_collection(collection_id, current_user['id'], update_data)
-    
-    if not result:
-        raise HTTPException(status_code=404, detail="Collection not found")
-    
-    return {"message": "Collection updated"}
+# @api_router.put("/collections/{collection_id}")
+# async def update_collection(collection_id: str, updates: CollectionCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
+#     """Update a collection"""
+#     # TODO: Implement update_collection in database abstraction layer
+#     update_data = updates.model_dump()
+#     # result = await db.update_collection(collection_id, current_user['id'], update_data)
+#     
+#     # if not result:
+#     #     raise HTTPException(status_code=404, detail="Collection not found")
+#     
+#     return {"message": "Collection update not implemented yet"}
 
 @api_router.delete("/collections/{collection_id}")
 async def delete_collection(collection_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
