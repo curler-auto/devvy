@@ -394,6 +394,13 @@ async def create_saved_item(item_data: SavedItemCreate, current_user: dict = Dep
     item_dict['user_id'] = current_user['id']
     item_dict['created_at'] = datetime.now(timezone.utc)
     
+    # Map tool_data to data for SQLite model compatibility
+    if 'tool_data' in item_dict:
+        item_dict['data'] = item_dict.pop('tool_data')
+    
+    # Remove description if not in SQLite model
+    item_dict.pop('description', None)
+    
     result = await db.create_saved_item(item_dict)
     return result
 
@@ -401,6 +408,12 @@ async def create_saved_item(item_data: SavedItemCreate, current_user: dict = Dep
 async def list_saved_items(collection_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """List all saved items in a collection"""
     items = await db.get_saved_items(collection_id, current_user['id'])
+    
+    # Map data field back to tool_data for frontend compatibility
+    for item in items:
+        if 'data' in item:
+            item['tool_data'] = item.pop('data')
+    
     return {"items": items}
 
 @api_router.get("/saved-items/{item_id}")
@@ -410,6 +423,10 @@ async def get_saved_item(item_id: str, current_user: dict = Depends(get_current_
     
     if not item:
         raise HTTPException(status_code=404, detail="Saved item not found")
+    
+    # Map data field back to tool_data for frontend compatibility
+    if 'data' in item:
+        item['tool_data'] = item.pop('data')
     
     return item
 
