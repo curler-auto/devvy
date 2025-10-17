@@ -17,19 +17,32 @@ function RepaymentCalculator({ tab, tabs, setTabs }) {
   const [paymentFrequency, setPaymentFrequency] = useState(tab.data?.paymentFrequency || 'monthly');
   const [startDate, setStartDate] = useState(tab.data?.startDate || new Date().toISOString().split('T')[0]);
   
-  const [schedule, setSchedule] = useState([]);
-  const [summary, setSummary] = useState(null);
-  const [showChart, setShowChart] = useState(false); // Toggle between chart and summary
+  const [schedule, setSchedule] = useState(tab.data?.schedule || []);
+  const [summary, setSummary] = useState(tab.data?.summary || null);
+  const [showChart, setShowChart] = useState(tab.data?.showChart || false); // Toggle between chart and summary
 
-  // Update tab data
+  // Update tab data - save both inputs and outputs
   useEffect(() => {
     const updatedTabs = tabs.map(t => 
       t.tabId === tab.tabId 
-        ? { ...t, data: { loanAmount, interestRate, loanTerm, termUnit, paymentFrequency, startDate } }
+        ? { 
+            ...t, 
+            data: { 
+              loanAmount, 
+              interestRate, 
+              loanTerm, 
+              termUnit, 
+              paymentFrequency, 
+              startDate,
+              schedule,
+              summary,
+              showChart
+            } 
+          }
         : t
     );
     setTabs(updatedTabs);
-  }, [loanAmount, interestRate, loanTerm, termUnit, paymentFrequency, startDate]);
+  }, [loanAmount, interestRate, loanTerm, termUnit, paymentFrequency, startDate, schedule, summary, showChart]);
 
   // Calculate repayment schedule
   const calculateSchedule = () => {

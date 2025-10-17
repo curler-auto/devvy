@@ -410,7 +410,7 @@ function MainApp() {
     }
 
     // Find the tool definition
-    const tool = TOOLS.find(t => t.id === savedItem.tool_id);
+    const tool = tools.find(t => t.id === savedItem.tool_id);
     if (!tool) {
       toast.error('Tool not found');
       return;
