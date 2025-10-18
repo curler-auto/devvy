@@ -433,21 +433,32 @@ async def get_saved_item(item_id: str, current_user: dict = Depends(get_current_
 @api_router.put("/saved-items/{item_id}")
 async def update_saved_item(item_id: str, updates: SavedItemCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Update a saved item"""
-    # Note: update_saved_item not in base class, using get + create pattern
-    existing = await db.get_saved_item(item_id, current_user['id'])
-    if not existing:
+    update_dict = updates.model_dump()
+    
+    # Map tool_data to data for SQLite model compatibility
+    if 'tool_data' in update_dict:
+        update_dict['data'] = update_dict.pop('tool_data')
+    
+    # Remove description if not in SQLite model
+    update_dict.pop('description', None)
+    
+    result = await db.update_saved_item(item_id, current_user['id'], update_dict)
+    
+    if not result:
         raise HTTPException(status_code=404, detail="Saved item not found")
     
-    # For now, return success - full update can be implemented later
-    return {"message": "Saved item updated"}
+    # Map data back to tool_data for frontend
+    if 'data' in result:
+        result['tool_data'] = result.pop('data')
+    
+    return result
 
 @api_router.delete("/saved-items/{item_id}")
 async def delete_saved_item(item_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Delete a saved item"""
-    # Note: delete_saved_item not in base class yet
-    # For now, just check if it exists
-    item = await db.get_saved_item(item_id, current_user['id'])
-    if not item:
+    result = await db.delete_saved_item(item_id, current_user['id'])
+    
+    if not result:
         raise HTTPException(status_code=404, detail="Saved item not found")
     
     return {"message": "Saved item deleted"}

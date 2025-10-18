@@ -100,21 +100,40 @@ export default function SaveToCollectionDialog({ open, onClose, tab }) {
     }
 
     try {
-      await axios.post(
-        `${API}/saved-items/create`,
-        {
-          name: itemName,
-          description: '',
-          tool_id: tab.id,
-          tool_data: tab.data || {},
-          collection_id: selectedCollection,
-          folder_id: selectedFolder || null
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      // Check if this tab has a savedItemId (existing saved item)
+      if (tab.savedItemId) {
+        // Update existing saved item
+        await axios.put(
+          `${API}/saved-items/${tab.savedItemId}`,
+          {
+            name: itemName,
+            description: '',
+            tool_id: tab.id,
+            tool_data: tab.data || {},
+            collection_id: selectedCollection,
+            folder_id: selectedFolder || null
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        toast.success('Updated saved item!');
+      } else {
+        // Create new saved item
+        await axios.post(
+          `${API}/saved-items/create`,
+          {
+            name: itemName,
+            description: '',
+            tool_id: tab.id,
+            tool_data: tab.data || {},
+            collection_id: selectedCollection,
+            folder_id: selectedFolder || null
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        toast.success('Saved to collection!');
+      }
       
-      toast.success('Saved to collection!');
-      onClose();
+      onClose(true); // Pass true to indicate successful save
     } catch (error) {
       console.error('Failed to save item:', error);
       toast.error('Failed to save to collection');

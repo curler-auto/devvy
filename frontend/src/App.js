@@ -86,6 +86,7 @@ function MainApp() {
   const [showSettings, setShowSettings] = useState(false);
   const [currentTheme, setCurrentTheme] = useState(getStoredTheme());
   const [editorTheme, setEditorTheme] = useState(getMonacoTheme(getStoredTheme()));
+  const [unsavedTabs, setUnsavedTabs] = useState(new Set()); // Track tabs with unsaved changes
 
   useEffect(() => {
     // Apply saved theme on startup
@@ -101,6 +102,34 @@ function MainApp() {
     loadToolsConfig();
     loadLicenseAndTools();
   }, []);
+
+  // Keyboard shortcut handler for Ctrl/Cmd+S
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        if (activeTab) {
+          const tab = tabs.find(t => t.tabId === activeTab);
+          if (tab) {
+            handleSaveTab(tab);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeTab, tabs]);
+
+  // Track unsaved changes for tabs with savedItemId
+  useEffect(() => {
+    tabs.forEach(tab => {
+      if (tab.savedItemId && tab.data) {
+        // Mark as unsaved when data changes
+        setUnsavedTabs(prev => new Set(prev).add(tab.tabId));
+      }
+    });
+  }, [tabs]);
   
   // Check if this is an upgrade and show notification
   const checkForUpgrade = () => {
@@ -399,6 +428,12 @@ function MainApp() {
     }
   };
 
+  const handleSaveTab = (tab) => {
+    if (!tab) return;
+    setTabToSave(tab);
+    setShowSaveDialog(true);
+  };
+
   const handleOpenSavedItem = (savedItem) => {
     // Check if this saved item is already open
     const existingTab = tabs.find(t => t.savedItemId === savedItem.id);
@@ -422,7 +457,9 @@ function MainApp() {
       ...tool,
       customName: savedItem.name,
       data: savedItem.tool_data || {},
-      savedItemId: savedItem.id // Mark this tab as opened from collection
+      savedItemId: savedItem.id, // Mark this tab as opened from collection
+      savedItemName: savedItem.name,
+      originalData: JSON.stringify(savedItem.tool_data || {}) // Store original for comparison
     };
     setTabs([...tabs, newTab]);
     setActiveTab(newTab.tabId);
@@ -748,6 +785,7 @@ function MainApp() {
                   onCloseOthers={() => closeOtherTabs(tab.tabId)}
                   onCloseToRight={() => closeTabsToRight(tab.tabId)}
                   onSave={handleSaveCurrentTab}
+                  hasUnsavedChanges={unsavedTabs.has(tab.tabId)}
                 />
               ))}
             </div>
@@ -815,7 +853,21 @@ function MainApp() {
       {showSaveDialog && tabToSave && (
         <SaveToCollectionDialog
           open={showSaveDialog}
-          onClose={() => {
+          onClose={(saved) => {
+            if (saved && tabToSave) {
+              // Clear unsaved flag for this tab
+              setUnsavedTabs(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(tabToSave.tabId);
+                return newSet;
+              });
+              // Update tab's originalData to current data
+              setTabs(tabs.map(t => 
+                t.tabId === tabToSave.tabId 
+                  ? { ...t, originalData: JSON.stringify(t.data || {}) }
+                  : t
+              ));
+            }
             setShowSaveDialog(false);
             setTabToSave(null);
           }}
@@ -843,7 +895,7 @@ function MainApp() {
   );
 }
 
-function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, onCloseOthers, onCloseToRight, onSave }) {
+function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, onCloseOthers, onCloseToRight, onSave, hasUnsavedChanges }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -919,6 +971,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
             className="tab-name"
             title={tab.customName || tab.name}
           >
+            {hasUnsavedChanges && tab.savedItemId && <span style={{ color: 'var(--accent-primary)', marginRight: '4px' }}>*</span>}
             {tab.customName || tab.name}
           </span>
         )}

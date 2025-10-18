@@ -110,8 +110,6 @@ export default function CollectionsPanel({ onOpenItem }) {
   };
 
   const deleteCollection = async (collectionId) => {
-    if (!window.confirm('Delete this collection and all its contents?')) return;
-    
     try {
       await axios.delete(`${API}/collections/${collectionId}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -134,6 +132,19 @@ export default function CollectionsPanel({ onOpenItem }) {
     } catch (error) {
       console.error('Failed to load item:', error);
       toast.error('Failed to load saved item');
+    }
+  };
+
+  const handleDeleteItem = async (itemId, collectionId) => {
+    try {
+      await axios.delete(`${API}/saved-items/${itemId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Saved item deleted');
+      loadItems(collectionId);
+    } catch (error) {
+      console.error('Failed to delete saved item:', error);
+      toast.error('Failed to delete saved item');
     }
   };
 
@@ -371,20 +382,19 @@ export default function CollectionsPanel({ onOpenItem }) {
                     toggleFolder={toggleFolder}
                     token={token}
                     onFolderDeleted={() => handleFolderDeleted(collection.id)}
+                    onDeleteItem={handleDeleteItem}
                   />
                 ))}
 
                 {/* Root items */}
                 {getRootItems(collection.id).map((item) => (
-                  <div
+                  <SavedItemComponent
                     key={item.id}
-                    className="saved-item"
-                    onClick={() => handleOpenItem(item.id)}
-                    data-testid={`saved-item-${item.id}`}
-                  >
-                    <FileText className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-                    <span>{item.name}</span>
-                  </div>
+                    item={item}
+                    collectionId={collection.id}
+                    onOpenItem={handleOpenItem}
+                    onDeleteItem={handleDeleteItem}
+                  />
                 ))}
 
                 {/* Add Folder Button */}
@@ -456,7 +466,7 @@ export default function CollectionsPanel({ onOpenItem }) {
   );
 }
 
-const FolderItem = memo(function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle, onOpenItem, getItemsForFolder, expandedFolders, toggleFolder, token, onFolderDeleted }) {
+const FolderItem = memo(function FolderItem({ folder, collectionId, items, folders, isExpanded, onToggle, onOpenItem, getItemsForFolder, expandedFolders, toggleFolder, token, onFolderDeleted, onDeleteItem }) {
   const [showNewSubfolder, setShowNewSubfolder] = useState(false);
   const [newSubfolderName, setNewSubfolderName] = useState('');
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -501,13 +511,8 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
 
   const handleDeleteFolder = async (e) => {
     if (e) {
-      e.stopPropagation();
       e.preventDefault();
-    }
-    
-    if (!window.confirm(`Delete "${folder.name}" and all its contents?`)) {
-      setShowContextMenu(false);
-      return;
+      e.stopPropagation();
     }
 
     try {
@@ -690,26 +695,85 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
               toggleFolder={toggleFolder}
               token={token}
               onFolderDeleted={onFolderDeleted}
+              onDeleteItem={onDeleteItem}
             />
           ))}
 
           {/* Render items in this folder */}
           {getItemsForFolder(collectionId, folder.id).map((item) => (
-            <div
+            <SavedItemComponent
               key={item.id}
-              className="saved-item"
-              onClick={() => onOpenItem(item.id)}
-              data-testid={`saved-item-${item.id}`}
-            >
-              <FileText className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
-              <span>{item.name}</span>
-            </div>
+              item={item}
+              collectionId={collectionId}
+              onOpenItem={onOpenItem}
+              onDeleteItem={onDeleteItem}
+            />
           ))}
         </div>
       )}
     </div>
   );
 });
+
+function SavedItemComponent({ item, collectionId, onOpenItem, onDeleteItem }) {
+  const [showContextMenu, setShowContextMenu] = useState(false);
+  const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
+
+  const handleContextMenu = (e) => {
+    e.preventDefault();
+    setContextMenuPos({ x: e.clientX, y: e.clientY });
+    setShowContextMenu(true);
+  };
+
+  const handleDelete = () => {
+    setShowContextMenu(false);
+    onDeleteItem(item.id, collectionId);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = () => setShowContextMenu(false);
+    if (showContextMenu) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [showContextMenu]);
+
+  return (
+    <>
+      <div
+        className="saved-item"
+        onClick={() => onOpenItem(item.id)}
+        onContextMenu={handleContextMenu}
+        data-testid={`saved-item-${item.id}`}
+      >
+        <FileText className="w-4 h-4" style={{ color: 'var(--text-secondary)' }} />
+        <span>{item.name}</span>
+      </div>
+
+      {showContextMenu && (
+        <div
+          className="context-menu"
+          style={{
+            position: 'fixed',
+            top: contextMenuPos.y,
+            left: contextMenuPos.x,
+            zIndex: 1000
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            className="context-menu-item"
+            style={{ color: '#ef4444' }}
+            onClick={handleDelete}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Delete Item
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
 
 function NewCollectionDialog({ onClose, onCreate }) {
   const [name, setName] = useState('');

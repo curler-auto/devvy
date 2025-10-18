@@ -230,6 +230,38 @@ class SQLiteDatabase(DatabaseBase):
             item = result.scalar_one_or_none()
             return self._model_to_dict(item) if item else None
     
+    async def update_saved_item(self, item_id: str, user_id: str, updates: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        async with self.SessionLocal() as session:
+            result = await session.execute(
+                select(SavedItem).where(
+                    SavedItem.id == item_id,
+                    SavedItem.user_id == user_id
+                )
+            )
+            item = result.scalar_one_or_none()
+            if not item:
+                return None
+            
+            # Update fields
+            for key, value in updates.items():
+                if hasattr(item, key):
+                    setattr(item, key, value)
+            
+            await session.commit()
+            await session.refresh(item)
+            return self._model_to_dict(item)
+    
+    async def delete_saved_item(self, item_id: str, user_id: str) -> bool:
+        async with self.SessionLocal() as session:
+            result = await session.execute(
+                delete(SavedItem).where(
+                    SavedItem.id == item_id,
+                    SavedItem.user_id == user_id
+                )
+            )
+            await session.commit()
+            return result.rowcount > 0
+    
     async def delete_saved_items_by_folder(self, folder_id: str, user_id: str) -> int:
         async with self.SessionLocal() as session:
             result = await session.execute(
