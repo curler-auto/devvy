@@ -141,7 +141,12 @@ export default function SaveToCollectionDialog({ open, onClose, tab }) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      if (!isOpen) {
+        // Dialog is closing - call onClose without saved flag (undefined/false)
+        onClose(false);
+      }
+    }}>
       <DialogContent className="save-to-collection-dialog">
         <DialogHeader>
           <DialogTitle>Save to Collection</DialogTitle>
