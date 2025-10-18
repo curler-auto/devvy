@@ -28,6 +28,7 @@ import JSONFilter from './JSONFilter';
 import RandomJSONGenerator from './RandomJSONGenerator';
 import FlattenJSON from './FlattenJSON';
 import UnflattenJSON from './UnflattenJSON';
+import JSONEscapeUnescape from './JSONEscapeUnescape';
 import RandomXMLGenerator from './RandomXMLGenerator';
 import FakerTool from './FakerTool';
 import DataGenerator from './DataGenerator';
@@ -78,6 +79,7 @@ export const TOOL_COMPONENTS = {
   'random-json-generator': RandomJSONGenerator,
   'flatten-json': FlattenJSON,
   'unflatten-json': UnflattenJSON,
+  'json-escape-unescape': JSONEscapeUnescape,
   'random-xml-generator': RandomXMLGenerator,
   'faker-tool': FakerTool,
   'data-generator': DataGenerator,

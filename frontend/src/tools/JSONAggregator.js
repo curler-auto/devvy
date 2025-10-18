@@ -175,10 +175,9 @@ function JSONAggregator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   };
 
   return (
-    <div className="json-aggregator-tool" data-testid="json-aggregator">
-      <div className="flex flex-col h-full">
-        {/* Inputs */}
-        <div className="flex-1 mb-4 overflow-auto">
+    <div className="json-tool" data-testid="json-aggregator">
+      {/* Left Column - Inputs */}
+      <div>
           <div className="panel-header mb-2">
             <h3>JSON Inputs</h3>
             <Button 
@@ -240,7 +239,6 @@ function JSONAggregator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
               </div>
             ))}
           </div>
-        </div>
 
         {/* Aggregation Controls */}
         <div className="flex items-center justify-center gap-4 mb-4">
@@ -267,40 +265,41 @@ function JSONAggregator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
           </Button>
         </div>
 
-        {/* Result */}
-        <div className="flex-1">
-          <div className="panel-header">
-            <h3>Aggregated Result</h3>
-            <Button 
-              onClick={copyToClipboard} 
-              size="sm"
-              variant="outline"
-              disabled={!aggregatedJSON}
-            >
-              {copied ? (
-                <><Check className="w-4 h-4 mr-2" /> Copied</>
-              ) : (
-                <><Copy className="w-4 h-4 mr-2" /> Copy</>
-              )}
-            </Button>
-          </div>
-          <div className="editor-container h-[300px]">
-            <Editor
-              height="100%"
-              defaultLanguage="json"
-              theme={editorTheme}
-              value={aggregatedJSON}
-              options={{
-                minimap: { enabled: false },
-                fontSize: 12,
-                lineNumbers: 'on',
-                scrollBeyondLastLine: false,
-                readOnly: true,
-                automaticLayout: true,
-                tabSize: 2,
-              }}
-            />
-          </div>
+      </div>
+
+      {/* Right Column - Result */}
+      <div>
+        <div className="panel-header">
+          <h3>Aggregated Result</h3>
+          <Button 
+            onClick={copyToClipboard} 
+            size="sm"
+            variant="outline"
+            disabled={!aggregatedJSON}
+          >
+            {copied ? (
+              <><Check className="w-4 h-4 mr-2" /> Copied</>
+            ) : (
+              <><Copy className="w-4 h-4 mr-2" /> Copy</>
+            )}
+          </Button>
+        </div>
+        <div className="editor-container">
+          <Editor
+            height="100%"
+            defaultLanguage="json"
+            theme={editorTheme}
+            value={aggregatedJSON}
+            options={{
+              minimap: { enabled: false },
+              fontSize: 12,
+              lineNumbers: 'on',
+              scrollBeyondLastLine: false,
+              readOnly: true,
+              automaticLayout: true,
+              tabSize: 2,
+            }}
+          />
         </div>
       </div>
     </div>

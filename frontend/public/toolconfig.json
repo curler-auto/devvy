@@ -380,6 +380,15 @@
       "description": "Convert flat JSON objects with path-based keys to nested structures"
     },
     {
+      "id": "json-escape-unescape",
+      "name": "JSON Escape/Unescape",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Escape and unescape JSON strings for embedding in code"
+    },
+    {
       "id": "random-xml-generator",
       "name": "Random XML Generator",
       "category": "generators",

@@ -447,10 +447,9 @@ function JSONFilter({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   };
 
   return (
-    <div className="json-filter-tool" data-testid="json-filter">
-      <div className="flex flex-col h-full">
-        {/* Input JSON */}
-        <div className="flex-1 json-panel mb-4">
+    <div className="json-tool" data-testid="json-filter">
+      {/* Left Column - Input */}
+      <div>
           <div className="panel-header">
             <h3>Input JSON</h3>
             <Button 
@@ -486,7 +485,6 @@ function JSONFilter({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
               </div>
             )}
           </div>
-        </div>
 
         {/* Filter Rules */}
         <div className="mb-4">
@@ -587,51 +585,52 @@ function JSONFilter({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
           )}
         </div>
 
-        {/* Filtered Result */}
-        <div className="flex-1">
-          <div className="panel-header">
-            <h3>Filtered Result</h3>
-            <div className="flex gap-2">
-              <Button 
-                onClick={beautifyOutput} 
-                size="sm"
-                variant="outline"
-                disabled={!filteredJSON}
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                Beautify
-              </Button>
-              <Button 
-                onClick={copyToClipboard} 
-                size="sm"
-                variant="outline"
-                disabled={!filteredJSON}
-              >
-                {copied ? (
-                  <><Check className="w-4 h-4 mr-2" /> Copied</>
-                ) : (
-                  <><Copy className="w-4 h-4 mr-2" /> Copy</>
-                )}
-              </Button>
-            </div>
+      </div>
+
+      {/* Right Column - Filtered Result */}
+      <div>
+        <div className="panel-header">
+          <h3>Filtered Result</h3>
+          <div className="flex gap-2">
+            <Button 
+              onClick={beautifyOutput} 
+              size="sm"
+              variant="outline"
+              disabled={!filteredJSON}
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Beautify
+            </Button>
+            <Button 
+              onClick={copyToClipboard} 
+              size="sm"
+              variant="outline"
+              disabled={!filteredJSON}
+            >
+              {copied ? (
+                <><Check className="w-4 h-4 mr-2" /> Copied</>
+              ) : (
+                <><Copy className="w-4 h-4 mr-2" /> Copy</>
+              )}
+            </Button>
           </div>
-          <div className="editor-container h-[300px]">
-            <Editor
-              height="100%"
-              defaultLanguage="json"
-              theme={editorTheme}
-              value={filteredJSON}
-              options={{
-                minimap: { enabled: false },
-                fontSize: 12,
-                lineNumbers: 'on',
-                scrollBeyondLastLine: false,
-                readOnly: true,
-                automaticLayout: true,
-                tabSize: 2,
-              }}
-            />
-          </div>
+        </div>
+        <div className="editor-container">
+          <Editor
+            height="100%"
+            defaultLanguage="json"
+            theme={editorTheme}
+            value={filteredJSON}
+            options={{
+              minimap: { enabled: false },
+              fontSize: 12,
+              lineNumbers: 'on',
+              scrollBeyondLastLine: false,
+              readOnly: true,
+              automaticLayout: true,
+              tabSize: 2,
+            }}
+          />
         </div>
       </div>
     </div>
