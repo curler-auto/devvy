@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
-import { Code, Copy, Check, AlertCircle, Filter, Plus, X, Sparkles } from 'lucide-react';
+import { Code, Copy, Check, AlertCircle, Filter, Plus, X, Sparkles, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { JSONPath } from 'jsonpath-plus';
