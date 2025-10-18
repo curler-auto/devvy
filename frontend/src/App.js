@@ -103,7 +103,7 @@ function MainApp() {
     loadLicenseAndTools();
   }, []);
 
-  // Keyboard shortcut handler for Ctrl/Cmd+S
+  // Keyboard shortcut handler for Ctrl/Cmd+S and Ctrl/Cmd+Shift+S
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
@@ -111,7 +111,17 @@ function MainApp() {
         if (activeTab) {
           const tab = tabs.find(t => t.tabId === activeTab);
           if (tab) {
-            handleSaveTab(tab);
+            if (e.shiftKey) {
+              // Ctrl/Cmd+Shift+S: Save As (always show dialog)
+              handleSaveTab(tab);
+            } else {
+              // Ctrl/Cmd+S: Direct save for existing items
+              if (tab.savedItemId) {
+                handleDirectSave(tab);
+              } else {
+                handleSaveTab(tab);
+              }
+            }
           }
         }
       }
@@ -124,9 +134,22 @@ function MainApp() {
   // Track unsaved changes for tabs with savedItemId
   useEffect(() => {
     tabs.forEach(tab => {
-      if (tab.savedItemId && tab.data) {
-        // Mark as unsaved when data changes
-        setUnsavedTabs(prev => new Set(prev).add(tab.tabId));
+      if (tab.savedItemId) {
+        // Compare current data and name with original
+        const currentData = JSON.stringify(tab.data || {});
+        const currentName = tab.customName || tab.name;
+        const hasDataChanged = tab.originalData && currentData !== tab.originalData;
+        const hasNameChanged = tab.savedItemName && currentName !== tab.savedItemName;
+        
+        if (hasDataChanged || hasNameChanged) {
+          setUnsavedTabs(prev => new Set(prev).add(tab.tabId));
+        } else {
+          setUnsavedTabs(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(tab.tabId);
+            return newSet;
+          });
+        }
       }
     });
   }, [tabs]);
@@ -421,8 +444,13 @@ function MainApp() {
   const handleSaveCurrentTab = () => {
     const currentTab = tabs.find(t => t.tabId === activeTab);
     if (currentTab) {
-      setTabToSave(currentTab);
-      setShowSaveDialog(true);
+      // Direct save for existing items, dialog for new items
+      if (currentTab.savedItemId) {
+        handleDirectSave(currentTab);
+      } else {
+        setTabToSave(currentTab);
+        setShowSaveDialog(true);
+      }
     } else {
       toast.error('No active tab to save');
     }
@@ -432,6 +460,50 @@ function MainApp() {
     if (!tab) return;
     setTabToSave(tab);
     setShowSaveDialog(true);
+  };
+
+  const handleDirectSave = async (tab) => {
+    if (!tab || !tab.savedItemId) return;
+
+    // For desktop mode, use 'desktop-token'
+    const token = 'desktop-token';
+    try {
+      await axios.put(
+        `${API}/saved-items/${tab.savedItemId}`,
+        {
+          name: tab.customName || tab.name,
+          description: '',
+          tool_id: tab.id,
+          tool_data: tab.data || {},
+          collection_id: tab.collectionId || '',
+          folder_id: tab.folderId || null
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      toast.success('Saved!');
+      
+      // Clear unsaved flag
+      setUnsavedTabs(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(tab.tabId);
+        return newSet;
+      });
+      
+      // Update originalData and savedItemName
+      setTabs(tabs.map(t => 
+        t.tabId === tab.tabId 
+          ? { 
+              ...t, 
+              originalData: JSON.stringify(t.data || {}),
+              savedItemName: t.customName || t.name
+            }
+          : t
+      ));
+    } catch (error) {
+      console.error('Failed to save:', error);
+      toast.error('Failed to save');
+    }
   };
 
   const handleOpenSavedItem = (savedItem) => {
@@ -459,6 +531,8 @@ function MainApp() {
       data: savedItem.tool_data || {},
       savedItemId: savedItem.id, // Mark this tab as opened from collection
       savedItemName: savedItem.name,
+      collectionId: savedItem.collection_id,
+      folderId: savedItem.folder_id,
       originalData: JSON.stringify(savedItem.tool_data || {}) // Store original for comparison
     };
     setTabs([...tabs, newTab]);
@@ -854,20 +928,26 @@ function MainApp() {
         <SaveToCollectionDialog
           open={showSaveDialog}
           onClose={(saved) => {
-            if (saved && tabToSave) {
+            // Only update if actually saved (not cancelled)
+            if (saved === true && tabToSave) {
               // Clear unsaved flag for this tab
               setUnsavedTabs(prev => {
                 const newSet = new Set(prev);
                 newSet.delete(tabToSave.tabId);
                 return newSet;
               });
-              // Update tab's originalData to current data
+              // Update tab's originalData and savedItemName
               setTabs(tabs.map(t => 
                 t.tabId === tabToSave.tabId 
-                  ? { ...t, originalData: JSON.stringify(t.data || {}) }
+                  ? { 
+                      ...t, 
+                      originalData: JSON.stringify(t.data || {}),
+                      savedItemName: t.customName || t.name
+                    }
                   : t
               ));
             }
+            // Always close dialog
             setShowSaveDialog(false);
             setTabToSave(null);
           }}
