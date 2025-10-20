@@ -47,7 +47,7 @@ function DataCompare({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       const config = dataSourceConfigs.find(c => c.id === sourceId);
       if (!config) return;
 
-      const response = await axios.get(`${config.apiUrl}/databases`, {
+      const response = await axios.get(`/api/datasources/${sourceId}/databases`, {
         headers: { 'Authorization': `Bearer ${config.token || ''}` }
       });
 
@@ -72,7 +72,7 @@ function DataCompare({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       const config = dataSourceConfigs.find(c => c.id === sourceId);
       if (!config) return;
 
-      const response = await axios.get(`${config.apiUrl}/databases/${dbName}/tables`, {
+      const response = await axios.get(`/api/datasources/${sourceId}/databases/${dbName}/tables`, {
         headers: { 'Authorization': `Bearer ${config.token || ''}` }
       });
 

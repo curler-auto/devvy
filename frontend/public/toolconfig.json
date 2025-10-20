@@ -227,6 +227,15 @@
       "description": "Compare schemas and data across SQL, NoSQL, and Excel sources"
     },
     {
+      "id": "code-executor",
+      "name": "Code Executor",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Play",
+      "description": "Execute code in 15+ languages with integrated terminal for dependency management"
+    },
+    {
       "id": "regex-tester",
       "name": "Regex Tester",
       "category": "text-tools",

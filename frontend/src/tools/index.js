@@ -65,6 +65,7 @@ import KafkaTopicViewer from './KafkaTopicViewer';
 import FilebeatViewer from './FilebeatViewer';
 import VectorViewer from './VectorViewer';
 import DataCompare from './DataCompare';
+import CodeExecutor from './CodeExecutor';
 
 /**
  * Tool Components Registry
@@ -121,6 +122,7 @@ export const TOOL_COMPONENTS = {
   'filebeat-viewer': FilebeatViewer,
   'vector-viewer': VectorViewer,
   'data-compare': DataCompare,
+  'code-executor': CodeExecutor,
 };
 
 /**

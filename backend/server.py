@@ -1903,6 +1903,127 @@ async def pull_docker_image(request: DockerPullRequest):
         logger.error(f"Docker pull error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== Data Comparison Endpoints ====================
+
+class DataSourceConfig(BaseModel):
+    id: str
+    name: str
+    type: str  # mysql, postgresql, mongodb, excel, etc.
+    apiUrl: str
+    token: Optional[str] = None
+    host: Optional[str] = None
+    port: Optional[int] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+
+class CompareRequest(BaseModel):
+    left: Dict
+    right: Dict
+    compareData: bool = False
+
+@api_router.get("/datasources/{source_id}/databases")
+async def get_databases(source_id: str):
+    """Get list of databases from a data source"""
+    try:
+        # This would connect to the actual database
+        # For now, return mock data
+        return {"databases": ["database1", "database2", "database3"]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/datasources/{source_id}/databases/{db_name}/tables")
+async def get_tables(source_id: str, db_name: str):
+    """Get list of tables from a database"""
+    try:
+        # This would connect to the actual database
+        # For now, return mock data
+        return {"tables": [
+            {"name": "users", "rowCount": 1000},
+            {"name": "orders", "rowCount": 5000},
+            {"name": "products", "rowCount": 500}
+        ]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/compare/schemas")
+async def compare_schemas(request: CompareRequest):
+    """Compare schemas between two data sources"""
+    try:
+        # This would perform actual schema comparison
+        # For now, return mock comparison results
+        results = {
+            "tables": [
+                {
+                    "name": "users",
+                    "status": "match",
+                    "differences": []
+                },
+                {
+                    "name": "orders",
+                    "status": "mismatch",
+                    "differences": [
+                        {"field": "status", "description": "Column type mismatch: VARCHAR(50) vs VARCHAR(100)"},
+                        {"field": "created_at", "description": "Column missing in right source"}
+                    ]
+                },
+                {
+                    "name": "products",
+                    "status": "partial",
+                    "differences": [
+                        {"field": "price", "description": "Precision mismatch: DECIMAL(10,2) vs DECIMAL(12,2)"}
+                    ]
+                }
+            ],
+            "summary": {
+                "totalTables": 3,
+                "matches": 1,
+                "mismatches": 1,
+                "partial": 1
+            }
+        }
+        return results
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==================== Code Execution Endpoints ====================
+
+class CodeExecutionRequest(BaseModel):
+    language: str
+    code: str
+    stdin: Optional[str] = ""
+    configId: str
+
+class CodeStopRequest(BaseModel):
+    configId: str
+
+@api_router.post("/code/execute")
+async def execute_code(request: CodeExecutionRequest):
+    """Execute code in specified language"""
+    try:
+        # This would execute code on remote/local environment
+        # For now, return mock execution result
+        import time
+        time.sleep(0.5)  # Simulate execution time
+        
+        result = {
+            "output": f"Executed {request.language} code successfully!\n",
+            "stdout": "Hello, World!\n",
+            "stderr": "",
+            "exitCode": 0,
+            "executionTime": 523
+        }
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/code/stop")
+async def stop_execution(request: CodeStopRequest):
+    """Stop running code execution"""
+    try:
+        return {"message": "Execution stopped"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.on_event("startup")
 async def startup_db_client():
     """Initialize database on startup"""
