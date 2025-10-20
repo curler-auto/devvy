@@ -236,6 +236,15 @@
       "description": "Execute code in 15+ languages with integrated terminal for dependency management"
     },
     {
+      "id": "openapi-to-tests",
+      "name": "OpenAPI to Test Cases",
+      "category": "api-testing",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Convert OpenAPI specs to test code in Python, Java, JavaScript, Postman, and more"
+    },
+    {
       "id": "regex-tester",
       "name": "Regex Tester",
       "category": "text-tools",

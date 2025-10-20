@@ -2024,6 +2024,216 @@ async def stop_execution(request: CodeStopRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# ==================== OpenAPI Test Generation Endpoints ====================
+
+class OpenAPITestRequest(BaseModel):
+    spec: Dict
+    outputFormat: str
+    testFramework: str
+    options: Dict
+
+@api_router.post("/openapi/generate-tests")
+async def generate_tests_from_openapi(request: OpenAPITestRequest):
+    """Generate test code from OpenAPI specification"""
+    try:
+        spec = request.spec
+        output_format = request.outputFormat
+        framework = request.testFramework
+        options = request.options
+        
+        # Generate test code based on format
+        if output_format == 'python':
+            code = generate_python_tests(spec, framework, options)
+        elif output_format == 'postman':
+            code = generate_postman_collection(spec, options)
+        elif output_format == 'java':
+            code = generate_java_tests(spec, framework, options)
+        elif output_format == 'javascript':
+            code = generate_javascript_tests(spec, framework, options)
+        elif output_format == 'typescript':
+            code = generate_typescript_tests(spec, framework, options)
+        else:
+            code = f"# Test generation for {output_format} coming soon"
+        
+        return {"code": code}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def generate_python_tests(spec, framework, options):
+    """Generate Python test code"""
+    base_url = options.get('baseUrl', 'http://localhost:8000')
+    code = f"""import pytest
+import requests
+import json
+
+BASE_URL = "{base_url}"
+
+"""
+    
+    # Generate test for each endpoint
+    for path, methods in spec.get('paths', {}).items():
+        for method, details in methods.items():
+            if method not in ['get', 'post', 'put', 'delete', 'patch']:
+                continue
+            
+            operation_id = details.get('operationId', f"{method}_{path.replace('/', '_')}")
+            summary = details.get('summary', f'Test {method.upper()} {path}')
+            
+            code += f"""
+def test_{operation_id}():
+    \"\"\"Test: {summary}\"\"\"
+    url = f"{{BASE_URL}}{path}"
+    response = requests.{method}(url)
+    assert response.status_code in [200, 201, 204]
+    """
+            
+            if options.get('includeValidation'):
+                code += """
+    assert response.headers.get('Content-Type') == 'application/json'
+    data = response.json()
+    assert data is not None
+"""
+    
+    return code
+
+def generate_postman_collection(spec, options):
+    """Generate Postman collection"""
+    collection = {
+        "info": {
+            "name": spec.get('info', {}).get('title', 'API Tests'),
+            "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+        },
+        "item": []
+    }
+    
+    for path, methods in spec.get('paths', {}).items():
+        for method, details in methods.items():
+            if method not in ['get', 'post', 'put', 'delete', 'patch']:
+                continue
+            
+            item = {
+                "name": details.get('summary', f"{method.upper()} {path}"),
+                "request": {
+                    "method": method.upper(),
+                    "header": [],
+                    "url": {
+                        "raw": f"{{{{base_url}}}}{path}",
+                        "host": ["{{base_url}}"],
+                        "path": path.split('/')[1:]
+                    }
+                },
+                "response": []
+            }
+            
+            if options.get('includeValidation'):
+                item["event"] = [{
+                    "listen": "test",
+                    "script": {
+                        "exec": [
+                            "pm.test('Status code is 200', function() {",
+                            "    pm.response.to.have.status(200);",
+                            "});"
+                        ]
+                    }
+                }]
+            
+            collection["item"].append(item)
+    
+    return json.dumps(collection, indent=2)
+
+def generate_java_tests(spec, framework, options):
+    """Generate Java test code"""
+    base_url = options.get('baseUrl', 'http://localhost:8000')
+    code = f"""import org.junit.jupiter.api.Test;
+import io.restassured.RestAssured;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+
+public class ApiTests {{
+    
+    private static final String BASE_URL = "{base_url}";
+    
+"""
+    
+    for path, methods in spec.get('paths', {}).items():
+        for method, details in methods.items():
+            if method not in ['get', 'post', 'put', 'delete', 'patch']:
+                continue
+            
+            operation_id = details.get('operationId', f"{method}_{path.replace('/', '_')}")
+            summary = details.get('summary', f'Test {method.upper()} {path}')
+            
+            code += f"""
+    @Test
+    public void test_{operation_id}() {{
+        given()
+            .baseUri(BASE_URL)
+        .when()
+            .{method}("{path}")
+        .then()
+            .statusCode(200);
+    }}
+"""
+    
+    code += "\n}\n"
+    return code
+
+def generate_javascript_tests(spec, framework, options):
+    """Generate JavaScript test code"""
+    base_url = options.get('baseUrl', 'http://localhost:8000')
+    code = f"""const axios = require('axios');
+
+const BASE_URL = '{base_url}';
+
+"""
+    
+    for path, methods in spec.get('paths', {}).items():
+        for method, details in methods.items():
+            if method not in ['get', 'post', 'put', 'delete', 'patch']:
+                continue
+            
+            operation_id = details.get('operationId', f"{method}_{path.replace('/', '_')}")
+            summary = details.get('summary', f'Test {method.upper()} {path}')
+            
+            code += f"""
+describe('{summary}', () => {{
+    test('should return success', async () => {{
+        const response = await axios.{method}(`${{BASE_URL}}{path}`);
+        expect(response.status).toBe(200);
+    }});
+}});
+"""
+    
+    return code
+
+def generate_typescript_tests(spec, framework, options):
+    """Generate TypeScript test code"""
+    base_url = options.get('baseUrl', 'http://localhost:8000')
+    code = f"""import axios from 'axios';
+
+const BASE_URL: string = '{base_url}';
+
+"""
+    
+    for path, methods in spec.get('paths', {}).items():
+        for method, details in methods.items():
+            if method not in ['get', 'post', 'put', 'delete', 'patch']:
+                continue
+            
+            operation_id = details.get('operationId', f"{method}_{path.replace('/', '_')}")
+            summary = details.get('summary', f'Test {method.upper()} {path}')
+            
+            code += f"""
+describe('{summary}', () => {{
+    test('should return success', async () => {{
+        const response = await axios.{method}<any>(`${{BASE_URL}}{path}`);
+        expect(response.status).toBe(200);
+    }});
+}});
+"""
+    
+    return code
+
 @app.on_event("startup")
 async def startup_db_client():
     """Initialize database on startup"""
