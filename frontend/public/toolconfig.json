@@ -182,6 +182,51 @@
       "description": "Manage Docker containers, images, and builds"
     },
     {
+      "id": "code-compare",
+      "name": "Code Compare",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Compare code files from different branches/commits with Monaco Diff Editor"
+    },
+    {
+      "id": "kafka-topic-viewer",
+      "name": "Kafka Topic Viewer",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Database",
+      "description": "Real-time Kafka topic message viewer with advanced filtering and search"
+    },
+    {
+      "id": "filebeat-viewer",
+      "name": "Filebeat Viewer",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "View and analyze Filebeat logs with advanced filtering and search"
+    },
+    {
+      "id": "vector-viewer",
+      "name": "Vector Viewer",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Zap",
+      "description": "View and analyze Vector observability data with advanced filtering"
+    },
+    {
+      "id": "data-compare",
+      "name": "Data Compare",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitCompare",
+      "description": "Compare schemas and data across SQL, NoSQL, and Excel sources"
+    },
+    {
       "id": "regex-tester",
       "name": "Regex Tester",
       "category": "text-tools",

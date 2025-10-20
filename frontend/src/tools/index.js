@@ -60,6 +60,11 @@ import S3Visualizer from './S3Visualizer';
 import SwaggerPayloadBuilder from './SwaggerPayloadBuilder';
 import RepaymentCalculator from './RepaymentCalculator';
 import DockerUI from './DockerUI';
+import CodeCompare from './CodeCompare';
+import KafkaTopicViewer from './KafkaTopicViewer';
+import FilebeatViewer from './FilebeatViewer';
+import VectorViewer from './VectorViewer';
+import DataCompare from './DataCompare';
 
 /**
  * Tool Components Registry
@@ -111,6 +116,11 @@ export const TOOL_COMPONENTS = {
   'swagger-payload-builder': SwaggerPayloadBuilder,
   'repayment-calculator': RepaymentCalculator,
   'docker-ui': DockerUI,
+  'code-compare': CodeCompare,
+  'kafka-topic-viewer': KafkaTopicViewer,
+  'filebeat-viewer': FilebeatViewer,
+  'vector-viewer': VectorViewer,
+  'data-compare': DataCompare,
 };
 
 /**
