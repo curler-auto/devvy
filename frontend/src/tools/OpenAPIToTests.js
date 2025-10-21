@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { FileCode, Download, Copy, Check, Upload, Sparkles, Code, FileJson, AlertCircle } from 'lucide-react';
+import { FileCode, Download, Copy, Check, Upload, Sparkles, Code, FileJson, AlertCircle, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import axios from 'axios';
 import Editor from '@monaco-editor/react';
+import AIChat from '../components/AIChat';
 
 function OpenAPIToTests({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   const [openApiSpec, setOpenApiSpec] = useState('');
@@ -16,6 +17,20 @@ function OpenAPIToTests({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   const [includeExamples, setIncludeExamples] = useState(true);
   const [baseUrl, setBaseUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [showAIChat, setShowAIChat] = useState(false);
+  const [aiChatMinimized, setAiChatMinimized] = useState(false);
+
+  const toolContext = {
+    toolName: 'OpenAPI to Test Cases',
+    toolId: 'openapi-to-tests',
+    description: 'Convert OpenAPI specifications to test code in multiple languages',
+    currentData: {
+      spec: openApiSpec,
+      outputFormat,
+      testFramework,
+      generatedCode
+    }
+  };
 
   const outputFormats = {
     python: { name: 'Python', frameworks: ['pytest', 'unittest', 'requests'], icon: '🐍' },
@@ -217,6 +232,10 @@ function OpenAPIToTests({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
           <h2>OpenAPI to Test Cases</h2>
         </div>
         <div className="flex items-center gap-2">
+          <Button onClick={() => setShowAIChat(true)} size="sm" variant="outline">
+            <MessageSquare className="w-4 h-4 mr-2" />
+            AI Assistant
+          </Button>
           <Button onClick={loadExample} size="sm" variant="outline">
             <Sparkles className="w-4 h-4 mr-2" />
             Load Example
@@ -348,6 +367,15 @@ function OpenAPIToTests({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
           </div>
         </div>
       </div>
+
+      {/* AI Chat Component */}
+      <AIChat
+        toolContext={toolContext}
+        isOpen={showAIChat}
+        onClose={() => setShowAIChat(false)}
+        onMinimize={() => setAiChatMinimized(!aiChatMinimized)}
+        isMinimized={aiChatMinimized}
+      />
     </div>
   );
 }

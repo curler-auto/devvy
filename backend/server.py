@@ -2234,6 +2234,57 @@ describe('{summary}', () => {{
     
     return code
 
+# ==================== AI Chat Endpoints ====================
+
+class AIChatRequest(BaseModel):
+    messages: List[Dict]
+    toolContext: Dict
+    llmConfig: Optional[Dict] = None
+
+@api_router.post("/ai/chat")
+async def ai_chat(request: AIChatRequest):
+    """AI-powered chat assistant with tool context"""
+    try:
+        messages = request.messages
+        tool_context = request.toolContext
+        llm_config = request.llmConfig or {}
+        
+        # Build context-aware system prompt
+        system_prompt = f"""You are an AI assistant integrated into the {tool_context.get('toolName')} tool.
+Your purpose: {tool_context.get('description')}
+
+Current tool state:
+{json.dumps(tool_context.get('currentData', {}), indent=2)}
+
+Provide helpful, accurate, and context-aware assistance. You can:
+- Explain features and functionality
+- Generate code or configurations
+- Debug issues
+- Suggest best practices
+- Answer questions about the tool
+
+Be concise and actionable."""
+
+        # For now, return intelligent mock responses
+        # In production, this would call OpenAI, Anthropic, or local LLM
+        user_message = messages[-1]['content'].lower()
+        
+        if 'generate' in user_message or 'create' in user_message:
+            response = f"I can help you generate test cases! Based on your OpenAPI spec, I'll create comprehensive tests. Would you like me to:\n\n1. Generate tests for all endpoints\n2. Focus on specific HTTP methods\n3. Include authentication tests\n4. Add data validation\n\nWhat would you prefer?"
+        elif 'error' in user_message or 'issue' in user_message or 'problem' in user_message:
+            response = "I'll help you troubleshoot! Common issues:\n\n1. Invalid OpenAPI spec format\n2. Missing required fields\n3. Unsupported HTTP methods\n\nCan you share more details about the error you're seeing?"
+        elif 'example' in user_message or 'sample' in user_message:
+            response = "Here's a sample OpenAPI spec structure:\n\n```json\n{\n  \"openapi\": \"3.0.0\",\n  \"info\": {\n    \"title\": \"My API\",\n    \"version\": \"1.0.0\"\n  },\n  \"paths\": {\n    \"/users\": {\n      \"get\": {\n        \"summary\": \"Get users\"\n      }\n    }\n  }\n}\n```\n\nWould you like me to explain any part?"
+        elif 'best practice' in user_message or 'recommend' in user_message:
+            response = "Best practices for API testing:\n\n1. ✅ Test all HTTP methods\n2. ✅ Validate response schemas\n3. ✅ Include authentication tests\n4. ✅ Test error scenarios\n5. ✅ Use meaningful test names\n6. ✅ Add assertions for status codes\n\nWant me to generate tests following these practices?"
+        else:
+            response = f"I'm here to help with {tool_context.get('toolName')}! I can:\n\n• Generate test code from your OpenAPI spec\n• Explain different output formats\n• Help debug issues\n• Suggest best practices\n• Answer questions\n\nWhat would you like to know?"
+        
+        return {"message": response}
+    except Exception as e:
+        logger.error(f"AI chat error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.on_event("startup")
 async def startup_db_client():
     """Initialize database on startup"""
