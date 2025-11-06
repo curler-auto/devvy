@@ -1,0 +1,1686 @@
+Card Name,Card Description,List Name,Labels,Due Date,Members
+JSON Beautifier,"Format and validate JSON data
+
+Category: formatters
+Tool ID: json-beautifier
+Tier: free",Done,"formatters,Simple",,
+REST API Tester,"Test REST APIs like Postman
+
+Category: api-testing
+Tool ID: rest-api-tester
+Tier: premium",Done,"api-testing,Complex",,
+gRPC Tester,"Test gRPC services
+
+Category: api-testing
+Tool ID: grpc-tester
+Tier: premium",Done,"api-testing,Complex",,
+GraphQL Playground,"Test GraphQL APIs
+
+Category: api-testing
+Tool ID: graphql-playground
+Tier: premium",Done,"api-testing,Simple",,
+WebSocket Tester,"Test WebSocket connections
+
+Category: api-testing
+Tool ID: websocket-tester
+Tier: premium",Done,"api-testing,Complex",,
+UI Recorder,"Record UI interactions and generate Playwright code
+
+Category: automation
+Tool ID: ui-recorder
+Tier: premium",Done,"automation,Simple",,
+Base64 Encoder/Decoder,"Encode and decode Base64 strings
+
+Category: encoders
+Tool ID: base64-encoder
+Tier: free",Done,"encoders,Simple",,
+URL Encoder/Decoder,"Encode and decode URLs
+
+Category: encoders
+Tool ID: url-encoder
+Tier: free",To Do,"encoders,Simple",,
+JWT Encoder/Decoder,"Encode and decode JWT tokens
+
+Category: security
+Tool ID: jwt-decoder
+Tier: free",To Do,"security,Simple",,
+String Profiler,"Comprehensive string analysis and manipulation tool
+
+Category: text-tools
+Tool ID: string-operations
+Tier: free",To Do,"text-tools,Simple",,
+Timestamp Converter,"Convert between Unix timestamps and human-readable dates
+
+Category: generators
+Tool ID: timestamp-converter
+Tier: free",Done,"generators,Medium",,
+Hash Generator,"Generate and verify hashes (MD5, SHA-1, SHA-256, SHA-512)
+
+Category: security
+Tool ID: hash-generator
+Tier: free",Done,"security,Medium",,
+UUID Generator,"Generate UUIDs/GUIDs in various formats
+
+Category: generators
+Tool ID: uuid-generator
+Tier: free",Done,"generators,Medium",,
+TOTP Generator,"Generate Time-based One-Time Passwords (2FA codes)
+
+Category: generators
+Tool ID: totp-generator
+Tier: free",Done,"generators,Medium",,
+Shell Script Executor,"Execute bash/shell scripts with real-time output
+
+Category: devops
+Tool ID: shell-executor
+Tier: free",Done,"devops,Simple",,
+Cron Manager,"Manage cron jobs with live countdown to next run
+
+Category: devops
+Tool ID: cron-manager
+Tier: free",Done,"devops,Simple",,
+S3 Visualizer,"Browse AWS S3 buckets with LocalStack support
+
+Category: devops
+Tool ID: s3-visualizer
+Tier: free",Done,"devops,Simple",,
+Swagger Payload Builder,"Generate request payloads from Swagger/OpenAPI specs
+
+Category: api-testing
+Tool ID: swagger-payload-builder
+Tier: free",Done,"api-testing,Complex",,
+Repayment Calculator,"Calculate loan repayment schedules with amortization
+
+Category: utilities
+Tool ID: repayment-calculator
+Tier: free",Done,"utilities,Simple",,
+Docker UI,"Manage Docker containers, images, and builds
+
+Category: devops
+Tool ID: docker-ui
+Tier: free",Done,"devops,Simple",,
+Code Compare,"Compare code files from different branches/commits with Monaco Diff Editor
+
+Category: utilities
+Tool ID: code-compare
+Tier: free",Done,"utilities,Simple",,
+Kafka Topic Viewer,"Real-time Kafka topic message viewer with advanced filtering and search
+
+Category: devops
+Tool ID: kafka-topic-viewer
+Tier: free",To Do,"devops,Simple",,
+Filebeat Viewer,"View and analyze Filebeat logs with advanced filtering and search
+
+Category: devops
+Tool ID: filebeat-viewer
+Tier: free",Done,"devops,Simple",,
+Vector Viewer,"View and analyze Vector observability data with advanced filtering
+
+Category: devops
+Tool ID: vector-viewer
+Tier: free",Done,"devops,Simple",,
+Data Compare,"Compare schemas and data across SQL, NoSQL, and Excel sources
+
+Category: utilities
+Tool ID: data-compare
+Tier: free",Done,"utilities,Simple",,
+Code Executor,"Execute code in 15+ languages with integrated terminal for dependency management
+
+Category: utilities
+Tool ID: code-executor
+Tier: free",Done,"utilities,Simple",,
+OpenAPI to Test Cases,"Convert OpenAPI specs to test code in Python, Java, JavaScript, Postman, and more
+
+Category: api-testing
+Tool ID: openapi-to-tests
+Tier: free",To Do,"api-testing,Simple",,
+Regex Tester,"Test and debug regular expressions
+
+Category: text-tools
+Tool ID: regex-tester
+Tier: free",Done,"text-tools,Complex",,
+QR Code Generator,"Generate customizable QR codes
+
+Category: generators
+Tool ID: qr-code-generator
+Tier: free",To Do,"generators,Medium",,
+Diff Checker,"Compare text differences
+
+Category: text-tools
+Tool ID: diff-checker
+Tier: premium",Done,"text-tools,Simple",,
+Markdown Visualizer,"Preview and edit Markdown with live rendering
+
+Category: text-tools
+Tool ID: markdown-preview
+Tier: free",To Do,"text-tools,Simple",,
+SQL Formatter,"Format SQL queries
+
+Category: formatters
+Tool ID: sql-formatter
+Tier: premium",To Do,"formatters,Medium",,
+XML Formatter,"Format and validate XML
+
+Category: formatters
+Tool ID: xml-formatter
+Tier: free",To Do,"formatters,Medium",,
+YAML Formatter,"Format and validate YAML
+
+Category: formatters
+Tool ID: yaml-formatter
+Tier: free",Done,"formatters,Medium",,
+Color Picker,"Pick and convert colors
+
+Category: design
+Tool ID: color-picker
+Tier: free",To Do,"design,Simple",,
+Image Optimizer,"Optimize and compress images
+
+Category: design
+Tool ID: image-optimizer
+Tier: premium",To Do,"design,Simple",,
+Cron Expression Builder,"Build cron expressions
+
+Category: generators
+Tool ID: cron-expression
+Tier: free",To Do,"generators,Simple",,
+SSH Key Generator,"Generate and verify SSH key pairs
+
+Category: generators
+Tool ID: ssh-key-generator
+Tier: free",Done,"generators,Medium",,
+SSL Certificate Generator,"Generate self-signed SSL/TLS certificates
+
+Category: generators
+Tool ID: ssl-cert-generator
+Tier: free",Done,"generators,Medium",,
+TOML Formatter,"Format and validate TOML
+
+Category: formatters
+Tool ID: toml-formatter
+Tier: free",Done,"formatters,Medium",,
+JSON Compare,"Compare two JSON documents and highlight differences
+
+Category: json
+Tool ID: json-compare
+Tier: free",Done,"json,Simple",,
+JSON Path Finder,"Find and extract JSON paths
+
+Category: json
+Tool ID: json-path-finder
+Tier: free",Done,"json,Simple",,
+JSON Path Extract,"Extract data from JSON using JSONPath expressions
+
+Category: json
+Tool ID: json-path-extract
+Tier: free",Done,"json,Simple",,
+JSON Tree View,"Visualize JSON data in a collapsible tree structure
+
+Category: json
+Tool ID: json-tree-view
+Tier: free",Done,"json,Simple",,
+JSON Aggregator,"Combine multiple JSON objects into arrays or merge objects
+
+Category: json
+Tool ID: json-aggregator
+Tier: free",Done,"json,Simple",,
+JSON Filter,"Filter JSON data based on various conditions
+
+Category: json
+Tool ID: json-filter
+Tier: free",Done,"json,Simple",,
+Random JSON Generator,"Generate random JSON data with customizable structure (Legacy - use Data Generator instead)
+
+Category: generators
+Tool ID: random-json-generator
+Tier: free",To Do,"generators,Medium",,
+Flatten JSON,"Convert nested JSON objects to flat structures with path-based keys
+
+Category: json
+Tool ID: flatten-json
+Tier: free",Done,"json,Simple",,
+Unflatten JSON,"Convert flat JSON objects with path-based keys to nested structures
+
+Category: json
+Tool ID: unflatten-json
+Tier: free",Done,"json,Simple",,
+JSON Escape/Unescape,"Escape and unescape JSON strings for embedding in code
+
+Category: json
+Tool ID: json-escape-unescape
+Tier: free",To Do,"json,Simple",,
+Random XML Generator,"Generate random XML data with customizable structure
+
+Category: generators
+Tool ID: random-xml-generator
+Tier: free",Done,"generators,Medium",,
+Faker Data Generator,"Generate random fake data using Faker.js library (Legacy - use Data Generator instead)
+
+Category: generators
+Tool ID: faker-tool
+Tier: free",To Do,"generators,Simple",,
+Data Generator,"Generate data in multiple formats (Basic, JSON, CSV, XML, YAML, TOML, SQL) with Faker.js
+
+Category: generators
+Tool ID: data-generator
+Tier: free",Done,"generators,Medium",,
+YAML to JSON,"Convert YAML to JSON format
+
+Category: converters
+Tool ID: yaml-to-json
+Tier: free",Done,"converters,Simple",,
+JSON to YAML,"Convert JSON to YAML format
+
+Category: converters
+Tool ID: json-to-yaml
+Tier: free",Done,"converters,Simple",,
+JSON to XML,"Convert JSON to XML format
+
+Category: converters
+Tool ID: json-to-xml
+Tier: free",Done,"converters,Simple",,
+XML to JSON,"Convert XML to JSON format
+
+Category: converters
+Tool ID: xml-to-json
+Tier: free",Done,"converters,Simple",,
+YAML to TOML,"Convert YAML to TOML format
+
+Category: converters
+Tool ID: yaml-to-toml
+Tier: free",Done,"converters,Simple",,
+TOML to YAML,"Convert TOML to YAML format
+
+Category: converters
+Tool ID: toml-to-yaml
+Tier: free",Done,"converters,Simple",,
+JSON to TOML,"Convert JSON to TOML format
+
+Category: converters
+Tool ID: json-to-toml
+Tier: free",Done,"converters,Simple",,
+TOML to JSON,"Convert TOML to JSON format
+
+Category: converters
+Tool ID: toml-to-json
+Tier: free",Done,"converters,Simple",,
+JSON Schema Validator,"Validate JSON data against a JSON Schema
+
+Category: json
+Tool ID: json-schema-validator
+Tier: free",Done,"json,Medium",,
+XML to YAML,"Convert XML to YAML format
+
+Category: converters
+Tool ID: xml-to-yaml
+Tier: free",To Do,"converters,Simple",,
+YAML to XML,"Convert YAML to XML format
+
+Category: converters
+Tool ID: yaml-to-xml
+Tier: free",To Do,"converters,Simple",,
+XML to TOML,"Convert XML to TOML format
+
+Category: converters
+Tool ID: xml-to-toml
+Tier: free",To Do,"converters,Simple",,
+TOML to XML,"Convert TOML to XML format
+
+Category: converters
+Tool ID: toml-to-xml
+Tier: free",To Do,"converters,Simple",,
+CSV to JSON,"Convert CSV to JSON format
+
+Category: converters
+Tool ID: csv-to-json
+Tier: free",To Do,"converters,Simple",,
+JSON to CSV,"Convert JSON to CSV format
+
+Category: converters
+Tool ID: json-to-csv
+Tier: free",To Do,"converters,Simple",,
+CSV to XML,"Convert CSV to XML format
+
+Category: converters
+Tool ID: csv-to-xml
+Tier: free",To Do,"converters,Simple",,
+XML to CSV,"Convert XML to CSV format
+
+Category: converters
+Tool ID: xml-to-csv
+Tier: free",To Do,"converters,Simple",,
+CSV to YAML,"Convert CSV to YAML format
+
+Category: converters
+Tool ID: csv-to-yaml
+Tier: free",To Do,"converters,Simple",,
+YAML to CSV,"Convert YAML to CSV format
+
+Category: converters
+Tool ID: yaml-to-csv
+Tier: free",To Do,"converters,Simple",,
+CSV to TOML,"Convert CSV to TOML format
+
+Category: converters
+Tool ID: csv-to-toml
+Tier: free",To Do,"converters,Simple",,
+TOML to CSV,"Convert TOML to CSV format
+
+Category: converters
+Tool ID: toml-to-csv
+Tier: free",To Do,"converters,Simple",,
+JSON to HTML Table,"Convert JSON to HTML table format
+
+Category: converters
+Tool ID: json-to-html-table
+Tier: free",To Do,"converters,Simple",,
+CSV to HTML Table,"Convert CSV to HTML table format
+
+Category: converters
+Tool ID: csv-to-html-table
+Tier: free",To Do,"converters,Simple",,
+JSON to TypeScript,"Generate TypeScript interfaces from JSON
+
+Category: converters
+Tool ID: json-to-typescript
+Tier: free",To Do,"converters,Simple",,
+JSON to Go Struct,"Generate Go structs from JSON
+
+Category: converters
+Tool ID: json-to-go-struct
+Tier: free",To Do,"converters,Simple",,
+JSON to Python Class,"Generate Python dataclasses from JSON
+
+Category: converters
+Tool ID: json-to-python-class
+Tier: free",To Do,"converters,Simple",,
+JSON to Java Class,"Generate Java POJOs from JSON
+
+Category: converters
+Tool ID: json-to-java-class
+Tier: free",To Do,"converters,Simple",,
+JSON to C# Class,"Generate C# classes from JSON
+
+Category: converters
+Tool ID: json-to-csharp-class
+Tier: free",To Do,"converters,Simple",,
+XML to JSON Schema,"Generate JSON Schema from XML
+
+Category: converters
+Tool ID: xml-to-json-schema
+Tier: free",To Do,"converters,Simple",,
+JSON to Protobuf,"Convert JSON to Protobuf definition
+
+Category: converters
+Tool ID: json-to-protobuf
+Tier: free",To Do,"converters,Simple",,
+Protobuf to JSON,"Convert Protobuf to JSON
+
+Category: converters
+Tool ID: protobuf-to-json
+Tier: free",To Do,"converters,Simple",,
+JSON to Avro,"Convert JSON to Apache Avro schema
+
+Category: converters
+Tool ID: json-to-avro
+Tier: free",To Do,"converters,Simple",,
+Avro to JSON,"Convert Avro schema to JSON
+
+Category: converters
+Tool ID: avro-to-json
+Tier: free",To Do,"converters,Simple",,
+Hex Encoder/Decoder,"Encode and decode hexadecimal strings
+
+Category: encoders
+Tool ID: hex-encoder
+Tier: free",To Do,"encoders,Simple",,
+ASCII Encoder/Decoder,"Convert text to ASCII codes and vice versa
+
+Category: encoders
+Tool ID: ascii-encoder
+Tier: free",To Do,"encoders,Simple",,
+Unicode Encoder/Decoder,"Encode and decode Unicode characters
+
+Category: encoders
+Tool ID: unicode-encoder
+Tier: free",To Do,"encoders,Simple",,
+HTML Entity Encoder/Decoder,"Encode and decode HTML entities
+
+Category: encoders
+Tool ID: html-encoder
+Tier: free",To Do,"encoders,Simple",,
+Punycode Encoder/Decoder,"Encode and decode internationalized domain names
+
+Category: encoders
+Tool ID: punycode-encoder
+Tier: free",To Do,"encoders,Simple",,
+Morse Code Translator,"Translate text to/from Morse code
+
+Category: encoders
+Tool ID: morse-code
+Tier: free",To Do,"encoders,Simple",,
+Binary Encoder/Decoder,"Convert text to binary and vice versa
+
+Category: encoders
+Tool ID: binary-encoder
+Tier: free",To Do,"encoders,Simple",,
+Octal Encoder/Decoder,"Convert text to octal and vice versa
+
+Category: encoders
+Tool ID: octal-encoder
+Tier: free",To Do,"encoders,Simple",,
+ROT13 Encoder/Decoder,"Apply ROT13 cipher encoding/decoding
+
+Category: encoders
+Tool ID: rot13-encoder
+Tier: free",To Do,"encoders,Simple",,
+UUEncode/UUDecode,"UUEncode and UUDecode binary data
+
+Category: encoders
+Tool ID: uuencode
+Tier: free",To Do,"encoders,Simple",,
+CSS Formatter,"Format and minify CSS code
+
+Category: formatters
+Tool ID: css-formatter
+Tier: free",To Do,"formatters,Medium",,
+HTML Formatter,"Format and beautify HTML code
+
+Category: formatters
+Tool ID: html-formatter
+Tier: free",To Do,"formatters,Medium",,
+JavaScript Formatter,"Format and beautify JavaScript code
+
+Category: formatters
+Tool ID: javascript-formatter
+Tier: free",To Do,"formatters,Medium",,
+TypeScript Formatter,"Format and beautify TypeScript code
+
+Category: formatters
+Tool ID: typescript-formatter
+Tier: free",To Do,"formatters,Medium",,
+Python Formatter,"Format Python code with Black/autopep8 style
+
+Category: formatters
+Tool ID: python-formatter
+Tier: free",To Do,"formatters,Medium",,
+Java Formatter,"Format Java code
+
+Category: formatters
+Tool ID: java-formatter
+Tier: free",To Do,"formatters,Medium",,
+Go Formatter,"Format Go code with gofmt style
+
+Category: formatters
+Tool ID: go-formatter
+Tier: free",To Do,"formatters,Medium",,
+Rust Formatter,"Format Rust code with rustfmt style
+
+Category: formatters
+Tool ID: rust-formatter
+Tier: free",To Do,"formatters,Medium",,
+GraphQL Formatter,"Format and validate GraphQL queries
+
+Category: formatters
+Tool ID: graphql-formatter
+Tier: free",To Do,"formatters,Medium",,
+Protobuf Formatter,"Format Protocol Buffer definitions
+
+Category: formatters
+Tool ID: protobuf-formatter
+Tier: free",To Do,"formatters,Medium",,
+Dockerfile Formatter,"Format and validate Dockerfiles
+
+Category: formatters
+Tool ID: dockerfile-formatter
+Tier: free",To Do,"formatters,Medium",,
+Nginx Config Formatter,"Format Nginx configuration files
+
+Category: formatters
+Tool ID: nginx-formatter
+Tier: free",To Do,"formatters,Medium",,
+Apache Config Formatter,"Format Apache configuration files
+
+Category: formatters
+Tool ID: apache-formatter
+Tier: free",To Do,"formatters,Medium",,
+INI Formatter,"Format and validate INI configuration files
+
+Category: formatters
+Tool ID: ini-formatter
+Tier: free",To Do,"formatters,Medium",,
+Properties Formatter,"Format Java properties files
+
+Category: formatters
+Tool ID: properties-formatter
+Tier: free",To Do,"formatters,Medium",,
+Text Case Converter,"Convert text between cases (camelCase, snake_case, kebab-case, etc.)
+
+Category: text-tools
+Tool ID: text-case-converter
+Tier: free",To Do,"text-tools,Medium",,
+Word Counter,"Count words, characters, lines, and paragraphs
+
+Category: text-tools
+Tool ID: word-counter
+Tier: free",To Do,"text-tools,Simple",,
+Lorem Ipsum Generator,"Generate placeholder Lorem Ipsum text
+
+Category: text-tools
+Tool ID: lorem-ipsum
+Tier: free",To Do,"text-tools,Simple",,
+Text Sorter,"Sort lines alphabetically or numerically
+
+Category: text-tools
+Tool ID: text-sorter
+Tier: free",To Do,"text-tools,Simple",,
+Duplicate Line Remover,"Remove duplicate lines from text
+
+Category: text-tools
+Tool ID: duplicate-remover
+Tier: free",To Do,"text-tools,Simple",,
+Line Numberer,"Add or remove line numbers from text
+
+Category: text-tools
+Tool ID: line-numberer
+Tier: free",To Do,"text-tools,Simple",,
+Whitespace Remover,"Remove extra whitespace from text
+
+Category: text-tools
+Tool ID: whitespace-remover
+Tier: free",To Do,"text-tools,Simple",,
+Text Reverser,"Reverse text, words, or lines
+
+Category: text-tools
+Tool ID: text-reverser
+Tier: free",To Do,"text-tools,Simple",,
+Text Splitter,"Split text by delimiter or pattern
+
+Category: text-tools
+Tool ID: text-splitter
+Tier: free",To Do,"text-tools,Simple",,
+Text Joiner,"Join lines with custom delimiter
+
+Category: text-tools
+Tool ID: text-joiner
+Tier: free",To Do,"text-tools,Simple",,
+Slug Generator,"Generate URL-friendly slugs from text
+
+Category: text-tools
+Tool ID: slug-generator
+Tier: free",To Do,"text-tools,Medium",,
+Password Generator,"Generate secure random passwords
+
+Category: security
+Tool ID: password-generator
+Tier: free",To Do,"security,Medium",,
+Password Strength Checker,"Check password strength and get improvement suggestions
+
+Category: security
+Tool ID: password-strength
+Tier: free",To Do,"security,Simple",,
+Bcrypt Hash Generator,"Generate and verify Bcrypt hashes
+
+Category: security
+Tool ID: bcrypt-generator
+Tier: free",To Do,"security,Medium",,
+HMAC Generator,"Generate HMAC signatures with various algorithms
+
+Category: security
+Tool ID: hmac-generator
+Tier: free",To Do,"security,Medium",,
+RSA Key Generator,"Generate RSA public/private key pairs
+
+Category: security
+Tool ID: rsa-key-generator
+Tier: free",To Do,"security,Medium",,
+AES Encrypt/Decrypt,"Encrypt and decrypt text using AES
+
+Category: security
+Tool ID: aes-encrypt
+Tier: free",To Do,"security,Simple",,
+PGP Encrypt/Decrypt,"PGP encryption and decryption tool
+
+Category: security
+Tool ID: pgp-tool
+Tier: free",To Do,"security,Simple",,
+Certificate Decoder,"Decode and analyze SSL/TLS certificates
+
+Category: security
+Tool ID: certificate-decoder
+Tier: free",To Do,"security,Simple",,
+NanoID Generator,"Generate compact unique IDs with NanoID
+
+Category: generators
+Tool ID: nanoid-generator
+Tier: free",To Do,"generators,Medium",,
+ULID Generator,"Generate Universally Unique Lexicographically Sortable Identifiers
+
+Category: generators
+Tool ID: ulid-generator
+Tier: free",To Do,"generators,Medium",,
+Barcode Generator,"Generate various barcode formats (EAN, UPC, Code128, etc.)
+
+Category: generators
+Tool ID: barcode-generator
+Tier: free",To Do,"generators,Medium",,
+Mock API Response Generator,"Generate mock API responses with realistic data
+
+Category: generators
+Tool ID: mock-data-generator
+Tier: free",To Do,"generators,Medium",,
+Test Credit Card Generator,"Generate test credit card numbers for development
+
+Category: generators
+Tool ID: credit-card-generator
+Tier: free",To Do,"generators,Medium",,
+IBAN Generator/Validator,"Generate and validate IBAN numbers
+
+Category: generators
+Tool ID: iban-generator
+Tier: free",To Do,"generators,Medium",,
+MAC Address Generator,"Generate random MAC addresses
+
+Category: generators
+Tool ID: mac-address-generator
+Tier: free",To Do,"generators,Medium",,
+IPv4 Address Generator,"Generate random IPv4 addresses
+
+Category: generators
+Tool ID: ipv4-generator
+Tier: free",To Do,"generators,Medium",,
+IPv6 Address Generator,"Generate random IPv6 addresses
+
+Category: generators
+Tool ID: ipv6-generator
+Tier: free",To Do,"generators,Medium",,
+User Agent Generator,"Generate random user agent strings
+
+Category: generators
+Tool ID: user-agent-generator
+Tier: free",To Do,"generators,Medium",,
+SQL Query Builder,"Visual SQL query builder with syntax highlighting
+
+Category: database
+Tool ID: sql-query-builder
+Tier: free",To Do,"database,Complex",,
+MongoDB Query Builder,"Build MongoDB queries and aggregations
+
+Category: database
+Tool ID: mongodb-query-builder
+Tier: free",To Do,"database,Complex",,
+Redis CLI Simulator,"Simulate Redis commands and test queries
+
+Category: database
+Tool ID: redis-cli
+Tier: free",To Do,"database,Simple",,
+Elasticsearch Query Builder,"Build and test Elasticsearch queries
+
+Category: database
+Tool ID: elasticsearch-query
+Tier: free",To Do,"database,Simple",,
+SQL to MongoDB Converter,"Convert SQL queries to MongoDB syntax
+
+Category: database
+Tool ID: sql-to-mongodb
+Tier: free",To Do,"database,Simple",,
+Database Diagram Generator,"Generate ER diagrams from schema definitions
+
+Category: database
+Tool ID: db-diagram-generator
+Tier: free",To Do,"database,Medium",,
+Database Migration Generator,"Generate database migration scripts
+
+Category: database
+Tool ID: migration-generator
+Tier: free",To Do,"database,Medium",,
+IP Subnet Calculator,"Calculate IP subnets, CIDR, and network ranges
+
+Category: network
+Tool ID: ip-calculator
+Tier: free",To Do,"network,Simple",,
+DNS Lookup Tool,"Perform DNS lookups and analyze records
+
+Category: network
+Tool ID: dns-lookup
+Tier: free",To Do,"network,Simple",,
+WHOIS Lookup,"Query WHOIS information for domains
+
+Category: network
+Tool ID: whois-lookup
+Tier: free",To Do,"network,Simple",,
+Port Scanner,"Scan and check open ports
+
+Category: network
+Tool ID: port-scanner
+Tier: free",To Do,"network,Simple",,
+Ping Tool,"Ping hosts and check connectivity
+
+Category: network
+Tool ID: ping-tool
+Tier: free",To Do,"network,Simple",,
+Traceroute Tool,"Trace network route to destination
+
+Category: network
+Tool ID: traceroute
+Tier: free",To Do,"network,Simple",,
+SSL Certificate Checker,"Check SSL certificate validity and details
+
+Category: network
+Tool ID: ssl-checker
+Tier: free",To Do,"network,Simple",,
+HTTP Headers Analyzer,"Analyze HTTP request and response headers
+
+Category: network
+Tool ID: http-headers
+Tier: free",To Do,"network,Simple",,
+URL Parser,"Parse and analyze URL components
+
+Category: network
+Tool ID: url-parser
+Tier: free",To Do,"network,Simple",,
+User Agent Parser,"Parse and analyze user agent strings
+
+Category: network
+Tool ID: user-agent-parser
+Tier: free",To Do,"network,Simple",,
+Image Format Converter,"Convert between image formats (PNG, JPG, WebP, etc.)
+
+Category: image
+Tool ID: image-converter
+Tier: free",To Do,"image,Medium",,
+Image Resizer,"Resize images with custom dimensions
+
+Category: image
+Tool ID: image-resizer
+Tier: free",To Do,"image,Simple",,
+Image Compressor,"Compress images to reduce file size
+
+Category: image
+Tool ID: image-compressor
+Tier: free",To Do,"image,Simple",,
+Image Cropper,"Crop images with custom aspect ratios
+
+Category: image
+Tool ID: image-cropper
+Tier: free",To Do,"image,Simple",,
+Image to Base64,"Convert images to Base64 data URLs
+
+Category: image
+Tool ID: image-to-base64
+Tier: free",To Do,"image,Simple",,
+Base64 to Image,"Convert Base64 strings to images
+
+Category: image
+Tool ID: base64-to-image
+Tier: free",To Do,"image,Simple",,
+SVG Optimizer,"Optimize and minify SVG files
+
+Category: image
+Tool ID: svg-optimizer
+Tier: free",To Do,"image,Simple",,
+Favicon Generator,"Generate favicons in multiple sizes
+
+Category: image
+Tool ID: favicon-generator
+Tier: free",To Do,"image,Medium",,
+Placeholder Image Generator,"Generate placeholder images with custom sizes
+
+Category: image
+Tool ID: placeholder-image
+Tier: free",To Do,"image,Simple",,
+Image Metadata Extractor,"Extract EXIF, IPTC, and XMP metadata from images
+
+Category: image
+Tool ID: image-metadata-extractor
+Tier: free",To Do,"image,Simple",,
+Image Metadata Editor,"Edit and remove image metadata
+
+Category: image
+Tool ID: image-metadata-editor
+Tier: free",To Do,"image,Simple",,
+Image Color Picker,"Pick colors from images and get color codes
+
+Category: image
+Tool ID: image-color-picker
+Tier: free",To Do,"image,Simple",,
+Image Color Palette Extractor,"Extract dominant color palettes from images
+
+Category: image
+Tool ID: image-color-palette
+Tier: free",To Do,"image,Simple",,
+Image Filter & Effects,"Apply filters and effects to images (grayscale, sepia, blur, etc.)
+
+Category: image
+Tool ID: image-filter
+Tier: free",To Do,"image,Simple",,
+Image Brightness/Contrast Adjuster,"Adjust image brightness, contrast, and saturation
+
+Category: image
+Tool ID: image-brightness-contrast
+Tier: free",To Do,"image,Simple",,
+Image Rotator,"Rotate and flip images
+
+Category: image
+Tool ID: image-rotator
+Tier: free",To Do,"image,Simple",,
+Image Watermark Tool,"Add text or image watermarks to images
+
+Category: image
+Tool ID: image-watermark
+Tier: free",To Do,"image,Simple",,
+Image Border Tool,"Add borders and frames to images
+
+Category: image
+Tool ID: image-border
+Tier: free",To Do,"image,Simple",,
+Background Remover,"Remove backgrounds from images
+
+Category: image
+Tool ID: image-background-remover
+Tier: free",To Do,"image,Simple",,
+Image Merger,"Merge multiple images into one (collage, grid, etc.)
+
+Category: image
+Tool ID: image-merger
+Tier: free",To Do,"image,Simple",,
+Image Splitter,"Split images into multiple parts or tiles
+
+Category: image
+Tool ID: image-splitter
+Tier: free",To Do,"image,Simple",,
+Image Comparison Tool,"Compare two images side-by-side with slider
+
+Category: image
+Tool ID: image-comparison
+Tier: free",To Do,"image,Simple",,
+Image Diff Tool,"Find differences between two images
+
+Category: image
+Tool ID: image-diff
+Tier: free",To Do,"image,Simple",,
+Image Histogram Analyzer,"Analyze image histogram and color distribution
+
+Category: image
+Tool ID: image-histogram
+Tier: free",To Do,"image,Simple",,
+Image Dimension Calculator,"Calculate aspect ratios and resize dimensions
+
+Category: image
+Tool ID: image-dimension-calculator
+Tier: free",To Do,"image,Simple",,
+Sprite Sheet Generator,"Generate sprite sheets from multiple images
+
+Category: image
+Tool ID: sprite-sheet-generator
+Tier: free",To Do,"image,Medium",,
+Sprite Sheet Extractor,"Extract individual sprites from sprite sheets
+
+Category: image
+Tool ID: sprite-sheet-extractor
+Tier: free",To Do,"image,Simple",,
+Image to ASCII Art,"Convert images to ASCII art
+
+Category: image
+Tool ID: image-ascii-art
+Tier: free",To Do,"image,Simple",,
+QR Code Scanner,"Scan and decode QR codes from images
+
+Category: image
+Tool ID: qr-code-scanner
+Tier: free",To Do,"image,Simple",,
+Barcode Scanner,"Scan and decode barcodes from images
+
+Category: image
+Tool ID: barcode-scanner
+Tier: free",To Do,"image,Simple",,
+Image Format Analyzer,"Analyze image format, compression, and technical details
+
+Category: image
+Tool ID: image-format-analyzer
+Tier: free",To Do,"image,Complex",,
+WebP Converter,"Convert images to/from WebP format
+
+Category: image
+Tool ID: webp-converter
+Tier: free",To Do,"image,Medium",,
+AVIF Converter,"Convert images to/from AVIF format
+
+Category: image
+Tool ID: avif-converter
+Tier: free",To Do,"image,Medium",,
+HEIC/HEIF Converter,"Convert HEIC/HEIF images to other formats
+
+Category: image
+Tool ID: heic-converter
+Tier: free",To Do,"image,Medium",,
+Image Batch Processor,"Process multiple images at once (resize, convert, compress)
+
+Category: image
+Tool ID: image-batch-processor
+Tier: free",To Do,"image,Simple",,
+File Hash Calculator,"Calculate file hashes (MD5, SHA-1, SHA-256)
+
+Category: file
+Tool ID: file-hash
+Tier: free",To Do,"file,Simple",,
+File Format Converter,"Convert between various file formats
+
+Category: file
+Tool ID: file-converter
+Tier: free",To Do,"file,Medium",,
+PDF Merger,"Merge multiple PDF files into one
+
+Category: file
+Tool ID: pdf-merger
+Tier: free",To Do,"file,Simple",,
+PDF Splitter,"Split PDF files into separate pages
+
+Category: file
+Tool ID: pdf-splitter
+Tier: free",To Do,"file,Simple",,
+PDF to Images,"Convert PDF pages to images
+
+Category: file
+Tool ID: pdf-to-images
+Tier: free",To Do,"file,Simple",,
+Images to PDF,"Convert multiple images to a PDF
+
+Category: file
+Tool ID: images-to-pdf
+Tier: free",To Do,"file,Simple",,
+File Splitter,"Split large files into smaller chunks
+
+Category: file
+Tool ID: file-splitter
+Tier: free",To Do,"file,Simple",,
+File Merger,"Merge split file chunks back together
+
+Category: file
+Tool ID: file-merger
+Tier: free",To Do,"file,Simple",,
+MIME Type Detector,"Detect MIME type of files
+
+Category: file
+Tool ID: mime-type-detector
+Tier: free",To Do,"file,Simple",,
+Git Command Builder,"Build and learn Git commands interactively
+
+Category: git
+Tool ID: git-command-builder
+Tier: free",To Do,"git,Complex",,
+.gitignore Generator,"Generate .gitignore files for various languages and frameworks
+
+Category: git
+Tool ID: gitignore-generator
+Tier: free",To Do,"git,Medium",,
+Git Diff Viewer,"Visualize Git diffs with syntax highlighting
+
+Category: git
+Tool ID: git-diff-viewer
+Tier: free",To Do,"git,Simple",,
+Commit Message Generator,"Generate conventional commit messages
+
+Category: git
+Tool ID: commit-message-generator
+Tier: free",To Do,"git,Medium",,
+GitHub Actions Workflow Builder,"Build GitHub Actions workflows visually
+
+Category: cicd
+Tool ID: github-actions-builder
+Tier: free",To Do,"cicd,Complex",,
+GitLab CI Builder,"Build GitLab CI/CD pipelines
+
+Category: cicd
+Tool ID: gitlab-ci-builder
+Tier: free",To Do,"cicd,Complex",,
+Jenkins Pipeline Generator,"Generate Jenkinsfile pipelines
+
+Category: cicd
+Tool ID: jenkins-pipeline
+Tier: free",To Do,"cicd,Simple",,
+CircleCI Config Builder,"Build CircleCI configuration files
+
+Category: cicd
+Tool ID: circleci-config
+Tier: free",To Do,"cicd,Simple",,
+Kubernetes YAML Generator,"Generate Kubernetes deployment YAML files
+
+Category: devops
+Tool ID: kubernetes-yaml
+Tier: free",To Do,"devops,Simple",,
+Helm Chart Generator,"Generate Helm chart templates
+
+Category: devops
+Tool ID: helm-chart-generator
+Tier: free",To Do,"devops,Medium",,
+Terraform Config Generator,"Generate Terraform configuration files
+
+Category: devops
+Tool ID: terraform-generator
+Tier: free",To Do,"devops,Medium",,
+Ansible Playbook Generator,"Generate Ansible playbooks
+
+Category: devops
+Tool ID: ansible-playbook
+Tier: free",To Do,"devops,Simple",,
+Docker Compose Generator,"Generate docker-compose.yml files
+
+Category: devops
+Tool ID: docker-compose-generator
+Tier: free",To Do,"devops,Medium",,
+Environment File Generator,"Generate and manage .env files
+
+Category: devops
+Tool ID: env-file-generator
+Tier: free",To Do,"devops,Medium",,
+Unit Test Generator,"Generate unit test boilerplate for various languages
+
+Category: testing
+Tool ID: unit-test-generator
+Tier: free",To Do,"testing,Medium",,
+Mock API Server,"Create mock API servers for testing
+
+Category: testing
+Tool ID: mock-server
+Tier: free",To Do,"testing,Simple",,
+Test Data Generator,"Generate realistic test data sets
+
+Category: testing
+Tool ID: test-data-generator
+Tier: free",To Do,"testing,Medium",,
+API Contract Validator,"Validate API responses against contracts
+
+Category: testing
+Tool ID: api-contract-validator
+Tier: free",To Do,"testing,Medium",,
+Performance Analyzer,"Analyze and visualize performance metrics
+
+Category: performance
+Tool ID: performance-analyzer
+Tier: free",To Do,"performance,Complex",,
+Load Test Script Generator,"Generate load testing scripts (JMeter, k6, etc.)
+
+Category: performance
+Tool ID: load-test-generator
+Tier: free",To Do,"performance,Medium",,
+Lighthouse Report Analyzer,"Analyze Lighthouse performance reports
+
+Category: performance
+Tool ID: lighthouse-analyzer
+Tier: free",To Do,"performance,Complex",,
+Bundle Size Analyzer,"Analyze JavaScript bundle sizes
+
+Category: performance
+Tool ID: bundle-analyzer
+Tier: free",To Do,"performance,Complex",,
+JSDoc Generator,"Generate JSDoc documentation
+
+Category: documentation
+Tool ID: jsdoc-generator
+Tier: free",To Do,"documentation,Medium",,
+Swagger/OpenAPI Generator,"Generate OpenAPI/Swagger documentation
+
+Category: documentation
+Tool ID: swagger-generator
+Tier: free",To Do,"documentation,Medium",,
+README Generator,"Generate professional README files
+
+Category: documentation
+Tool ID: readme-generator
+Tier: free",To Do,"documentation,Medium",,
+Changelog Generator,"Generate CHANGELOG files from commits
+
+Category: documentation
+Tool ID: changelog-generator
+Tier: free",To Do,"documentation,Medium",,
+License Generator,"Generate software license files
+
+Category: documentation
+Tool ID: license-generator
+Tier: free",To Do,"documentation,Medium",,
+API Documentation Generator,"Generate API documentation from code
+
+Category: documentation
+Tool ID: api-docs-generator
+Tier: free",To Do,"documentation,Medium",,
+Programmer Calculator,"Calculator with hex, binary, octal support
+
+Category: math
+Tool ID: calculator
+Tier: free",To Do,"math,Simple",,
+Unit Converter,"Convert between various units (length, weight, temperature, etc.)
+
+Category: math
+Tool ID: unit-converter
+Tier: free",To Do,"math,Medium",,
+Number Base Converter,"Convert between decimal, hex, binary, octal
+
+Category: math
+Tool ID: number-base-converter
+Tier: free",To Do,"math,Medium",,
+Percentage Calculator,"Calculate percentages and percentage changes
+
+Category: math
+Tool ID: percentage-calculator
+Tier: free",To Do,"math,Simple",,
+Date Calculator,"Calculate date differences and add/subtract dates
+
+Category: math
+Tool ID: date-calculator
+Tier: free",To Do,"math,Simple",,
+Timezone Converter,"Convert times between timezones
+
+Category: math
+Tool ID: timezone-converter
+Tier: free",To Do,"math,Medium",,
+Ethereum Unit Converter,"Convert between Wei, Gwei, and Ether
+
+Category: blockchain
+Tool ID: ethereum-unit-converter
+Tier: free",To Do,"blockchain,Medium",,
+Smart Contract Analyzer,"Analyze Solidity smart contracts
+
+Category: blockchain
+Tool ID: smart-contract-analyzer
+Tier: free",To Do,"blockchain,Complex",,
+Crypto Wallet Generator,"Generate cryptocurrency wallet addresses
+
+Category: blockchain
+Tool ID: wallet-generator
+Tier: free",To Do,"blockchain,Medium",,
+ABI Encoder/Decoder,"Encode and decode Ethereum ABI data
+
+Category: blockchain
+Tool ID: abi-encoder
+Tier: free",To Do,"blockchain,Simple",,
+Keccak-256 Hash,"Generate Keccak-256 hashes for Ethereum
+
+Category: blockchain
+Tool ID: keccak-hash
+Tier: free",To Do,"blockchain,Simple",,
+AWS IAM Policy Generator,"Generate AWS IAM policies
+
+Category: cloud
+Tool ID: aws-policy-generator
+Tier: free",To Do,"cloud,Medium",,
+AWS CLI Command Builder,"Build AWS CLI commands interactively
+
+Category: cloud
+Tool ID: aws-cli-builder
+Tier: free",To Do,"cloud,Complex",,
+GCP Command Builder,"Build Google Cloud CLI commands
+
+Category: cloud
+Tool ID: gcp-command-builder
+Tier: free",To Do,"cloud,Complex",,
+Azure CLI Builder,"Build Azure CLI commands
+
+Category: cloud
+Tool ID: azure-cli-builder
+Tier: free",To Do,"cloud,Complex",,
+CloudFormation Template Generator,"Generate AWS CloudFormation templates
+
+Category: cloud
+Tool ID: cloudformation-generator
+Tier: free",To Do,"cloud,Medium",,
+Log Parser,"Parse and analyze log files
+
+Category: monitoring
+Tool ID: log-parser
+Tier: free",To Do,"monitoring,Simple",,
+Log Formatter,"Format and beautify log files
+
+Category: monitoring
+Tool ID: log-formatter
+Tier: free",To Do,"monitoring,Medium",,
+Prometheus Query Builder,"Build Prometheus PromQL queries
+
+Category: monitoring
+Tool ID: prometheus-query-builder
+Tier: free",To Do,"monitoring,Complex",,
+Grafana Dashboard Generator,"Generate Grafana dashboard JSON
+
+Category: monitoring
+Tool ID: grafana-dashboard-generator
+Tier: free",To Do,"monitoring,Medium",,
+Alert Rule Generator,"Generate monitoring alert rules
+
+Category: monitoring
+Tool ID: alert-rule-generator
+Tier: free",To Do,"monitoring,Medium",,
+package.json Generator,"Generate package.json files for Node.js projects
+
+Category: utilities
+Tool ID: package-json-generator
+Tier: free",To Do,"utilities,Medium",,
+requirements.txt Generator,"Generate Python requirements.txt files
+
+Category: utilities
+Tool ID: requirements-txt-generator
+Tier: free",To Do,"utilities,Medium",,
+Gemfile Generator,"Generate Ruby Gemfiles
+
+Category: utilities
+Tool ID: gemfile-generator
+Tier: free",To Do,"utilities,Medium",,
+composer.json Generator,"Generate PHP composer.json files
+
+Category: utilities
+Tool ID: composer-json-generator
+Tier: free",To Do,"utilities,Medium",,
+robots.txt Generator,"Generate robots.txt files for SEO
+
+Category: utilities
+Tool ID: robots-txt-generator
+Tier: free",To Do,"utilities,Medium",,
+Sitemap Generator,"Generate XML sitemaps
+
+Category: utilities
+Tool ID: sitemap-generator
+Tier: free",To Do,"utilities,Medium",,
+.htaccess Generator,"Generate Apache .htaccess files
+
+Category: utilities
+Tool ID: htaccess-generator
+Tier: free",To Do,"utilities,Medium",,
+CORS Tester,"Test CORS configuration
+
+Category: utilities
+Tool ID: cors-tester
+Tier: free",To Do,"utilities,Complex",,
+Webhook Tester,"Test and debug webhooks
+
+Category: utilities
+Tool ID: webhook-tester
+Tier: free",To Do,"utilities,Complex",,
+Email Validator,"Validate email addresses and check MX records
+
+Category: utilities
+Tool ID: email-validator
+Tier: free",To Do,"utilities,Medium",,
+Phone Number Validator,"Validate and format phone numbers
+
+Category: utilities
+Tool ID: phone-validator
+Tier: free",To Do,"utilities,Medium",,
+Credit Card Validator,"Validate credit card numbers using Luhn algorithm
+
+Category: utilities
+Tool ID: credit-card-validator
+Tier: free",To Do,"utilities,Medium",,
+JSON Minifier,"Minify JSON by removing whitespace
+
+Category: json
+Tool ID: json-minifier
+Tier: free",To Do,"json,Simple",,
+XML Minifier,"Minify XML by removing whitespace
+
+Category: formatters
+Tool ID: xml-minifier
+Tier: free",To Do,"formatters,Simple",,
+CSS Minifier,"Minify CSS code
+
+Category: formatters
+Tool ID: css-minifier
+Tier: free",To Do,"formatters,Simple",,
+JavaScript Minifier,"Minify JavaScript code
+
+Category: formatters
+Tool ID: js-minifier
+Tier: free",To Do,"formatters,Simple",,
+HTML Minifier,"Minify HTML code
+
+Category: formatters
+Tool ID: html-minifier
+Tier: free",To Do,"formatters,Simple",,
+SQL to NoSQL Converter,"Convert SQL schemas to NoSQL document structures
+
+Category: converters
+Tool ID: sql-to-nosql
+Tier: free",To Do,"converters,Simple",,
+GraphQL to TypeScript,"Generate TypeScript types from GraphQL schemas
+
+Category: converters
+Tool ID: graphql-to-typescript
+Tier: free",To Do,"converters,Simple",,
+OpenAPI to GraphQL,"Convert OpenAPI specs to GraphQL schemas
+
+Category: converters
+Tool ID: openapi-to-graphql
+Tier: free",To Do,"converters,Simple",,
+Postman to OpenAPI,"Convert Postman collections to OpenAPI specs
+
+Category: converters
+Tool ID: postman-to-openapi
+Tier: free",To Do,"converters,Simple",,
+cURL to Code,"Convert cURL commands to code (Python, JS, etc.)
+
+Category: converters
+Tool ID: curl-to-code
+Tier: free",To Do,"converters,Simple",,
+Code to cURL,"Convert HTTP code to cURL commands
+
+Category: converters
+Tool ID: code-to-curl
+Tier: free",To Do,"converters,Simple",,
+HAR File Analyzer,"Analyze HTTP Archive (HAR) files
+
+Category: network
+Tool ID: har-analyzer
+Tier: free",To Do,"network,Complex",,
+Cookie Parser,"Parse and analyze HTTP cookies
+
+Category: network
+Tool ID: cookie-parser
+Tier: free",To Do,"network,Simple",,
+CIDR Calculator,"Calculate CIDR ranges, validate CIDR notation, and convert between formats
+
+Category: network
+Tool ID: cidr-calculator
+Tier: free",To Do,"network,Simple",,
+CIDR to IP Range Converter,"Convert CIDR notation to IP address ranges
+
+Category: network
+Tool ID: cidr-to-ip-range
+Tier: free",To Do,"network,Simple",,
+IP Range to CIDR Converter,"Convert IP address ranges to CIDR notation
+
+Category: network
+Tool ID: ip-range-to-cidr
+Tier: free",To Do,"network,Simple",,
+IPv4 Address Generator,"Generate random or sequential IPv4 addresses
+
+Category: network
+Tool ID: ipv4-generator
+Tier: free",To Do,"network,Medium",,
+IPv6 Address Generator,"Generate random or sequential IPv6 addresses
+
+Category: network
+Tool ID: ipv6-generator
+Tier: free",To Do,"network,Medium",,
+Private IP Generator,"Generate private IP addresses (RFC 1918)
+
+Category: network
+Tool ID: private-ip-generator
+Tier: free",To Do,"network,Medium",,
+Public IP Checker,"Check your public IP address and geolocation
+
+Category: network
+Tool ID: public-ip-checker
+Tier: free",To Do,"network,Simple",,
+IP Geolocation Lookup,"Lookup geolocation information for IP addresses
+
+Category: network
+Tool ID: ip-geolocation
+Tier: free",To Do,"network,Simple",,
+IP Address Validator,"Validate IPv4 and IPv6 addresses
+
+Category: network
+Tool ID: ip-validator
+Tier: free",To Do,"network,Medium",,
+Telnet Client,"Test TCP connectivity to hosts and ports
+
+Category: network
+Tool ID: telnet-client
+Tier: free",To Do,"network,Simple",,
+TCP Connection Tester,"Test TCP connections and measure response times
+
+Category: network
+Tool ID: tcp-connection-tester
+Tier: free",To Do,"network,Complex",,
+UDP Connection Tester,"Test UDP connectivity and packet transmission
+
+Category: network
+Tool ID: udp-connection-tester
+Tier: free",To Do,"network,Complex",,
+Network Latency Tester,"Measure network latency and round-trip time
+
+Category: network
+Tool ID: network-latency-tester
+Tier: free",To Do,"network,Complex",,
+Jitter Calculator,"Calculate network jitter and packet delay variation
+
+Category: network
+Tool ID: jitter-calculator
+Tier: free",To Do,"network,Simple",,
+Packet Loss Tester,"Test and measure packet loss percentage
+
+Category: network
+Tool ID: packet-loss-tester
+Tier: free",To Do,"network,Complex",,
+Bandwidth Calculator,"Calculate bandwidth requirements and conversions
+
+Category: network
+Tool ID: bandwidth-calculator
+Tier: free",To Do,"network,Simple",,
+Network Speed Test,"Test upload and download speeds
+
+Category: network
+Tool ID: speed-test
+Tier: free",To Do,"network,Simple",,
+Throughput Calculator,"Calculate network throughput and data transfer rates
+
+Category: network
+Tool ID: throughput-calculator
+Tier: free",To Do,"network,Simple",,
+MTU Size Tester,"Test and determine optimal MTU size
+
+Category: network
+Tool ID: mtu-tester
+Tier: free",To Do,"network,Complex",,
+Network Hop Analyzer,"Analyze network hops and routing paths
+
+Category: network
+Tool ID: hop-analyzer
+Tier: free",To Do,"network,Complex",,
+Route Visualizer,"Visualize network routes and trace paths
+
+Category: network
+Tool ID: route-visualizer
+Tier: free",To Do,"network,Simple",,
+Proxy Detector,"Detect proxies, VPNs, and load balancers in network path
+
+Category: network
+Tool ID: proxy-detector
+Tier: free",To Do,"network,Simple",,
+Load Balancer Tester,"Test load balancer behavior and distribution
+
+Category: network
+Tool ID: load-balancer-tester
+Tier: free",To Do,"network,Complex",,
+Network Availability Monitor,"Monitor network availability and uptime
+
+Category: network
+Tool ID: network-availability
+Tier: free",To Do,"network,Simple",,
+Upstream/Downstream Tester,"Test upstream and downstream bandwidth separately
+
+Category: network
+Tool ID: upstream-downstream-tester
+Tier: free",To Do,"network,Complex",,
+Network Quality Analyzer,"Comprehensive network quality analysis (latency, jitter, loss, bandwidth)
+
+Category: network
+Tool ID: network-quality-analyzer
+Tier: free",To Do,"network,Complex",,
+BGP Lookup Tool,"Lookup BGP routing information and AS numbers
+
+Category: network
+Tool ID: bgp-lookup
+Tier: free",To Do,"network,Simple",,
+ASN Lookup,"Lookup Autonomous System Number information
+
+Category: network
+Tool ID: asn-lookup
+Tier: free",To Do,"network,Simple",,
+Reverse DNS Lookup,"Perform reverse DNS lookups (PTR records)
+
+Category: network
+Tool ID: reverse-dns-lookup
+Tier: free",To Do,"network,Simple",,
+MX Record Checker,"Check and validate MX records for domains
+
+Category: network
+Tool ID: mx-record-checker
+Tier: free",To Do,"network,Simple",,
+DNS Propagation Checker,"Check DNS propagation across global servers
+
+Category: network
+Tool ID: dns-propagation-checker
+Tier: free",To Do,"network,Simple",,
+Network Diagram Generator,"Generate network topology diagrams
+
+Category: network
+Tool ID: network-diagram-generator
+Tier: free",To Do,"network,Medium",,
+JWT Debugger,"Debug and analyze JWT tokens in detail
+
+Category: security
+Tool ID: jwt-debugger
+Tier: free",To Do,"security,Simple",,
+OAuth Playground,"Test OAuth 2.0 flows
+
+Category: security
+Tool ID: oauth-playground
+Tier: free",To Do,"security,Simple",,
+SAML Decoder,"Decode and analyze SAML assertions
+
+Category: security
+Tool ID: saml-decoder
+Tier: free",To Do,"security,Simple",,
+API Rate Limit Calculator,"Calculate API rate limits and quotas
+
+Category: api-testing
+Tool ID: api-rate-limit-calculator
+Tier: free",To Do,"api-testing,Simple",,
+Batch Request Generator,"Generate batch API requests
+
+Category: api-testing
+Tool ID: batch-request-generator
+Tier: free",To Do,"api-testing,Medium",,
+API Mock Generator,"Generate mock API responses from schemas
+
+Category: api-testing
+Tool ID: api-mock-generator
+Tier: free",To Do,"api-testing,Medium",,
+ASCII Art Generator,"Generate ASCII art from text
+
+Category: design
+Tool ID: ascii-art-generator
+Tier: free",To Do,"design,Medium",,
+CSS Gradient Generator,"Generate CSS gradients visually
+
+Category: design
+Tool ID: gradient-generator
+Tier: free",To Do,"design,Medium",,
+Box Shadow Generator,"Generate CSS box shadows
+
+Category: design
+Tool ID: box-shadow-generator
+Tier: free",To Do,"design,Medium",,
+Border Radius Generator,"Generate CSS border radius
+
+Category: design
+Tool ID: border-radius-generator
+Tier: free",To Do,"design,Medium",,
+Flexbox Generator,"Generate CSS Flexbox layouts
+
+Category: design
+Tool ID: flexbox-generator
+Tier: free",To Do,"design,Medium",,
+CSS Grid Generator,"Generate CSS Grid layouts
+
+Category: design
+Tool ID: grid-generator
+Tier: free",To Do,"design,Medium",,
+Tailwind Config Generator,"Generate Tailwind CSS configuration
+
+Category: design
+Tool ID: tailwind-config-generator
+Tier: free",To Do,"design,Medium",,
+Meta Tags Generator,"Generate HTML meta tags for SEO and social media
+
+Category: utilities
+Tool ID: meta-tags-generator
+Tier: free",To Do,"utilities,Medium",,
+Open Graph Generator,"Generate Open Graph meta tags
+
+Category: utilities
+Tool ID: open-graph-generator
+Tier: free",To Do,"utilities,Medium",,
+Twitter Card Generator,"Generate Twitter Card meta tags
+
+Category: utilities
+Tool ID: twitter-card-generator
+Tier: free",To Do,"utilities,Medium",,
+Schema.org Generator,"Generate Schema.org structured data
+
+Category: utilities
+Tool ID: schema-org-generator
+Tier: free",To Do,"utilities,Medium",,
+Web App Manifest Generator,"Generate PWA manifest.json files
+
+Category: utilities
+Tool ID: manifest-generator
+Tier: free",To Do,"utilities,Medium",,
+Service Worker Generator,"Generate service worker templates
+
+Category: utilities
+Tool ID: service-worker-generator
+Tier: free",To Do,"utilities,Medium",,
+EditorConfig Generator,"Generate .editorconfig files
+
+Category: utilities
+Tool ID: editorconfig-generator
+Tier: free",To Do,"utilities,Medium",,
+ESLint Config Generator,"Generate ESLint configuration files
+
+Category: utilities
+Tool ID: eslint-config-generator
+Tier: free",To Do,"utilities,Medium",,
+Prettier Config Generator,"Generate Prettier configuration files
+
+Category: utilities
+Tool ID: prettier-config-generator
+Tier: free",To Do,"utilities,Medium",,
+tsconfig.json Generator,"Generate TypeScript configuration files
+
+Category: utilities
+Tool ID: tsconfig-generator
+Tier: free",To Do,"utilities,Medium",,
+VS Code Settings Generator,"Generate VS Code settings.json
+
+Category: utilities
+Tool ID: vscode-settings-generator
+Tier: free",To Do,"utilities,Medium",,
+GitHub Profile README Generator,"Generate GitHub profile README with stats
+
+Category: documentation
+Tool ID: github-profile-readme
+Tier: free",To Do,"documentation,Simple",,
+Badge Generator,"Generate shields.io badges for README
+
+Category: documentation
+Tool ID: badge-generator
+Tier: free",To Do,"documentation,Medium",,
+CONTRIBUTING.md Generator,"Generate CONTRIBUTING.md files
+
+Category: documentation
+Tool ID: contributing-generator
+Tier: free",To Do,"documentation,Medium",,
+Code of Conduct Generator,"Generate CODE_OF_CONDUCT.md files
+
+Category: documentation
+Tool ID: code-of-conduct-generator
+Tier: free",To Do,"documentation,Medium",,
+Pull Request Template Generator,"Generate PR templates for GitHub/GitLab
+
+Category: documentation
+Tool ID: pull-request-template
+Tier: free",To Do,"documentation,Simple",,
+Issue Template Generator,"Generate issue templates for GitHub/GitLab
+
+Category: documentation
+Tool ID: issue-template-generator
+Tier: free",To Do,"documentation,Medium",,

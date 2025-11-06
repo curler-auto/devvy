@@ -24,6 +24,8 @@ export default function CollectionsPanel({ onOpenItem }) {
   const [showNewCollection, setShowNewCollection] = useState(false);
   const [showNewFolder, setShowNewFolder] = useState(null); // stores collection ID
   const [newFolderName, setNewFolderName] = useState('');
+  const [editingCollection, setEditingCollection] = useState(null); // stores collection ID being edited
+  const [editCollectionName, setEditCollectionName] = useState('');
   const { token } = useAuth();
 
   useEffect(() => {
@@ -109,6 +111,23 @@ export default function CollectionsPanel({ onOpenItem }) {
     }
   };
 
+  const updateCollection = async (collectionId, name, description = '') => {
+    try {
+      await axios.put(
+        `${API}/collections/${collectionId}`,
+        { name, description },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success('Collection updated!');
+      loadCollections();
+      setEditingCollection(null);
+      setEditCollectionName('');
+    } catch (error) {
+      console.error('Failed to update collection:', error);
+      toast.error('Failed to update collection');
+    }
+  };
+
   const deleteCollection = async (collectionId) => {
     try {
       await axios.delete(`${API}/collections/${collectionId}`, {
@@ -189,16 +208,32 @@ export default function CollectionsPanel({ onOpenItem }) {
   const exportCollection = async (collectionId) => {
     try {
       const collection = collections.find(c => c.id === collectionId);
-      const collectionFolders = folders[collectionId] || [];
-      const collectionItems = items[collectionId] || [];
+      
+      // Load folders and items if not already loaded
+      let collectionFolders = folders[collectionId];
+      let collectionItems = items[collectionId];
+      
+      if (!collectionFolders) {
+        const foldersResponse = await axios.get(`${API}/folders/list/${collectionId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        collectionFolders = foldersResponse.data.folders;
+      }
+      
+      if (!collectionItems) {
+        const itemsResponse = await axios.get(`${API}/saved-items/list/${collectionId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        collectionItems = itemsResponse.data.items;
+      }
 
       const exportData = {
         collection: {
           name: collection.name,
           description: collection.description
         },
-        folders: collectionFolders,
-        items: collectionItems
+        folders: collectionFolders || [],
+        items: collectionItems || []
       };
 
       const dataStr = JSON.stringify(exportData, null, 2);
@@ -329,40 +364,79 @@ export default function CollectionsPanel({ onOpenItem }) {
       <div className="collections-list">
         {collections.map((collection) => (
           <div key={collection.id} className="collection-item">
-            <div
-              className="collection-header"
-              onClick={() => toggleCollection(collection.id)}
-              data-testid={`collection-${collection.id}`}
-            >
-              {expandedCollections.has(collection.id) ? (
-                <ChevronDown className="w-4 h-4" />
-              ) : (
-                <ChevronRight className="w-4 h-4" />
-              )}
-              <FolderOpen className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
-              <span className="flex-1">{collection.name}</span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  exportCollection(collection.id);
-                }}
-                className="delete-icon"
-                title="Export Collection"
-                data-testid={`export-collection-${collection.id}`}
+            {editingCollection === collection.id ? (
+              <div className="collection-header" style={{ padding: '8px', gap: '8px' }} onClick={(e) => e.stopPropagation()}>
+                <Input
+                  value={editCollectionName}
+                  onChange={(e) => setEditCollectionName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      updateCollection(collection.id, editCollectionName, collection.description);
+                    }
+                    if (e.key === 'Escape') {
+                      setEditingCollection(null);
+                      setEditCollectionName('');
+                    }
+                  }}
+                  autoFocus
+                  size="sm"
+                  style={{ flex: 1 }}
+                />
+                <Button 
+                  size="sm" 
+                  onClick={() => updateCollection(collection.id, editCollectionName, collection.description)}
+                >
+                  <Check className="w-3 h-3" />
+                </Button>
+              </div>
+            ) : (
+              <div
+                className="collection-header"
+                onClick={() => toggleCollection(collection.id)}
+                data-testid={`collection-${collection.id}`}
               >
-                <Download className="w-3 h-3" />
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteCollection(collection.id);
-                }}
-                className="delete-icon"
-                data-testid={`delete-collection-${collection.id}`}
-              >
-                <Trash2 className="w-3 h-3" />
-              </button>
-            </div>
+                {expandedCollections.has(collection.id) ? (
+                  <ChevronDown className="w-4 h-4" />
+                ) : (
+                  <ChevronRight className="w-4 h-4" />
+                )}
+                <FolderOpen className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
+                <span className="flex-1">{collection.name}</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingCollection(collection.id);
+                    setEditCollectionName(collection.name);
+                  }}
+                  className="delete-icon"
+                  title="Edit Collection"
+                  data-testid={`edit-collection-${collection.id}`}
+                >
+                  <Edit2 className="w-3 h-3" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    exportCollection(collection.id);
+                  }}
+                  className="delete-icon"
+                  title="Export Collection"
+                  data-testid={`export-collection-${collection.id}`}
+                >
+                  <Download className="w-3 h-3" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteCollection(collection.id);
+                  }}
+                  className="delete-icon"
+                  data-testid={`delete-collection-${collection.id}`}
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            )}
 
             {expandedCollections.has(collection.id) && (
               <div className="collection-content">
@@ -400,7 +474,7 @@ export default function CollectionsPanel({ onOpenItem }) {
                 {/* Add Folder Button */}
                 <div style={{ padding: '8px', marginLeft: '8px' }}>
                   {showNewFolder === collection.id ? (
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', width: '100%' }}>
                       <Input
                         placeholder="Folder name"
                         value={newFolderName}
@@ -411,25 +485,37 @@ export default function CollectionsPanel({ onOpenItem }) {
                           }
                         }}
                         autoFocus
-                        style={{ flex: 1 }}
+                        className="folder-name-input"
+                        style={{ 
+                          flex: 1, 
+                          minWidth: '150px',
+                          height: '32px',
+                          fontSize: '14px',
+                          padding: '6px 12px',
+                          backgroundColor: 'var(--bg-secondary)',
+                          color: 'var(--text-primary)',
+                          border: '1px solid var(--border-primary)',
+                          borderRadius: '4px'
+                        }}
                       />
-                      <button
+                      <Button
+                        size="sm"
                         onClick={() => createFolder(collection.id)}
-                        className="context-menu-item"
-                        style={{ padding: '4px 8px' }}
+                        style={{ minWidth: '32px', height: '32px', padding: '6px' }}
                       >
                         <Check className="w-4 h-4" />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => {
                           setShowNewFolder(null);
                           setNewFolderName('');
                         }}
-                        className="context-menu-item"
-                        style={{ padding: '4px 8px' }}
+                        style={{ minWidth: '32px', height: '32px', padding: '6px' }}
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button>
+                      </Button>
                     </div>
                   ) : (
                     <button
@@ -659,19 +745,29 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
       )}
 
       {showNewSubfolder && (
-        <div className="new-subfolder-input" onClick={(e) => e.stopPropagation()}>
+        <div className="new-subfolder-input" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', alignItems: 'center', padding: '8px', width: '100%' }}>
           <Input
             value={newSubfolderName}
             onChange={(e) => setNewSubfolderName(e.target.value)}
             placeholder="Subfolder name"
-            size="sm"
             onKeyDown={(e) => {
               if (e.key === 'Enter') createSubfolder(e);
               if (e.key === 'Escape') setShowNewSubfolder(false);
             }}
             autoFocus
+            style={{ 
+              flex: 1, 
+              minWidth: '150px',
+              height: '32px',
+              fontSize: '14px',
+              padding: '6px 12px',
+              backgroundColor: 'var(--bg-secondary)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border-primary)',
+              borderRadius: '4px'
+            }}
           />
-          <Button size="sm" onClick={createSubfolder}>
+          <Button size="sm" onClick={createSubfolder} style={{ minWidth: '32px', height: '32px', padding: '6px' }}>
             <Plus className="w-3 h-3" />
           </Button>
         </div>

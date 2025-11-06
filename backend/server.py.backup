@@ -86,31 +86,6 @@ async def require_admin(current_user: dict = Depends(get_current_user)) -> dict:
         raise HTTPException(status_code=403, detail="Admin access required")
     return current_user
 
-# Optional auth for desktop mode - no authentication required
-async def get_current_user_optional(
-    credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False))
-) -> Optional[dict]:
-    """
-    Get current user with optional authentication.
-    - In desktop mode (APP_MODE=desktop): Returns a default desktop user without requiring auth
-    - In web mode: Requires valid JWT token
-    """
-    if os.environ.get('APP_MODE') == 'desktop':
-        # Desktop mode: no authentication required, return default user
-        return {
-            'id': 'desktop-user',
-            'email': 'desktop@devtools.local',
-            'name': 'Desktop User',
-            'role': 'user',
-            'organization_id': 'desktop-org'
-        }
-    
-    # Web mode: require authentication
-    if credentials is None:
-        raise HTTPException(status_code=401, detail="Authentication required")
-    
-    return await get_current_user(credentials)
-
 
 # Define Models
 class StatusCheck(BaseModel):
@@ -283,9 +258,9 @@ async def validate_license(current_user: dict = Depends(get_current_user)):
     }
 
 @api_router.get("/tools/config")
-async def get_tools_config(db = Depends(get_database)):
+async def get_tools_config():
     """Get configuration of which tools are free/premium"""
-    configs = await db.get_tool_configs()
+    configs = await db.tool_configs.find({}, {"_id": 0}).to_list(100)
     
     # If no config exists, create default (all free)
     if not configs:
@@ -298,17 +273,19 @@ async def get_tools_config(db = Depends(get_database)):
         ]
         
         for tool_data in default_tools:
-            await db.upsert_tool_config(tool_data["tool_id"], tool_data)
+            tool_config = ToolConfig(**tool_data)
+            doc = tool_config.model_dump()
+            await db.tool_configs.insert_one(doc)
         
-        configs = await db.get_tool_configs()
+        configs = await db.tool_configs.find({}, {"_id": 0}).to_list(100)
     
     return {"tools": configs}
 
 @api_router.get("/tools/check-access/{tool_id}")
-async def check_tool_access(tool_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
+async def check_tool_access(tool_id: str, current_user: dict = Depends(get_current_user)):
     """Check if user has access to a specific tool"""
     # Get tool config
-    tool_config = await db.get_tool_config(tool_id)
+    tool_config = await db.tool_configs.find_one({"tool_id": tool_id}, {"_id": 0})
     
     if not tool_config:
         # If no config, assume free
@@ -331,7 +308,7 @@ async def check_tool_access(tool_id: str, current_user: dict = Depends(get_curre
 # ========== COLLECTIONS ROUTES ==========
 
 @api_router.post("/collections/create")
-async def create_collection(collection_data: CollectionCreate, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def create_collection(collection_data: CollectionCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Create a new collection"""
     collection_dict = collection_data.model_dump()
     collection_dict['created_at'] = datetime.now(timezone.utc)
@@ -340,24 +317,25 @@ async def create_collection(collection_data: CollectionCreate, current_user: dic
     return result
 
 @api_router.get("/collections/list")
-async def list_collections(current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def list_collections(current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """List all collections for current user"""
     collections = await db.get_collections(current_user['id'])
     return {"collections": collections}
 
-@api_router.put("/collections/{collection_id}")
-async def update_collection(collection_id: str, updates: CollectionCreate, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
-    """Update a collection"""
-    update_data = updates.model_dump()
-    result = await db.update_collection(collection_id, current_user['id'], update_data)
-    
-    if not result:
-        raise HTTPException(status_code=404, detail="Collection not found")
-    
-    return {"message": "Collection updated", "success": True}
+# @api_router.put("/collections/{collection_id}")
+# async def update_collection(collection_id: str, updates: CollectionCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
+#     """Update a collection"""
+#     # TODO: Implement update_collection in database abstraction layer
+#     update_data = updates.model_dump()
+#     # result = await db.update_collection(collection_id, current_user['id'], update_data)
+#     
+#     # if not result:
+#     #     raise HTTPException(status_code=404, detail="Collection not found")
+#     
+#     return {"message": "Collection update not implemented yet"}
 
 @api_router.delete("/collections/{collection_id}")
-async def delete_collection(collection_id: str, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def delete_collection(collection_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Delete a collection and all its folders and items"""
     result = await db.delete_collection(collection_id, current_user['id'])
     
@@ -370,7 +348,7 @@ async def delete_collection(collection_id: str, current_user: dict = Depends(get
 # ========== FOLDERS ROUTES ==========
 
 @api_router.post("/folders/create")
-async def create_folder(folder_data: FolderCreate, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def create_folder(folder_data: FolderCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Create a new folder in a collection"""
     folder_dict = folder_data.model_dump()
     folder_dict['user_id'] = current_user['id']
@@ -380,13 +358,13 @@ async def create_folder(folder_data: FolderCreate, current_user: dict = Depends(
     return result
 
 @api_router.get("/folders/list/{collection_id}")
-async def list_folders(collection_id: str, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def list_folders(collection_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """List all folders in a collection"""
     folders = await db.get_folders(collection_id, current_user['id'])
     return {"folders": folders}
 
 @api_router.put("/folders/{folder_id}")
-async def update_folder(folder_id: str, updates: FolderCreate, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def update_folder(folder_id: str, updates: FolderCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Update a folder"""
     update_data = updates.model_dump()
     result = await db.update_folder(folder_id, current_user['id'], update_data)
@@ -397,7 +375,7 @@ async def update_folder(folder_id: str, updates: FolderCreate, current_user: dic
     return {"message": "Folder updated"}
 
 @api_router.delete("/folders/{folder_id}")
-async def delete_folder(folder_id: str, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def delete_folder(folder_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Delete a folder and all its items and subfolders recursively"""
     result = await db.delete_folder(folder_id, current_user['id'])
     
@@ -410,7 +388,7 @@ async def delete_folder(folder_id: str, current_user: dict = Depends(get_current
 # ========== SAVED ITEMS ROUTES ==========
 
 @api_router.post("/saved-items/create")
-async def create_saved_item(item_data: SavedItemCreate, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def create_saved_item(item_data: SavedItemCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Save a tab/snippet to a collection"""
     item_dict = item_data.model_dump()
     item_dict['user_id'] = current_user['id']
@@ -427,7 +405,7 @@ async def create_saved_item(item_data: SavedItemCreate, current_user: dict = Dep
     return result
 
 @api_router.get("/saved-items/list/{collection_id}")
-async def list_saved_items(collection_id: str, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def list_saved_items(collection_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """List all saved items in a collection"""
     items = await db.get_saved_items(collection_id, current_user['id'])
     
@@ -439,7 +417,7 @@ async def list_saved_items(collection_id: str, current_user: dict = Depends(get_
     return {"items": items}
 
 @api_router.get("/saved-items/{item_id}")
-async def get_saved_item(item_id: str, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def get_saved_item(item_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Get a specific saved item"""
     item = await db.get_saved_item(item_id, current_user['id'])
     
@@ -453,7 +431,7 @@ async def get_saved_item(item_id: str, current_user: dict = Depends(get_current_
     return item
 
 @api_router.put("/saved-items/{item_id}")
-async def update_saved_item(item_id: str, updates: SavedItemCreate, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def update_saved_item(item_id: str, updates: SavedItemCreate, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Update a saved item"""
     update_dict = updates.model_dump()
     
@@ -476,7 +454,7 @@ async def update_saved_item(item_id: str, updates: SavedItemCreate, current_user
     return result
 
 @api_router.delete("/saved-items/{item_id}")
-async def delete_saved_item(item_id: str, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+async def delete_saved_item(item_id: str, current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Delete a saved item"""
     result = await db.delete_saved_item(item_id, current_user['id'])
     

@@ -107,11 +107,58 @@ function UnflattenJSON({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   };
 
   return (
-    <div className="unflatten-json-tool" data-testid="unflatten-json">
-      <div className="flex flex-col h-full">
+    <div className="unflatten-json-tool h-full flex flex-col" data-testid="unflatten-json">
+      {/* Unflatten Controls */}
+      <div className="p-4 border-b border-[var(--border-primary)]">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Delimiter:</label>
+            <input
+              type="text"
+              value={delimiter}
+              onChange={(e) => setDelimiter(e.target.value)}
+              className="w-16 px-2 py-1 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
+              placeholder="."
+            />
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={overwrite}
+                onChange={(e) => setOverwrite(e.target.checked)}
+              />
+              <span className="text-sm">Overwrite</span>
+            </label>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={object}
+                onChange={(e) => setObject(e.target.checked)}
+              />
+              <span className="text-sm">Object Mode</span>
+            </label>
+          </div>
+          
+          <Button 
+            onClick={unflattenJSON} 
+            size="sm"
+          >
+            <ArrowUp className="w-4 h-4 mr-2" />
+            Unflatten JSON
+          </Button>
+        </div>
+      </div>
+
+      {/* Two Column Layout */}
+      <div className="flex-1 grid grid-cols-2 gap-4 p-4 overflow-hidden">
         {/* Input JSON */}
-        <div className="flex-1 json-panel mb-4">
-          <div className="panel-header">
+        <div className="flex flex-col h-full">
+          <div className="panel-header mb-2">
             <h3>Input Flat JSON</h3>
             <Button 
               onClick={formatJSON} 
@@ -121,7 +168,7 @@ function UnflattenJSON({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
               Format
             </Button>
           </div>
-          <div className="editor-container">
+          <div className="editor-container flex-1 relative">
             <Editor
               height="100%"
               defaultLanguage="json"
@@ -146,69 +193,9 @@ function UnflattenJSON({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
           </div>
         </div>
 
-        {/* Unflatten Controls */}
-        <div className="mb-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium">Delimiter:</label>
-              <input
-                type="text"
-                value={delimiter}
-                onChange={(e) => setDelimiter(e.target.value)}
-                className="w-16 px-2 py-1 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
-                placeholder="."
-              />
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <label className="flex items-center gap-1">
-                <input
-                  type="checkbox"
-                  checked={overwrite}
-                  onChange={(e) => setOverwrite(e.target.checked)}
-                />
-                <span className="text-sm">Overwrite</span>
-              </label>
-              <span className="text-xs text-[var(--text-tertiary)]">(Overwrite existing keys)</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <label className="flex items-center gap-1">
-                <input
-                  type="checkbox"
-                  checked={object}
-                  onChange={(e) => setObject(e.target.checked)}
-                />
-                <span className="text-sm">Object Mode</span>
-              </label>
-              <span className="text-xs text-[var(--text-tertiary)]">(Create objects for nested keys)</span>
-            </div>
-            
-            <Button 
-              onClick={unflattenJSON} 
-              size="sm"
-            >
-              <ArrowUp className="w-4 h-4 mr-2" />
-              Unflatten JSON
-            </Button>
-          </div>
-          
-          <div className="mt-2 text-xs text-[var(--text-tertiary)]">
-            <p>
-              <strong>Delimiter:</strong> Character that separates nested keys (e.g., "person.address.city")
-            </p>
-            <p>
-              <strong>Overwrite:</strong> If enabled, will overwrite existing keys when there's a conflict
-            </p>
-            <p>
-              <strong>Object Mode:</strong> If enabled, creates objects for nested keys; otherwise creates arrays for numeric keys
-            </p>
-          </div>
-        </div>
-
         {/* Unflattened Result */}
-        <div className="flex-1">
-          <div className="panel-header">
+        <div className="flex flex-col h-full">
+          <div className="panel-header mb-2">
             <h3>Unflattened JSON</h3>
             <Button 
               onClick={copyToClipboard} 
@@ -223,7 +210,7 @@ function UnflattenJSON({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
               )}
             </Button>
           </div>
-          <div className="editor-container">
+          <div className="editor-container flex-1">
             <Editor
               height="100%"
               defaultLanguage="json"

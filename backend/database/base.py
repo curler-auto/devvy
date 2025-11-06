@@ -68,6 +68,10 @@ class DatabaseBase(ABC):
         pass
     
     @abstractmethod
+    async def update_collection(self, collection_id: str, user_id: str, update_data: Dict[str, Any]) -> bool:
+        pass
+    
+    @abstractmethod
     async def delete_collection(self, collection_id: str, user_id: str) -> bool:
         pass
     

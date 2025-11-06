@@ -131,6 +131,26 @@ class SQLiteDatabase(DatabaseBase):
             collections = result.scalars().all()
             return [self._model_to_dict(c) for c in collections]
     
+    async def update_collection(self, collection_id: str, user_id: str, update_data: Dict[str, Any]) -> bool:
+        async with self.SessionLocal() as session:
+            result = await session.execute(
+                select(Collection).where(
+                    Collection.id == collection_id,
+                    Collection.user_id == user_id
+                )
+            )
+            collection = result.scalar_one_or_none()
+            
+            if not collection:
+                return False
+            
+            for key, value in update_data.items():
+                if hasattr(collection, key):
+                    setattr(collection, key, value)
+            
+            await session.commit()
+            return True
+    
     async def delete_collection(self, collection_id: str, user_id: str) -> bool:
         async with self.SessionLocal() as session:
             result = await session.execute(

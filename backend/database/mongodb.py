@@ -72,6 +72,13 @@ class MongoDBDatabase(DatabaseBase):
     async def get_collections(self, user_id: str) -> List[Dict[str, Any]]:
         return await self.db.collections.find({"user_id": user_id}, {"_id": 0}).to_list(1000)
     
+    async def update_collection(self, collection_id: str, user_id: str, update_data: Dict[str, Any]) -> bool:
+        result = await self.db.collections.update_one(
+            {"id": collection_id, "user_id": user_id},
+            {"$set": update_data}
+        )
+        return result.modified_count > 0
+    
     async def delete_collection(self, collection_id: str, user_id: str) -> bool:
         result = await self.db.collections.delete_one({"id": collection_id, "user_id": user_id})
         return result.deleted_count > 0

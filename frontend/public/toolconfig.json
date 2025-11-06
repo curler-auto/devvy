@@ -2,6 +2,15 @@
   "version": "1.0.0",
   "tools": [
     {
+      "id": "sheet-vue",
+      "name": "SheetVue",
+      "category": "excel",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileSpreadsheet",
+      "description": "Excel-like spreadsheet with formulas, charts, and pivot tables"
+    },
+    {
       "id": "json-beautifier",
       "name": "JSON Beautifier",
       "category": "formatters",
@@ -558,6 +567,2481 @@
       "tier": "free",
       "icon": "CheckSquare",
       "description": "Validate JSON data against a JSON Schema"
+    },
+    {
+      "id": "xml-to-yaml",
+      "name": "XML to YAML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert XML to YAML format"
+    },
+    {
+      "id": "yaml-to-xml",
+      "name": "YAML to XML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert YAML to XML format"
+    },
+    {
+      "id": "xml-to-toml",
+      "name": "XML to TOML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert XML to TOML format"
+    },
+    {
+      "id": "toml-to-xml",
+      "name": "TOML to XML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert TOML to XML format"
+    },
+    {
+      "id": "csv-to-json",
+      "name": "CSV to JSON",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert CSV to JSON format"
+    },
+    {
+      "id": "json-to-csv",
+      "name": "JSON to CSV",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert JSON to CSV format"
+    },
+    {
+      "id": "csv-to-xml",
+      "name": "CSV to XML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert CSV to XML format"
+    },
+    {
+      "id": "xml-to-csv",
+      "name": "XML to CSV",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert XML to CSV format"
+    },
+    {
+      "id": "csv-to-yaml",
+      "name": "CSV to YAML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert CSV to YAML format"
+    },
+    {
+      "id": "yaml-to-csv",
+      "name": "YAML to CSV",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert YAML to CSV format"
+    },
+    {
+      "id": "csv-to-toml",
+      "name": "CSV to TOML",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert CSV to TOML format"
+    },
+    {
+      "id": "toml-to-csv",
+      "name": "TOML to CSV",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert TOML to CSV format"
+    },
+    {
+      "id": "json-to-html-table",
+      "name": "JSON to HTML Table",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert JSON to HTML table format"
+    },
+    {
+      "id": "csv-to-html-table",
+      "name": "CSV to HTML Table",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert CSV to HTML table format"
+    },
+    {
+      "id": "json-to-typescript",
+      "name": "JSON to TypeScript",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Generate TypeScript interfaces from JSON"
+    },
+    {
+      "id": "json-to-go-struct",
+      "name": "JSON to Go Struct",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Generate Go structs from JSON"
+    },
+    {
+      "id": "json-to-python-class",
+      "name": "JSON to Python Class",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Generate Python dataclasses from JSON"
+    },
+    {
+      "id": "json-to-java-class",
+      "name": "JSON to Java Class",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Generate Java POJOs from JSON"
+    },
+    {
+      "id": "json-to-csharp-class",
+      "name": "JSON to C# Class",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Generate C# classes from JSON"
+    },
+    {
+      "id": "xml-to-json-schema",
+      "name": "XML to JSON Schema",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Generate JSON Schema from XML"
+    },
+    {
+      "id": "json-to-protobuf",
+      "name": "JSON to Protobuf",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert JSON to Protobuf definition"
+    },
+    {
+      "id": "protobuf-to-json",
+      "name": "Protobuf to JSON",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert Protobuf to JSON"
+    },
+    {
+      "id": "json-to-avro",
+      "name": "JSON to Avro",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert JSON to Apache Avro schema"
+    },
+    {
+      "id": "avro-to-json",
+      "name": "Avro to JSON",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert Avro schema to JSON"
+    },
+    {
+      "id": "hex-encoder",
+      "name": "Hex Encoder/Decoder",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Binary",
+      "description": "Encode and decode hexadecimal strings"
+    },
+    {
+      "id": "ascii-encoder",
+      "name": "ASCII Encoder/Decoder",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Binary",
+      "description": "Convert text to ASCII codes and vice versa"
+    },
+    {
+      "id": "unicode-encoder",
+      "name": "Unicode Encoder/Decoder",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Binary",
+      "description": "Encode and decode Unicode characters"
+    },
+    {
+      "id": "html-encoder",
+      "name": "HTML Entity Encoder/Decoder",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Encode and decode HTML entities"
+    },
+    {
+      "id": "punycode-encoder",
+      "name": "Punycode Encoder/Decoder",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Globe",
+      "description": "Encode and decode internationalized domain names"
+    },
+    {
+      "id": "morse-code",
+      "name": "Morse Code Translator",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Radio",
+      "description": "Translate text to/from Morse code"
+    },
+    {
+      "id": "binary-encoder",
+      "name": "Binary Encoder/Decoder",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Binary",
+      "description": "Convert text to binary and vice versa"
+    },
+    {
+      "id": "octal-encoder",
+      "name": "Octal Encoder/Decoder",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Binary",
+      "description": "Convert text to octal and vice versa"
+    },
+    {
+      "id": "rot13-encoder",
+      "name": "ROT13 Encoder/Decoder",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "RotateCw",
+      "description": "Apply ROT13 cipher encoding/decoding"
+    },
+    {
+      "id": "uuencode",
+      "name": "UUEncode/UUDecode",
+      "category": "encoders",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Binary",
+      "description": "UUEncode and UUDecode binary data"
+    },
+    {
+      "id": "css-formatter",
+      "name": "CSS Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Paintbrush",
+      "description": "Format and minify CSS code"
+    },
+    {
+      "id": "html-formatter",
+      "name": "HTML Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Format and beautify HTML code"
+    },
+    {
+      "id": "javascript-formatter",
+      "name": "JavaScript Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Format and beautify JavaScript code"
+    },
+    {
+      "id": "typescript-formatter",
+      "name": "TypeScript Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Format and beautify TypeScript code"
+    },
+    {
+      "id": "python-formatter",
+      "name": "Python Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Format Python code with Black/autopep8 style"
+    },
+    {
+      "id": "java-formatter",
+      "name": "Java Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Format Java code"
+    },
+    {
+      "id": "go-formatter",
+      "name": "Go Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Format Go code with gofmt style"
+    },
+    {
+      "id": "rust-formatter",
+      "name": "Rust Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Format Rust code with rustfmt style"
+    },
+    {
+      "id": "graphql-formatter",
+      "name": "GraphQL Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitBranch",
+      "description": "Format and validate GraphQL queries"
+    },
+    {
+      "id": "protobuf-formatter",
+      "name": "Protobuf Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Format Protocol Buffer definitions"
+    },
+    {
+      "id": "dockerfile-formatter",
+      "name": "Dockerfile Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Container",
+      "description": "Format and validate Dockerfiles"
+    },
+    {
+      "id": "nginx-formatter",
+      "name": "Nginx Config Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Server",
+      "description": "Format Nginx configuration files"
+    },
+    {
+      "id": "apache-formatter",
+      "name": "Apache Config Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Server",
+      "description": "Format Apache configuration files"
+    },
+    {
+      "id": "ini-formatter",
+      "name": "INI Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Format and validate INI configuration files"
+    },
+    {
+      "id": "properties-formatter",
+      "name": "Properties Formatter",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Format Java properties files"
+    },
+    {
+      "id": "text-case-converter",
+      "name": "Text Case Converter",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Type",
+      "description": "Convert text between cases (camelCase, snake_case, kebab-case, etc.)"
+    },
+    {
+      "id": "word-counter",
+      "name": "Word Counter",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Count words, characters, lines, and paragraphs"
+    },
+    {
+      "id": "lorem-ipsum",
+      "name": "Lorem Ipsum Generator",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate placeholder Lorem Ipsum text"
+    },
+    {
+      "id": "text-sorter",
+      "name": "Text Sorter",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowUpDown",
+      "description": "Sort lines alphabetically or numerically"
+    },
+    {
+      "id": "duplicate-remover",
+      "name": "Duplicate Line Remover",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Filter",
+      "description": "Remove duplicate lines from text"
+    },
+    {
+      "id": "line-numberer",
+      "name": "Line Numberer",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ListOrdered",
+      "description": "Add or remove line numbers from text"
+    },
+    {
+      "id": "whitespace-remover",
+      "name": "Whitespace Remover",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Minimize",
+      "description": "Remove extra whitespace from text"
+    },
+    {
+      "id": "text-reverser",
+      "name": "Text Reverser",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Repeat",
+      "description": "Reverse text, words, or lines"
+    },
+    {
+      "id": "text-splitter",
+      "name": "Text Splitter",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Scissors",
+      "description": "Split text by delimiter or pattern"
+    },
+    {
+      "id": "text-joiner",
+      "name": "Text Joiner",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Link",
+      "description": "Join lines with custom delimiter"
+    },
+    {
+      "id": "slug-generator",
+      "name": "Slug Generator",
+      "category": "text-tools",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Link",
+      "description": "Generate URL-friendly slugs from text"
+    },
+    {
+      "id": "password-generator",
+      "name": "Password Generator",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Key",
+      "description": "Generate secure random passwords"
+    },
+    {
+      "id": "password-strength",
+      "name": "Password Strength Checker",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Shield",
+      "description": "Check password strength and get improvement suggestions"
+    },
+    {
+      "id": "bcrypt-generator",
+      "name": "Bcrypt Hash Generator",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Hash",
+      "description": "Generate and verify Bcrypt hashes"
+    },
+    {
+      "id": "hmac-generator",
+      "name": "HMAC Generator",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Hash",
+      "description": "Generate HMAC signatures with various algorithms"
+    },
+    {
+      "id": "rsa-key-generator",
+      "name": "RSA Key Generator",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Key",
+      "description": "Generate RSA public/private key pairs"
+    },
+    {
+      "id": "aes-encrypt",
+      "name": "AES Encrypt/Decrypt",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Lock",
+      "description": "Encrypt and decrypt text using AES"
+    },
+    {
+      "id": "pgp-tool",
+      "name": "PGP Encrypt/Decrypt",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Shield",
+      "description": "PGP encryption and decryption tool"
+    },
+    {
+      "id": "certificate-decoder",
+      "name": "Certificate Decoder",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileKey",
+      "description": "Decode and analyze SSL/TLS certificates"
+    },
+    {
+      "id": "nanoid-generator",
+      "name": "NanoID Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Fingerprint",
+      "description": "Generate compact unique IDs with NanoID"
+    },
+    {
+      "id": "ulid-generator",
+      "name": "ULID Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Fingerprint",
+      "description": "Generate Universally Unique Lexicographically Sortable Identifiers"
+    },
+    {
+      "id": "barcode-generator",
+      "name": "Barcode Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Barcode",
+      "description": "Generate various barcode formats (EAN, UPC, Code128, etc.)"
+    },
+    {
+      "id": "mock-data-generator",
+      "name": "Mock API Response Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Database",
+      "description": "Generate mock API responses with realistic data"
+    },
+    {
+      "id": "credit-card-generator",
+      "name": "Test Credit Card Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "CreditCard",
+      "description": "Generate test credit card numbers for development"
+    },
+    {
+      "id": "iban-generator",
+      "name": "IBAN Generator/Validator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "CreditCard",
+      "description": "Generate and validate IBAN numbers"
+    },
+    {
+      "id": "mac-address-generator",
+      "name": "MAC Address Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Network",
+      "description": "Generate random MAC addresses"
+    },
+    {
+      "id": "ipv4-generator",
+      "name": "IPv4 Address Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Network",
+      "description": "Generate random IPv4 addresses"
+    },
+    {
+      "id": "ipv6-generator",
+      "name": "IPv6 Address Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Network",
+      "description": "Generate random IPv6 addresses"
+    },
+    {
+      "id": "user-agent-generator",
+      "name": "User Agent Generator",
+      "category": "generators",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Globe",
+      "description": "Generate random user agent strings"
+    },
+    {
+      "id": "sql-query-builder",
+      "name": "SQL Query Builder",
+      "category": "database",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Database",
+      "description": "Visual SQL query builder with syntax highlighting"
+    },
+    {
+      "id": "mongodb-query-builder",
+      "name": "MongoDB Query Builder",
+      "category": "database",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Database",
+      "description": "Build MongoDB queries and aggregations"
+    },
+    {
+      "id": "redis-cli",
+      "name": "Redis CLI Simulator",
+      "category": "database",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Database",
+      "description": "Simulate Redis commands and test queries"
+    },
+    {
+      "id": "elasticsearch-query",
+      "name": "Elasticsearch Query Builder",
+      "category": "database",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Search",
+      "description": "Build and test Elasticsearch queries"
+    },
+    {
+      "id": "sql-to-mongodb",
+      "name": "SQL to MongoDB Converter",
+      "category": "database",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert SQL queries to MongoDB syntax"
+    },
+    {
+      "id": "db-diagram-generator",
+      "name": "Database Diagram Generator",
+      "category": "database",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitBranch",
+      "description": "Generate ER diagrams from schema definitions"
+    },
+    {
+      "id": "migration-generator",
+      "name": "Database Migration Generator",
+      "category": "database",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Database",
+      "description": "Generate database migration scripts"
+    },
+    {
+      "id": "ip-calculator",
+      "name": "IP Subnet Calculator",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Network",
+      "description": "Calculate IP subnets, CIDR, and network ranges"
+    },
+    {
+      "id": "dns-lookup",
+      "name": "DNS Lookup Tool",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Globe",
+      "description": "Perform DNS lookups and analyze records"
+    },
+    {
+      "id": "whois-lookup",
+      "name": "WHOIS Lookup",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Search",
+      "description": "Query WHOIS information for domains"
+    },
+    {
+      "id": "port-scanner",
+      "name": "Port Scanner",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Network",
+      "description": "Scan and check open ports"
+    },
+    {
+      "id": "ping-tool",
+      "name": "Ping Tool",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Activity",
+      "description": "Ping hosts and check connectivity"
+    },
+    {
+      "id": "traceroute",
+      "name": "Traceroute Tool",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Route",
+      "description": "Trace network route to destination"
+    },
+    {
+      "id": "ssl-checker",
+      "name": "SSL Certificate Checker",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Shield",
+      "description": "Check SSL certificate validity and details"
+    },
+    {
+      "id": "http-headers",
+      "name": "HTTP Headers Analyzer",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Analyze HTTP request and response headers"
+    },
+    {
+      "id": "url-parser",
+      "name": "URL Parser",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Link",
+      "description": "Parse and analyze URL components"
+    },
+    {
+      "id": "user-agent-parser",
+      "name": "User Agent Parser",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Globe",
+      "description": "Parse and analyze user agent strings"
+    },
+    {
+      "id": "image-converter",
+      "name": "Image Format Converter",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Convert between image formats (PNG, JPG, WebP, etc.)"
+    },
+    {
+      "id": "image-resizer",
+      "name": "Image Resizer",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Maximize",
+      "description": "Resize images with custom dimensions"
+    },
+    {
+      "id": "image-compressor",
+      "name": "Image Compressor",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Minimize",
+      "description": "Compress images to reduce file size"
+    },
+    {
+      "id": "image-cropper",
+      "name": "Image Cropper",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Crop",
+      "description": "Crop images with custom aspect ratios"
+    },
+    {
+      "id": "image-to-base64",
+      "name": "Image to Base64",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Convert images to Base64 data URLs"
+    },
+    {
+      "id": "base64-to-image",
+      "name": "Base64 to Image",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Convert Base64 strings to images"
+    },
+    {
+      "id": "svg-optimizer",
+      "name": "SVG Optimizer",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Minimize",
+      "description": "Optimize and minify SVG files"
+    },
+    {
+      "id": "favicon-generator",
+      "name": "Favicon Generator",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Generate favicons in multiple sizes"
+    },
+    {
+      "id": "placeholder-image",
+      "name": "Placeholder Image Generator",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Generate placeholder images with custom sizes"
+    },
+    {
+      "id": "image-metadata-extractor",
+      "name": "Image Metadata Extractor",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Info",
+      "description": "Extract EXIF, IPTC, and XMP metadata from images"
+    },
+    {
+      "id": "image-metadata-editor",
+      "name": "Image Metadata Editor",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Edit",
+      "description": "Edit and remove image metadata"
+    },
+    {
+      "id": "image-color-picker",
+      "name": "Image Color Picker",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Pipette",
+      "description": "Pick colors from images and get color codes"
+    },
+    {
+      "id": "image-color-palette",
+      "name": "Image Color Palette Extractor",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Palette",
+      "description": "Extract dominant color palettes from images"
+    },
+    {
+      "id": "image-filter",
+      "name": "Image Filter & Effects",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Sparkles",
+      "description": "Apply filters and effects to images (grayscale, sepia, blur, etc.)"
+    },
+    {
+      "id": "image-brightness-contrast",
+      "name": "Image Brightness/Contrast Adjuster",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Sun",
+      "description": "Adjust image brightness, contrast, and saturation"
+    },
+    {
+      "id": "image-rotator",
+      "name": "Image Rotator",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "RotateCw",
+      "description": "Rotate and flip images"
+    },
+    {
+      "id": "image-watermark",
+      "name": "Image Watermark Tool",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Droplet",
+      "description": "Add text or image watermarks to images"
+    },
+    {
+      "id": "image-border",
+      "name": "Image Border Tool",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Square",
+      "description": "Add borders and frames to images"
+    },
+    {
+      "id": "image-background-remover",
+      "name": "Background Remover",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Eraser",
+      "description": "Remove backgrounds from images"
+    },
+    {
+      "id": "image-merger",
+      "name": "Image Merger",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Combine",
+      "description": "Merge multiple images into one (collage, grid, etc.)"
+    },
+    {
+      "id": "image-splitter",
+      "name": "Image Splitter",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Scissors",
+      "description": "Split images into multiple parts or tiles"
+    },
+    {
+      "id": "image-comparison",
+      "name": "Image Comparison Tool",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitCompare",
+      "description": "Compare two images side-by-side with slider"
+    },
+    {
+      "id": "image-diff",
+      "name": "Image Diff Tool",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Diff",
+      "description": "Find differences between two images"
+    },
+    {
+      "id": "image-histogram",
+      "name": "Image Histogram Analyzer",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "BarChart",
+      "description": "Analyze image histogram and color distribution"
+    },
+    {
+      "id": "image-dimension-calculator",
+      "name": "Image Dimension Calculator",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Ruler",
+      "description": "Calculate aspect ratios and resize dimensions"
+    },
+    {
+      "id": "sprite-sheet-generator",
+      "name": "Sprite Sheet Generator",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Grid",
+      "description": "Generate sprite sheets from multiple images"
+    },
+    {
+      "id": "sprite-sheet-extractor",
+      "name": "Sprite Sheet Extractor",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Scissors",
+      "description": "Extract individual sprites from sprite sheets"
+    },
+    {
+      "id": "image-ascii-art",
+      "name": "Image to ASCII Art",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Type",
+      "description": "Convert images to ASCII art"
+    },
+    {
+      "id": "qr-code-scanner",
+      "name": "QR Code Scanner",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Scan",
+      "description": "Scan and decode QR codes from images"
+    },
+    {
+      "id": "barcode-scanner",
+      "name": "Barcode Scanner",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Scan",
+      "description": "Scan and decode barcodes from images"
+    },
+    {
+      "id": "image-format-analyzer",
+      "name": "Image Format Analyzer",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileSearch",
+      "description": "Analyze image format, compression, and technical details"
+    },
+    {
+      "id": "webp-converter",
+      "name": "WebP Converter",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Convert images to/from WebP format"
+    },
+    {
+      "id": "avif-converter",
+      "name": "AVIF Converter",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Convert images to/from AVIF format"
+    },
+    {
+      "id": "heic-converter",
+      "name": "HEIC/HEIF Converter",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Convert HEIC/HEIF images to other formats"
+    },
+    {
+      "id": "image-batch-processor",
+      "name": "Image Batch Processor",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Layers",
+      "description": "Process multiple images at once (resize, convert, compress)"
+    },
+    {
+      "id": "file-hash",
+      "name": "File Hash Calculator",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Hash",
+      "description": "Calculate file hashes (MD5, SHA-1, SHA-256)"
+    },
+    {
+      "id": "file-converter",
+      "name": "File Format Converter",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "RefreshCw",
+      "description": "Convert between various file formats"
+    },
+    {
+      "id": "pdf-merger",
+      "name": "PDF Merger",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Merge multiple PDF files into one"
+    },
+    {
+      "id": "pdf-splitter",
+      "name": "PDF Splitter",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Scissors",
+      "description": "Split PDF files into separate pages"
+    },
+    {
+      "id": "pdf-to-images",
+      "name": "PDF to Images",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Convert PDF pages to images"
+    },
+    {
+      "id": "images-to-pdf",
+      "name": "Images to PDF",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Convert multiple images to a PDF"
+    },
+    {
+      "id": "file-splitter",
+      "name": "File Splitter",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Scissors",
+      "description": "Split large files into smaller chunks"
+    },
+    {
+      "id": "file-merger",
+      "name": "File Merger",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Combine",
+      "description": "Merge split file chunks back together"
+    },
+    {
+      "id": "mime-type-detector",
+      "name": "MIME Type Detector",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileQuestion",
+      "description": "Detect MIME type of files"
+    },
+    {
+      "id": "git-command-builder",
+      "name": "Git Command Builder",
+      "category": "git",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitBranch",
+      "description": "Build and learn Git commands interactively"
+    },
+    {
+      "id": "gitignore-generator",
+      "name": ".gitignore Generator",
+      "category": "git",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate .gitignore files for various languages and frameworks"
+    },
+    {
+      "id": "git-diff-viewer",
+      "name": "Git Diff Viewer",
+      "category": "git",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitCompare",
+      "description": "Visualize Git diffs with syntax highlighting"
+    },
+    {
+      "id": "commit-message-generator",
+      "name": "Commit Message Generator",
+      "category": "git",
+      "enabled": true,
+      "tier": "free",
+      "icon": "MessageSquare",
+      "description": "Generate conventional commit messages"
+    },
+    {
+      "id": "github-actions-builder",
+      "name": "GitHub Actions Workflow Builder",
+      "category": "cicd",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Workflow",
+      "description": "Build GitHub Actions workflows visually"
+    },
+    {
+      "id": "gitlab-ci-builder",
+      "name": "GitLab CI Builder",
+      "category": "cicd",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Workflow",
+      "description": "Build GitLab CI/CD pipelines"
+    },
+    {
+      "id": "jenkins-pipeline",
+      "name": "Jenkins Pipeline Generator",
+      "category": "cicd",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Workflow",
+      "description": "Generate Jenkinsfile pipelines"
+    },
+    {
+      "id": "circleci-config",
+      "name": "CircleCI Config Builder",
+      "category": "cicd",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Workflow",
+      "description": "Build CircleCI configuration files"
+    },
+    {
+      "id": "kubernetes-yaml",
+      "name": "Kubernetes YAML Generator",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Box",
+      "description": "Generate Kubernetes deployment YAML files"
+    },
+    {
+      "id": "helm-chart-generator",
+      "name": "Helm Chart Generator",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Package",
+      "description": "Generate Helm chart templates"
+    },
+    {
+      "id": "terraform-generator",
+      "name": "Terraform Config Generator",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Cloud",
+      "description": "Generate Terraform configuration files"
+    },
+    {
+      "id": "ansible-playbook",
+      "name": "Ansible Playbook Generator",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Generate Ansible playbooks"
+    },
+    {
+      "id": "docker-compose-generator",
+      "name": "Docker Compose Generator",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Container",
+      "description": "Generate docker-compose.yml files"
+    },
+    {
+      "id": "env-file-generator",
+      "name": "Environment File Generator",
+      "category": "devops",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Generate and manage .env files"
+    },
+    {
+      "id": "unit-test-generator",
+      "name": "Unit Test Generator",
+      "category": "testing",
+      "enabled": true,
+      "tier": "free",
+      "icon": "TestTube",
+      "description": "Generate unit test boilerplate for various languages"
+    },
+    {
+      "id": "mock-server",
+      "name": "Mock API Server",
+      "category": "testing",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Server",
+      "description": "Create mock API servers for testing"
+    },
+    {
+      "id": "test-data-generator",
+      "name": "Test Data Generator",
+      "category": "testing",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Database",
+      "description": "Generate realistic test data sets"
+    },
+    {
+      "id": "api-contract-validator",
+      "name": "API Contract Validator",
+      "category": "testing",
+      "enabled": true,
+      "tier": "free",
+      "icon": "CheckSquare",
+      "description": "Validate API responses against contracts"
+    },
+    {
+      "id": "performance-analyzer",
+      "name": "Performance Analyzer",
+      "category": "performance",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Activity",
+      "description": "Analyze and visualize performance metrics"
+    },
+    {
+      "id": "load-test-generator",
+      "name": "Load Test Script Generator",
+      "category": "performance",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Zap",
+      "description": "Generate load testing scripts (JMeter, k6, etc.)"
+    },
+    {
+      "id": "lighthouse-analyzer",
+      "name": "Lighthouse Report Analyzer",
+      "category": "performance",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Gauge",
+      "description": "Analyze Lighthouse performance reports"
+    },
+    {
+      "id": "bundle-analyzer",
+      "name": "Bundle Size Analyzer",
+      "category": "performance",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Package",
+      "description": "Analyze JavaScript bundle sizes"
+    },
+    {
+      "id": "jsdoc-generator",
+      "name": "JSDoc Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate JSDoc documentation"
+    },
+    {
+      "id": "swagger-generator",
+      "name": "Swagger/OpenAPI Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileJson",
+      "description": "Generate OpenAPI/Swagger documentation"
+    },
+    {
+      "id": "readme-generator",
+      "name": "README Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate professional README files"
+    },
+    {
+      "id": "changelog-generator",
+      "name": "Changelog Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate CHANGELOG files from commits"
+    },
+    {
+      "id": "license-generator",
+      "name": "License Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate software license files"
+    },
+    {
+      "id": "api-docs-generator",
+      "name": "API Documentation Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Book",
+      "description": "Generate API documentation from code"
+    },
+    {
+      "id": "calculator",
+      "name": "Programmer Calculator",
+      "category": "math",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Calculator",
+      "description": "Calculator with hex, binary, octal support"
+    },
+    {
+      "id": "unit-converter",
+      "name": "Unit Converter",
+      "category": "math",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowLeftRight",
+      "description": "Convert between various units (length, weight, temperature, etc.)"
+    },
+    {
+      "id": "number-base-converter",
+      "name": "Number Base Converter",
+      "category": "math",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Binary",
+      "description": "Convert between decimal, hex, binary, octal"
+    },
+    {
+      "id": "percentage-calculator",
+      "name": "Percentage Calculator",
+      "category": "math",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Percent",
+      "description": "Calculate percentages and percentage changes"
+    },
+    {
+      "id": "date-calculator",
+      "name": "Date Calculator",
+      "category": "math",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Calendar",
+      "description": "Calculate date differences and add/subtract dates"
+    },
+    {
+      "id": "timezone-converter",
+      "name": "Timezone Converter",
+      "category": "math",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Globe",
+      "description": "Convert times between timezones"
+    },
+    {
+      "id": "ethereum-unit-converter",
+      "name": "Ethereum Unit Converter",
+      "category": "blockchain",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Coins",
+      "description": "Convert between Wei, Gwei, and Ether"
+    },
+    {
+      "id": "smart-contract-analyzer",
+      "name": "Smart Contract Analyzer",
+      "category": "blockchain",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Analyze Solidity smart contracts"
+    },
+    {
+      "id": "wallet-generator",
+      "name": "Crypto Wallet Generator",
+      "category": "blockchain",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Wallet",
+      "description": "Generate cryptocurrency wallet addresses"
+    },
+    {
+      "id": "abi-encoder",
+      "name": "ABI Encoder/Decoder",
+      "category": "blockchain",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Encode and decode Ethereum ABI data"
+    },
+    {
+      "id": "keccak-hash",
+      "name": "Keccak-256 Hash",
+      "category": "blockchain",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Hash",
+      "description": "Generate Keccak-256 hashes for Ethereum"
+    },
+    {
+      "id": "aws-policy-generator",
+      "name": "AWS IAM Policy Generator",
+      "category": "cloud",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Cloud",
+      "description": "Generate AWS IAM policies"
+    },
+    {
+      "id": "aws-cli-builder",
+      "name": "AWS CLI Command Builder",
+      "category": "cloud",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Terminal",
+      "description": "Build AWS CLI commands interactively"
+    },
+    {
+      "id": "gcp-command-builder",
+      "name": "GCP Command Builder",
+      "category": "cloud",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Cloud",
+      "description": "Build Google Cloud CLI commands"
+    },
+    {
+      "id": "azure-cli-builder",
+      "name": "Azure CLI Builder",
+      "category": "cloud",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Cloud",
+      "description": "Build Azure CLI commands"
+    },
+    {
+      "id": "cloudformation-generator",
+      "name": "CloudFormation Template Generator",
+      "category": "cloud",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Generate AWS CloudFormation templates"
+    },
+    {
+      "id": "log-parser",
+      "name": "Log Parser",
+      "category": "monitoring",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Parse and analyze log files"
+    },
+    {
+      "id": "log-formatter",
+      "name": "Log Formatter",
+      "category": "monitoring",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Format and beautify log files"
+    },
+    {
+      "id": "prometheus-query-builder",
+      "name": "Prometheus Query Builder",
+      "category": "monitoring",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Activity",
+      "description": "Build Prometheus PromQL queries"
+    },
+    {
+      "id": "grafana-dashboard-generator",
+      "name": "Grafana Dashboard Generator",
+      "category": "monitoring",
+      "enabled": true,
+      "tier": "free",
+      "icon": "BarChart",
+      "description": "Generate Grafana dashboard JSON"
+    },
+    {
+      "id": "alert-rule-generator",
+      "name": "Alert Rule Generator",
+      "category": "monitoring",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Bell",
+      "description": "Generate monitoring alert rules"
+    },
+    {
+      "id": "package-json-generator",
+      "name": "package.json Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Package",
+      "description": "Generate package.json files for Node.js projects"
+    },
+    {
+      "id": "requirements-txt-generator",
+      "name": "requirements.txt Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate Python requirements.txt files"
+    },
+    {
+      "id": "gemfile-generator",
+      "name": "Gemfile Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate Ruby Gemfiles"
+    },
+    {
+      "id": "composer-json-generator",
+      "name": "composer.json Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Generate PHP composer.json files"
+    },
+    {
+      "id": "robots-txt-generator",
+      "name": "robots.txt Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate robots.txt files for SEO"
+    },
+    {
+      "id": "sitemap-generator",
+      "name": "Sitemap Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Map",
+      "description": "Generate XML sitemaps"
+    },
+    {
+      "id": "htaccess-generator",
+      "name": ".htaccess Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Generate Apache .htaccess files"
+    },
+    {
+      "id": "cors-tester",
+      "name": "CORS Tester",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Globe",
+      "description": "Test CORS configuration"
+    },
+    {
+      "id": "webhook-tester",
+      "name": "Webhook Tester",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Webhook",
+      "description": "Test and debug webhooks"
+    },
+    {
+      "id": "email-validator",
+      "name": "Email Validator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Mail",
+      "description": "Validate email addresses and check MX records"
+    },
+    {
+      "id": "phone-validator",
+      "name": "Phone Number Validator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Phone",
+      "description": "Validate and format phone numbers"
+    },
+    {
+      "id": "credit-card-validator",
+      "name": "Credit Card Validator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "CreditCard",
+      "description": "Validate credit card numbers using Luhn algorithm"
+    },
+    {
+      "id": "json-minifier",
+      "name": "JSON Minifier",
+      "category": "json",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Minimize",
+      "description": "Minify JSON by removing whitespace"
+    },
+    {
+      "id": "xml-minifier",
+      "name": "XML Minifier",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Minimize",
+      "description": "Minify XML by removing whitespace"
+    },
+    {
+      "id": "css-minifier",
+      "name": "CSS Minifier",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Minimize",
+      "description": "Minify CSS code"
+    },
+    {
+      "id": "js-minifier",
+      "name": "JavaScript Minifier",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Minimize",
+      "description": "Minify JavaScript code"
+    },
+    {
+      "id": "html-minifier",
+      "name": "HTML Minifier",
+      "category": "formatters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Minimize",
+      "description": "Minify HTML code"
+    },
+    {
+      "id": "sql-to-nosql",
+      "name": "SQL to NoSQL Converter",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert SQL schemas to NoSQL document structures"
+    },
+    {
+      "id": "graphql-to-typescript",
+      "name": "GraphQL to TypeScript",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Generate TypeScript types from GraphQL schemas"
+    },
+    {
+      "id": "openapi-to-graphql",
+      "name": "OpenAPI to GraphQL",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert OpenAPI specs to GraphQL schemas"
+    },
+    {
+      "id": "postman-to-openapi",
+      "name": "Postman to OpenAPI",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert Postman collections to OpenAPI specs"
+    },
+    {
+      "id": "curl-to-code",
+      "name": "cURL to Code",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert cURL commands to code (Python, JS, etc.)"
+    },
+    {
+      "id": "code-to-curl",
+      "name": "Code to cURL",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert HTTP code to cURL commands"
+    },
+    {
+      "id": "har-analyzer",
+      "name": "HAR File Analyzer",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Analyze HTTP Archive (HAR) files"
+    },
+    {
+      "id": "cookie-parser",
+      "name": "Cookie Parser",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Cookie",
+      "description": "Parse and analyze HTTP cookies"
+    },
+    {
+      "id": "cidr-calculator",
+      "name": "CIDR Calculator",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Network",
+      "description": "Calculate CIDR ranges, validate CIDR notation, and convert between formats"
+    },
+    {
+      "id": "cidr-to-ip-range",
+      "name": "CIDR to IP Range Converter",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert CIDR notation to IP address ranges"
+    },
+    {
+      "id": "ip-range-to-cidr",
+      "name": "IP Range to CIDR Converter",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowRight",
+      "description": "Convert IP address ranges to CIDR notation"
+    },
+    {
+      "id": "ipv4-generator",
+      "name": "IPv4 Address Generator",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Network",
+      "description": "Generate random or sequential IPv4 addresses"
+    },
+    {
+      "id": "ipv6-generator",
+      "name": "IPv6 Address Generator",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Network",
+      "description": "Generate random or sequential IPv6 addresses"
+    },
+    {
+      "id": "private-ip-generator",
+      "name": "Private IP Generator",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Network",
+      "description": "Generate private IP addresses (RFC 1918)"
+    },
+    {
+      "id": "public-ip-checker",
+      "name": "Public IP Checker",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Globe",
+      "description": "Check your public IP address and geolocation"
+    },
+    {
+      "id": "ip-geolocation",
+      "name": "IP Geolocation Lookup",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "MapPin",
+      "description": "Lookup geolocation information for IP addresses"
+    },
+    {
+      "id": "ip-validator",
+      "name": "IP Address Validator",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "CheckCircle",
+      "description": "Validate IPv4 and IPv6 addresses"
+    },
+    {
+      "id": "telnet-client",
+      "name": "Telnet Client",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Terminal",
+      "description": "Test TCP connectivity to hosts and ports"
+    },
+    {
+      "id": "tcp-connection-tester",
+      "name": "TCP Connection Tester",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Link",
+      "description": "Test TCP connections and measure response times"
+    },
+    {
+      "id": "udp-connection-tester",
+      "name": "UDP Connection Tester",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Radio",
+      "description": "Test UDP connectivity and packet transmission"
+    },
+    {
+      "id": "network-latency-tester",
+      "name": "Network Latency Tester",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Clock",
+      "description": "Measure network latency and round-trip time"
+    },
+    {
+      "id": "jitter-calculator",
+      "name": "Jitter Calculator",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Activity",
+      "description": "Calculate network jitter and packet delay variation"
+    },
+    {
+      "id": "packet-loss-tester",
+      "name": "Packet Loss Tester",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "AlertTriangle",
+      "description": "Test and measure packet loss percentage"
+    },
+    {
+      "id": "bandwidth-calculator",
+      "name": "Bandwidth Calculator",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Gauge",
+      "description": "Calculate bandwidth requirements and conversions"
+    },
+    {
+      "id": "speed-test",
+      "name": "Network Speed Test",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Zap",
+      "description": "Test upload and download speeds"
+    },
+    {
+      "id": "throughput-calculator",
+      "name": "Throughput Calculator",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "TrendingUp",
+      "description": "Calculate network throughput and data transfer rates"
+    },
+    {
+      "id": "mtu-tester",
+      "name": "MTU Size Tester",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Maximize2",
+      "description": "Test and determine optimal MTU size"
+    },
+    {
+      "id": "hop-analyzer",
+      "name": "Network Hop Analyzer",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitBranch",
+      "description": "Analyze network hops and routing paths"
+    },
+    {
+      "id": "route-visualizer",
+      "name": "Route Visualizer",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Map",
+      "description": "Visualize network routes and trace paths"
+    },
+    {
+      "id": "proxy-detector",
+      "name": "Proxy Detector",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Shield",
+      "description": "Detect proxies, VPNs, and load balancers in network path"
+    },
+    {
+      "id": "load-balancer-tester",
+      "name": "Load Balancer Tester",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Scale",
+      "description": "Test load balancer behavior and distribution"
+    },
+    {
+      "id": "network-availability",
+      "name": "Network Availability Monitor",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Activity",
+      "description": "Monitor network availability and uptime"
+    },
+    {
+      "id": "upstream-downstream-tester",
+      "name": "Upstream/Downstream Tester",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "ArrowUpDown",
+      "description": "Test upstream and downstream bandwidth separately"
+    },
+    {
+      "id": "network-quality-analyzer",
+      "name": "Network Quality Analyzer",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "BarChart3",
+      "description": "Comprehensive network quality analysis (latency, jitter, loss, bandwidth)"
+    },
+    {
+      "id": "bgp-lookup",
+      "name": "BGP Lookup Tool",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Globe",
+      "description": "Lookup BGP routing information and AS numbers"
+    },
+    {
+      "id": "asn-lookup",
+      "name": "ASN Lookup",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Search",
+      "description": "Lookup Autonomous System Number information"
+    },
+    {
+      "id": "reverse-dns-lookup",
+      "name": "Reverse DNS Lookup",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "RotateCcw",
+      "description": "Perform reverse DNS lookups (PTR records)"
+    },
+    {
+      "id": "mx-record-checker",
+      "name": "MX Record Checker",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Mail",
+      "description": "Check and validate MX records for domains"
+    },
+    {
+      "id": "dns-propagation-checker",
+      "name": "DNS Propagation Checker",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Globe",
+      "description": "Check DNS propagation across global servers"
+    },
+    {
+      "id": "network-diagram-generator",
+      "name": "Network Diagram Generator",
+      "category": "network",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Network",
+      "description": "Generate network topology diagrams"
+    },
+    {
+      "id": "jwt-debugger",
+      "name": "JWT Debugger",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Bug",
+      "description": "Debug and analyze JWT tokens in detail"
+    },
+    {
+      "id": "oauth-playground",
+      "name": "OAuth Playground",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Key",
+      "description": "Test OAuth 2.0 flows"
+    },
+    {
+      "id": "saml-decoder",
+      "name": "SAML Decoder",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Shield",
+      "description": "Decode and analyze SAML assertions"
+    },
+    {
+      "id": "api-rate-limit-calculator",
+      "name": "API Rate Limit Calculator",
+      "category": "api-testing",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Gauge",
+      "description": "Calculate API rate limits and quotas"
+    },
+    {
+      "id": "batch-request-generator",
+      "name": "Batch Request Generator",
+      "category": "api-testing",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Layers",
+      "description": "Generate batch API requests"
+    },
+    {
+      "id": "api-mock-generator",
+      "name": "API Mock Generator",
+      "category": "api-testing",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Server",
+      "description": "Generate mock API responses from schemas"
+    },
+    {
+      "id": "ascii-art-generator",
+      "name": "ASCII Art Generator",
+      "category": "design",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Type",
+      "description": "Generate ASCII art from text"
+    },
+    {
+      "id": "gradient-generator",
+      "name": "CSS Gradient Generator",
+      "category": "design",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Palette",
+      "description": "Generate CSS gradients visually"
+    },
+    {
+      "id": "box-shadow-generator",
+      "name": "Box Shadow Generator",
+      "category": "design",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Box",
+      "description": "Generate CSS box shadows"
+    },
+    {
+      "id": "border-radius-generator",
+      "name": "Border Radius Generator",
+      "category": "design",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Circle",
+      "description": "Generate CSS border radius"
+    },
+    {
+      "id": "flexbox-generator",
+      "name": "Flexbox Generator",
+      "category": "design",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Layout",
+      "description": "Generate CSS Flexbox layouts"
+    },
+    {
+      "id": "grid-generator",
+      "name": "CSS Grid Generator",
+      "category": "design",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Grid",
+      "description": "Generate CSS Grid layouts"
+    },
+    {
+      "id": "tailwind-config-generator",
+      "name": "Tailwind Config Generator",
+      "category": "design",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Paintbrush",
+      "description": "Generate Tailwind CSS configuration"
+    },
+    {
+      "id": "meta-tags-generator",
+      "name": "Meta Tags Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Tag",
+      "description": "Generate HTML meta tags for SEO and social media"
+    },
+    {
+      "id": "open-graph-generator",
+      "name": "Open Graph Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Share",
+      "description": "Generate Open Graph meta tags"
+    },
+    {
+      "id": "twitter-card-generator",
+      "name": "Twitter Card Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Twitter",
+      "description": "Generate Twitter Card meta tags"
+    },
+    {
+      "id": "schema-org-generator",
+      "name": "Schema.org Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Code",
+      "description": "Generate Schema.org structured data"
+    },
+    {
+      "id": "manifest-generator",
+      "name": "Web App Manifest Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Generate PWA manifest.json files"
+    },
+    {
+      "id": "service-worker-generator",
+      "name": "Service Worker Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Cog",
+      "description": "Generate service worker templates"
+    },
+    {
+      "id": "editorconfig-generator",
+      "name": "EditorConfig Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Generate .editorconfig files"
+    },
+    {
+      "id": "eslint-config-generator",
+      "name": "ESLint Config Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Generate ESLint configuration files"
+    },
+    {
+      "id": "prettier-config-generator",
+      "name": "Prettier Config Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Generate Prettier configuration files"
+    },
+    {
+      "id": "tsconfig-generator",
+      "name": "tsconfig.json Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Generate TypeScript configuration files"
+    },
+    {
+      "id": "vscode-settings-generator",
+      "name": "VS Code Settings Generator",
+      "category": "utilities",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Settings",
+      "description": "Generate VS Code settings.json"
+    },
+    {
+      "id": "github-profile-readme",
+      "name": "GitHub Profile README Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "User",
+      "description": "Generate GitHub profile README with stats"
+    },
+    {
+      "id": "badge-generator",
+      "name": "Badge Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Award",
+      "description": "Generate shields.io badges for README"
+    },
+    {
+      "id": "contributing-generator",
+      "name": "CONTRIBUTING.md Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate CONTRIBUTING.md files"
+    },
+    {
+      "id": "code-of-conduct-generator",
+      "name": "Code of Conduct Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Generate CODE_OF_CONDUCT.md files"
+    },
+    {
+      "id": "pull-request-template",
+      "name": "Pull Request Template Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitPullRequest",
+      "description": "Generate PR templates for GitHub/GitLab"
+    },
+    {
+      "id": "issue-template-generator",
+      "name": "Issue Template Generator",
+      "category": "documentation",
+      "enabled": true,
+      "tier": "free",
+      "icon": "AlertCircle",
+      "description": "Generate issue templates for GitHub/GitLab"
     }
   ],
   "categories": [
@@ -620,6 +3104,77 @@
       "id": "utilities",
       "name": "Utilities",
       "icon": "Wrench"
+    },
+    {
+      "id": "database",
+      "name": "Database Tools",
+      "icon": "Database"
+    },
+    {
+      "id": "network",
+      "name": "Network Tools",
+      "icon": "Network"
+    },
+    {
+      "id": "image",
+      "name": "Image Tools",
+      "icon": "Image"
+    },
+    {
+      "id": "file",
+      "name": "File Tools",
+      "icon": "File"
+    },
+    {
+      "id": "git",
+      "name": "Git Tools",
+      "icon": "GitBranch"
+    },
+    {
+      "id": "cicd",
+      "name": "CI/CD Tools",
+      "icon": "Workflow"
+    },
+    {
+      "id": "testing",
+      "name": "Testing Tools",
+      "icon": "TestTube"
+    },
+    {
+      "id": "performance",
+      "name": "Performance Tools",
+      "icon": "Gauge"
+    },
+    {
+      "id": "documentation",
+      "name": "Documentation Tools",
+      "icon": "Book"
+    },
+    {
+      "id": "math",
+      "name": "Math & Calculation",
+      "icon": "Calculator"
+    },
+    {
+      "id": "blockchain",
+      "name": "Blockchain Tools",
+      "icon": "Coins"
+    },
+    {
+      "id": "cloud",
+      "name": "Cloud Tools",
+      "icon": "Cloud"
+    },
+    {
+      "id": "monitoring",
+      "name": "Monitoring & Logging",
+      "icon": "Activity"
+    },
+    {
+      "id": "excel",
+      "name": "Excel & Spreadsheets",
+      "icon": "FileSpreadsheet",
+      "description": "Excel and spreadsheet tools"
     }
   ]
 }

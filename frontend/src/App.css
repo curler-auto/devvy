@@ -271,8 +271,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 12px 8px;
+  gap: 10px;
+  padding: 16px 12px;
   border-radius: 8px;
   background: transparent;
   border: none;
@@ -283,16 +283,17 @@ body {
   text-align: center;
   width: 100%;
   position: relative;
-  min-height: 85px;
+  min-height: 110px;
   overflow: visible;
   box-sizing: border-box;
 }
 
 @media (min-width: 500px) {
   .pane-item {
-    padding: 14px 10px;
-    gap: 8px;
+    padding: 18px 12px;
+    gap: 10px;
     font-size: 12px;
+    min-height: 120px;
   }
 }
 
@@ -414,17 +415,22 @@ body {
   font-size: 10px;
   color: var(--text-primary);
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.5;
   word-break: break-word;
   width: 100%;
   display: block;
   overflow-wrap: break-word;
   max-height: none;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (min-width: 500px) {
   .pane-item-name {
     font-size: 11px;
+    min-height: 32px;
   }
 }
 
@@ -805,13 +811,13 @@ button {
   gap: 8px;
   font-size: 13px;
   font-weight: 500;
-  color: #e5e5e5;
+  color: var(--text-primary);
 }
 
 .auth-input {
-  background: #0f0f0f;
-  border: 1px solid #2a2a2a;
-  color: #e5e5e5;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 14px;
@@ -821,6 +827,11 @@ button {
 .auth-input:focus {
   outline: none;
   border-color: #10b981;
+}
+
+.auth-input option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 .auth-button {
@@ -1274,10 +1285,28 @@ button {
   color: var(--text-secondary);
 }
 
+/* Folder name input styling */
+.folder-name-input {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-primary) !important;
+}
+
+.folder-name-input:focus {
+  border-color: var(--accent-primary) !important;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.folder-name-input::placeholder {
+  color: var(--text-tertiary) !important;
+  opacity: 0.6;
+}
+
 /* Save to Collection Dialog */
 .save-to-collection-dialog {
-  background: #141414;
-  border: 1px solid #2a2a2a;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   max-width: 450px;
 }
 
@@ -1289,8 +1318,8 @@ button {
 
 .create-collection-dialog,
 .create-collection-form {
-  background: #141414;
-  border: 1px solid #2a2a2a;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   max-width: 450px;
 }
 
@@ -1311,19 +1340,7 @@ button {
 
 /* Collections Panel - REMOVED DUPLICATE - See line 1094 for actual styles */
 
-/* DUPLICATE RULES REMOVED - See line 1094+ for actual themed styles */
-
-.save-to-collection-dialog {
-  background: #141414;
-  border: 1px solid #2a2a2a;
-  max-width: 450px;
-}
-
-.save-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+/* DUPLICATE RULES REMOVED - See line 1301+ for actual themed styles */
 
 
 /* ========== API TESTER STYLES ========== */

@@ -4,6 +4,7 @@ import Editor from '@monaco-editor/react';
 import { Code, Copy, Check, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import ToolHeader from '@/components/ToolHeader';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -13,7 +14,7 @@ const API = `${BACKEND_URL}/api`;
  * Formats and validates JSON with syntax highlighting
  * Backend-dependent: Uses API for validation and formatting
  */
-function JSONBeautifier({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
+function JSONBeautifier({ toolId, tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   const [inputJSON, setInputJSON] = useState(tab.data.input || '');
   const [outputJSON, setOutputJSON] = useState(tab.data.output || '');
   const [isValid, setIsValid] = useState(true);
@@ -130,19 +131,21 @@ function JSONBeautifier({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   };
 
   return (
-    <div className="json-tool" data-testid="json-beautifier">
-      <div className="json-panel">
-        <div className="panel-header">
-          <h3>Input JSON</h3>
-          <Button 
-            onClick={beautifyJSON} 
-            size="sm"
-            data-testid="beautify-button"
-          >
-            <Code className="w-4 h-4 mr-2" />
-            Beautify
-          </Button>
-        </div>
+    <div className="flex flex-col h-full" data-testid="json-beautifier">
+      <ToolHeader toolId={toolId || 'json-beautifier'} toolName="JSON Beautifier" />
+      <div className="json-tool flex-1">
+        <div className="json-panel">
+          <div className="panel-header">
+            <h3>Input JSON</h3>
+            <Button 
+              onClick={beautifyJSON} 
+              size="sm"
+              data-testid="beautify-button"
+            >
+              <Code className="w-4 h-4 mr-2" />
+              Beautify
+            </Button>
+          </div>
         <div className="editor-container">
           <Editor
             height="100%"
@@ -204,6 +207,7 @@ function JSONBeautifier({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
             }}
           />
         </div>
+      </div>
       </div>
     </div>
   );

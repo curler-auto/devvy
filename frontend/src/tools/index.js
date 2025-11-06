@@ -67,6 +67,7 @@ import VectorViewer from './VectorViewer';
 import DataCompare from './DataCompare';
 import CodeExecutor from './CodeExecutor';
 import OpenAPIToTests from './OpenAPIToTests';
+import SheetVue from './SheetVue';
 
 /**
  * Tool Components Registry
@@ -125,6 +126,7 @@ export const TOOL_COMPONENTS = {
   'data-compare': DataCompare,
   'code-executor': CodeExecutor,
   'openapi-to-tests': OpenAPIToTests,
+  'sheet-vue': SheetVue,
 };
 
 /**

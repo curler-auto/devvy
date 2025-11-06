@@ -316,7 +316,9 @@ const LLMConfig = ({ config, onSave }) => {
     model: 'gpt-4',
     apiUrl: 'https://api.openai.com/v1',
     temperature: 0.7,
-    maxTokens: 2000
+    maxTokens: 2000,
+    customHeaders: {},
+    requestFormat: 'openai'
   });
 
   useEffect(() => {
@@ -326,12 +328,53 @@ const LLMConfig = ({ config, onSave }) => {
       model: 'gpt-4',
       apiUrl: 'https://api.openai.com/v1',
       temperature: 0.7,
-      maxTokens: 2000
+      maxTokens: 2000,
+      customHeaders: {},
+      requestFormat: 'openai'
     });
   }, [config]);
 
   const handleSave = () => {
     onSave(formData);
+  };
+
+  const providerPresets = {
+    openai: {
+      apiUrl: 'https://api.openai.com/v1',
+      model: 'gpt-4',
+      requestFormat: 'openai'
+    },
+    anthropic: {
+      apiUrl: 'https://api.anthropic.com/v1',
+      model: 'claude-3-opus-20240229',
+      requestFormat: 'anthropic'
+    },
+    ollama: {
+      apiUrl: 'http://localhost:11434/api',
+      model: 'llama2',
+      requestFormat: 'ollama'
+    },
+    azure: {
+      apiUrl: 'https://YOUR_RESOURCE.openai.azure.com',
+      model: 'gpt-4',
+      requestFormat: 'azure'
+    },
+    custom: {
+      apiUrl: '',
+      model: '',
+      requestFormat: 'openai'
+    }
+  };
+
+  const handleProviderChange = (provider) => {
+    const preset = providerPresets[provider];
+    setFormData({
+      ...formData,
+      provider,
+      apiUrl: preset.apiUrl,
+      model: preset.model,
+      requestFormat: preset.requestFormat
+    });
   };
 
   return (
@@ -341,13 +384,14 @@ const LLMConfig = ({ config, onSave }) => {
           <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Provider</label>
           <select
             value={formData.provider}
-            onChange={(e) => setFormData({...formData, provider: e.target.value})}
+            onChange={(e) => handleProviderChange(e.target.value)}
             className="w-full px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
           >
             <option value="openai">OpenAI</option>
             <option value="anthropic">Anthropic (Claude)</option>
             <option value="ollama">Ollama (Local)</option>
             <option value="azure">Azure OpenAI</option>
+            <option value="custom">Custom (Self-hosted LLM/SLM)</option>
           </select>
         </div>
         <div>
@@ -404,6 +448,65 @@ const LLMConfig = ({ config, onSave }) => {
           />
         </div>
       </div>
+
+      {formData.provider === 'custom' && (
+        <div className="space-y-4 p-4 border border-[var(--border-primary)] rounded-md bg-[var(--bg-secondary)]">
+          <h4 className="text-sm font-semibold text-[var(--text-primary)]">Custom Configuration</h4>
+          
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Request Format</label>
+            <select
+              value={formData.requestFormat}
+              onChange={(e) => setFormData({...formData, requestFormat: e.target.value})}
+              className="w-full px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
+            >
+              <option value="openai">OpenAI Compatible</option>
+              <option value="anthropic">Anthropic Compatible</option>
+              <option value="ollama">Ollama Compatible</option>
+              <option value="huggingface">HuggingFace</option>
+              <option value="custom-json">Custom JSON</option>
+            </select>
+            <p className="text-xs text-[var(--text-secondary)] mt-1">
+              Select the API format your LLM/SLM uses
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Custom Headers (JSON)</label>
+            <textarea
+              value={typeof formData.customHeaders === 'string' ? formData.customHeaders : JSON.stringify(formData.customHeaders, null, 2)}
+              onChange={(e) => {
+                try {
+                  const parsed = JSON.parse(e.target.value);
+                  setFormData({...formData, customHeaders: parsed});
+                } catch {
+                  setFormData({...formData, customHeaders: e.target.value});
+                }
+              }}
+              placeholder={'{\n  "Authorization": "Bearer token",\n  "X-Custom-Header": "value"\n}'}
+              rows={4}
+              className="w-full px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)] font-mono text-xs"
+            />
+            <p className="text-xs text-[var(--text-secondary)] mt-1">
+              Add custom HTTP headers for your API (optional)
+            </p>
+          </div>
+
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-md p-3">
+            <p className="text-xs text-blue-400 font-medium mb-1">💡 Examples of Self-hosted LLMs/SLMs:</p>
+            <ul className="text-xs text-[var(--text-secondary)] space-y-1 ml-4">
+              <li>• Ollama (llama2, mistral, codellama)</li>
+              <li>• LM Studio (local models)</li>
+              <li>• vLLM (high-performance inference)</li>
+              <li>• Text Generation WebUI</li>
+              <li>• LocalAI (OpenAI compatible)</li>
+              <li>• HuggingFace Inference API</li>
+              <li>• Custom FastAPI/Flask endpoints</li>
+            </ul>
+          </div>
+        </div>
+      )}
+
       <button
         onClick={handleSave}
         className="px-4 py-2 bg-[var(--accent-primary)] text-white rounded-md hover:bg-[var(--accent-secondary)] transition-colors"

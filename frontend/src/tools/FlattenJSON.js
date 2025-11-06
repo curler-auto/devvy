@@ -111,11 +111,60 @@ function FlattenJSON({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   };
 
   return (
-    <div className="flatten-json-tool" data-testid="flatten-json">
-      <div className="flex flex-col h-full">
+    <div className="flatten-json-tool h-full flex flex-col" data-testid="flatten-json">
+      {/* Flatten Controls */}
+      <div className="p-4 border-b border-[var(--border-primary)]">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Delimiter:</label>
+            <input
+              type="text"
+              value={delimiter}
+              onChange={(e) => setDelimiter(e.target.value)}
+              className="w-16 px-2 py-1 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
+              placeholder="."
+            />
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium">Max Depth:</label>
+            <input
+              type="number"
+              value={maxDepth}
+              onChange={(e) => setMaxDepth(parseInt(e.target.value) || 0)}
+              min="0"
+              className="w-16 px-2 py-1 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
+              placeholder="0"
+            />
+            <span className="text-xs text-[var(--text-tertiary)]">(0 = unlimited)</span>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-1">
+              <input
+                type="checkbox"
+                checked={safe}
+                onChange={(e) => setSafe(e.target.checked)}
+              />
+              <span className="text-sm">Safe Mode</span>
+            </label>
+          </div>
+          
+          <Button 
+            onClick={flattenJSON} 
+            size="sm"
+          >
+            <ArrowDown className="w-4 h-4 mr-2" />
+            Flatten JSON
+          </Button>
+        </div>
+      </div>
+
+      {/* Two Column Layout */}
+      <div className="flex-1 grid grid-cols-2 gap-4 p-4 overflow-hidden">
         {/* Input JSON */}
-        <div className="flex-1 json-panel mb-4">
-          <div className="panel-header">
+        <div className="flex flex-col h-full">
+          <div className="panel-header mb-2">
             <h3>Input JSON</h3>
             <Button 
               onClick={formatJSON} 
@@ -125,7 +174,7 @@ function FlattenJSON({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
               Format
             </Button>
           </div>
-          <div className="editor-container">
+          <div className="editor-container flex-1 relative">
             <Editor
               height="100%"
               defaultLanguage="json"
@@ -150,70 +199,9 @@ function FlattenJSON({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
           </div>
         </div>
 
-        {/* Flatten Controls */}
-        <div className="mb-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium">Delimiter:</label>
-              <input
-                type="text"
-                value={delimiter}
-                onChange={(e) => setDelimiter(e.target.value)}
-                className="w-16 px-2 py-1 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
-                placeholder="."
-              />
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium">Max Depth:</label>
-              <input
-                type="number"
-                value={maxDepth}
-                onChange={(e) => setMaxDepth(parseInt(e.target.value) || 0)}
-                min="0"
-                className="w-16 px-2 py-1 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
-                placeholder="0"
-              />
-              <span className="text-xs text-[var(--text-tertiary)]">(0 = unlimited)</span>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <label className="flex items-center gap-1">
-                <input
-                  type="checkbox"
-                  checked={safe}
-                  onChange={(e) => setSafe(e.target.checked)}
-                />
-                <span className="text-sm">Safe Mode</span>
-              </label>
-              <span className="text-xs text-[var(--text-tertiary)]">(Handles arrays safely)</span>
-            </div>
-            
-            <Button 
-              onClick={flattenJSON} 
-              size="sm"
-            >
-              <ArrowDown className="w-4 h-4 mr-2" />
-              Flatten JSON
-            </Button>
-          </div>
-          
-          <div className="mt-2 text-xs text-[var(--text-tertiary)]">
-            <p>
-              <strong>Delimiter:</strong> Character to separate nested keys (e.g., "person.address.city")
-            </p>
-            <p>
-              <strong>Max Depth:</strong> Maximum depth to flatten (0 = unlimited)
-            </p>
-            <p>
-              <strong>Safe Mode:</strong> Preserves arrays and doesn't create numeric keys for array indices
-            </p>
-          </div>
-        </div>
-
         {/* Flattened Result */}
-        <div className="flex-1">
-          <div className="panel-header">
+        <div className="flex flex-col h-full">
+          <div className="panel-header mb-2">
             <h3>Flattened JSON</h3>
             <Button 
               onClick={copyToClipboard} 
@@ -228,7 +216,7 @@ function FlattenJSON({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
               )}
             </Button>
           </div>
-          <div className="editor-container">
+          <div className="editor-container flex-1">
             <Editor
               height="100%"
               defaultLanguage="json"

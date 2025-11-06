@@ -17,7 +17,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 import hashlib
 import platform
-from auth import SavedItemCreate
 
 # Initialize FastAPI app
 app = FastAPI(title="DevTools Suite Desktop", version="1.0.0")
@@ -77,9 +76,8 @@ def init_database():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS folders (
             id TEXT PRIMARY KEY,
-            user_id TEXT NOT NULL,
             collection_id TEXT,
-            parent_folder_id TEXT,
+            parent_id TEXT,
             name TEXT NOT NULL,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (collection_id) REFERENCES collections (id)
@@ -393,7 +391,7 @@ async def list_folders(collection_id: str):
     cursor = conn.cursor()
     
     cursor.execute("""
-        SELECT id, collection_id, parent_folder_id, name, created_at
+        SELECT id, collection_id, parent_id, name, created_at
         FROM folders
         WHERE collection_id = ?
         ORDER BY created_at
@@ -417,15 +415,14 @@ async def create_folder(folder: FolderCreate):
     """Create a new folder"""
     folder_id = str(uuid.uuid4())
     created_at = datetime.now(timezone.utc).isoformat()
-    user_id = "desktop_user"  # Desktop mode uses default user
     
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
     cursor.execute("""
-        INSERT INTO folders (id, user_id, collection_id, parent_folder_id, name, created_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (folder_id, user_id, folder.collection_id, folder.parent_folder_id, folder.name, created_at))
+        INSERT INTO folders (id, collection_id, parent_id, name, created_at)
+        VALUES (?, ?, ?, ?, ?)
+    """, (folder_id, folder.collection_id, folder.parent_folder_id, folder.name, created_at))
     
     conn.commit()
     conn.close()
@@ -446,7 +443,7 @@ async def update_folder(folder_id: str, folder: FolderUpdate):
     
     cursor.execute("""
         UPDATE folders
-        SET name = ?, parent_folder_id = ?
+        SET name = ?, parent_id = ?
         WHERE id = ?
     """, (folder.name, folder.parent_folder_id, folder_id))
     
@@ -465,115 +462,18 @@ async def delete_folder(folder_id: str):
     cursor.execute("DELETE FROM saved_items WHERE folder_id = ?", (folder_id,))
     
     # Delete subfolders recursively (get all subfolders first)
-    cursor.execute("SELECT id FROM folders WHERE parent_folder_id = ?", (folder_id,))
+    cursor.execute("SELECT id FROM folders WHERE parent_id = ?", (folder_id,))
     subfolders = [row[0] for row in cursor.fetchall()]
     
     for subfolder_id in subfolders:
-        # Delete saved items in subfolders
+        # Recursively delete items in subfolders
         cursor.execute("DELETE FROM saved_items WHERE folder_id = ?", (subfolder_id,))
     
     # Delete all subfolders
-    cursor.execute("DELETE FROM folders WHERE parent_folder_id = ?", (folder_id,))
+    cursor.execute("DELETE FROM folders WHERE parent_id = ?", (folder_id,))
     
     # Delete the folder itself
     cursor.execute("DELETE FROM folders WHERE id = ?", (folder_id,))
-    
-    conn.commit()
-    conn.close()
-    
-    return {"success": True}
-
-# Saved Items endpoints
-@app.post("/api/saved-items/create")
-async def create_saved_item(item: SavedItemCreate):
-    """Save a tool state to a collection"""
-    item_id = str(uuid.uuid4())
-    created_at = datetime.now(timezone.utc).isoformat()
-    user_id = "desktop_user"  # Desktop mode uses default user
-    
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    cursor.execute("""
-        INSERT INTO saved_items (id, user_id, collection_id, folder_id, name, tool_id, data, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    """, (item_id, user_id, item.collection_id, item.folder_id, item.name, item.tool_id, json.dumps(item.tool_data), created_at))
-    
-    conn.commit()
-    conn.close()
-    
-    return {
-        "id": item_id,
-        "user_id": user_id,
-        "collection_id": item.collection_id,
-        "folder_id": item.folder_id,
-        "name": item.name,
-        "tool_id": item.tool_id,
-        "tool_data": item.tool_data,
-        "created_at": created_at
-    }
-
-@app.get("/api/saved-items/list/{collection_id}")
-async def list_saved_items(collection_id: str, folder_id: Optional[str] = None):
-    """List saved items in a collection/folder"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    if folder_id:
-        cursor.execute("""
-            SELECT id, user_id, collection_id, folder_id, name, tool_id, data, created_at
-            FROM saved_items
-            WHERE collection_id = ? AND folder_id = ?
-            ORDER BY created_at DESC
-        """, (collection_id, folder_id))
-    else:
-        cursor.execute("""
-            SELECT id, user_id, collection_id, folder_id, name, tool_id, data, created_at
-            FROM saved_items
-            WHERE collection_id = ? AND folder_id IS NULL
-            ORDER BY created_at DESC
-        """, (collection_id,))
-    
-    items = []
-    for row in cursor.fetchall():
-        items.append({
-            "id": row[0],
-            "user_id": row[1],
-            "collection_id": row[2],
-            "folder_id": row[3],
-            "name": row[4],
-            "tool_id": row[5],
-            "tool_data": json.loads(row[6]) if row[6] else {},
-            "created_at": row[7]
-        })
-    
-    conn.close()
-    return {"items": items}
-
-@app.put("/api/saved-items/{item_id}")
-async def update_saved_item(item_id: str, item: SavedItemCreate):
-    """Update a saved item"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    cursor.execute("""
-        UPDATE saved_items
-        SET name = ?, data = ?, collection_id = ?, folder_id = ?
-        WHERE id = ?
-    """, (item.name, json.dumps(item.tool_data), item.collection_id, item.folder_id, item_id))
-    
-    conn.commit()
-    conn.close()
-    
-    return {"success": True, "id": item_id}
-
-@app.delete("/api/saved-items/{item_id}")
-async def delete_saved_item(item_id: str):
-    """Delete a saved item"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    
-    cursor.execute("DELETE FROM saved_items WHERE id = ?", (item_id,))
     
     conn.commit()
     conn.close()
@@ -587,37 +487,39 @@ async def list_favorites():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # Desktop mode uses default user_id
-    cursor.execute("SELECT tool_id FROM favorites WHERE user_id = ?", ("desktop_user",))
+    cursor.execute("SELECT tool_id FROM favorites")
     favorites = [row[0] for row in cursor.fetchall()]
     
     conn.close()
     return {"favorites": favorites}
 
-class FavoriteRequest(BaseModel):
-    tool_id: str
-
 @app.post("/api/favorites/add")
-async def add_favorite(request: FavoriteRequest):
+async def add_favorite(request: dict):
     """Add tool to favorites"""
+    tool_id = request.get("tool_id")
+    if not tool_id:
+        raise HTTPException(status_code=400, detail="tool_id is required")
+    
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # Desktop mode uses default user_id
-    cursor.execute("INSERT OR IGNORE INTO favorites (user_id, tool_id) VALUES (?, ?)", ("desktop_user", request.tool_id))
+    cursor.execute("INSERT OR IGNORE INTO favorites (tool_id) VALUES (?)", (tool_id,))
     conn.commit()
     conn.close()
     
     return {"success": True}
 
 @app.post("/api/favorites/remove")
-async def remove_favorite(request: FavoriteRequest):
+async def remove_favorite(request: dict):
     """Remove tool from favorites"""
+    tool_id = request.get("tool_id")
+    if not tool_id:
+        raise HTTPException(status_code=400, detail="tool_id is required")
+    
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
-    # Desktop mode uses default user_id
-    cursor.execute("DELETE FROM favorites WHERE user_id = ? AND tool_id = ?", ("desktop_user", request.tool_id))
+    cursor.execute("DELETE FROM favorites WHERE tool_id = ?", (tool_id,))
     conn.commit()
     conn.close()
     

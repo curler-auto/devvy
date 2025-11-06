@@ -101,6 +101,16 @@ function MainApp() {
     loadFavorites();
     loadToolsConfig();
     loadLicenseAndTools();
+    
+    // Listen for favorites changes from tool headers
+    const handleFavoritesChanged = () => {
+      loadFavorites();
+    };
+    window.addEventListener('favoritesChanged', handleFavoritesChanged);
+    
+    return () => {
+      window.removeEventListener('favoritesChanged', handleFavoritesChanged);
+    };
   }, []);
 
   // Keyboard shortcut handler for Ctrl/Cmd+S and Ctrl/Cmd+Shift+S
@@ -215,7 +225,9 @@ function MainApp() {
   const loadFavorites = async () => {
     try {
       const response = await axios.get(`${API}/favorites/list`);
-      setFavorites(response.data.favorites || []);
+      const favs = response.data.favorites || [];
+      console.log('Loaded favorites:', favs);
+      setFavorites(favs);
     } catch (error) {
       console.error('Failed to load favorites:', error);
     }
@@ -339,15 +351,29 @@ function MainApp() {
 
   const toggleFavorite = async (toolId) => {
     try {
+      console.log('Toggling favorite for:', toolId);
+      console.log('Current favorites:', favorites);
+      
       if (favorites.includes(toolId)) {
         await axios.post(`${API}/favorites/remove`, { tool_id: toolId });
-        setFavorites(favorites.filter(id => id !== toolId));
+        const newFavorites = favorites.filter(id => id !== toolId);
+        setFavorites(newFavorites);
+        console.log('Removed from favorites. New list:', newFavorites);
         toast.success('Removed from favorites');
       } else {
         await axios.post(`${API}/favorites/add`, { tool_id: toolId });
-        setFavorites([...favorites, toolId]);
+        const newFavorites = [...favorites, toolId];
+        setFavorites(newFavorites);
+        console.log('Added to favorites. New list:', newFavorites);
         toast.success('Added to favorites');
       }
+      
+      // Dispatch event to notify other components
+      console.log('Dispatching favoritesChanged event');
+      window.dispatchEvent(new CustomEvent('favoritesChanged'));
+      
+      // Also reload favorites to ensure sync
+      setTimeout(() => loadFavorites(), 100);
     } catch (error) {
       console.error('Failed to toggle favorite:', error);
       toast.error('Failed to update favorites');
@@ -562,6 +588,14 @@ function MainApp() {
     : [];
 
   const favoriteTools = enabledTools.filter(tool => favorites.includes(tool.id));
+  
+  // Filter favorites based on search query
+  const filteredFavorites = searchQuery
+    ? favoriteTools.filter(tool =>
+        tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.description.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : favoriteTools;
 
   // Filter out categories with no enabled tools
   const categoriesWithTools = categories.filter(category => {
@@ -644,6 +678,19 @@ function MainApp() {
               <Search className="w-5 h-5" />
             </button>
             <button
+              className={`icon-pane-item ${activePane === 'favorites' ? 'active' : ''}`}
+              onClick={() => {
+                setActivePane('favorites');
+                setSelectedCategory(null);
+                setSearchQuery('');
+                setIsSidebarCollapsed(false);
+              }}
+              title={`Favorites ${favorites.length > 0 ? `(${favorites.length})` : ''}`}
+              data-testid="icon-favorites"
+            >
+              <Star className="w-5 h-5" fill={favorites.length > 0 ? 'currentColor' : 'none'} />
+            </button>
+            <button
               className={`icon-pane-item ${activePane === 'collections' ? 'active' : ''}`}
               onClick={() => {
                 setActivePane('collections');
@@ -656,21 +703,6 @@ function MainApp() {
             >
               <Bookmark className="w-5 h-5" />
             </button>
-            {favorites.length > 0 && (
-              <button
-                className={`icon-pane-item ${activePane === 'favorites' ? 'active' : ''}`}
-                onClick={() => {
-                  setActivePane('favorites');
-                  setSelectedCategory(null);
-                  setSearchQuery('');
-                  setIsSidebarCollapsed(false);
-                }}
-                title="Favorites"
-                data-testid="icon-favorites"
-              >
-                <Star className="w-5 h-5" />
-              </button>
-            )}
             
             {/* Spacer */}
             <div className="flex-1"></div>
@@ -822,20 +854,32 @@ function MainApp() {
               {/* Show Favorites */}
               {activePane === 'favorites' && (
                 <>
-                  {favoriteTools.map((tool) => {
-                    const access = checkToolAccess(tool);
-                    return (
-                      <ToolPaneItem
-                        key={tool.id}
-                        tool={tool}
-                        onOpen={openTool}
-                        isFavorite={true}
-                        onToggleFavorite={toggleFavorite}
-                        isPremium={access.isPremium}
-                        isLocked={access.needsActivation}
-                      />
-                    );
-                  })}
+                  {filteredFavorites.length > 0 ? (
+                    filteredFavorites.map((tool) => {
+                      const access = checkToolAccess(tool);
+                      return (
+                        <ToolPaneItem
+                          key={tool.id}
+                          tool={tool}
+                          onOpen={openTool}
+                          isFavorite={true}
+                          onToggleFavorite={toggleFavorite}
+                          isPremium={access.isPremium}
+                          isLocked={access.needsActivation}
+                        />
+                      );
+                    })
+                  ) : (
+                    <div className="col-span-full flex flex-col items-center justify-center p-8 text-center min-h-[400px]">
+                      <Star className="w-16 h-16 text-gray-600 mb-4" />
+                      <p className="text-gray-400 mb-2">
+                        {searchQuery ? 'No favorites match your search' : 'No favorites yet'}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {searchQuery ? 'Try a different search term' : 'Click the star icon on any tool to add it to favorites'}
+                      </p>
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -1149,9 +1193,14 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
 function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, isLocked }) {
   const Icon = tool.icon;
   
+  const handleFavoriteClick = (e) => {
+    e.stopPropagation();
+    onToggleFavorite(tool.id);
+  };
+  
   return (
     <button
-      className={`pane-item ${isLocked ? 'opacity-75' : ''}`}
+      className={`pane-item ${isLocked ? 'opacity-75' : ''} relative group`}
       data-category={tool.category}
       onClick={() => onOpen(tool)}
       data-testid={`tool-pane-item-${tool.id}`}
@@ -1171,9 +1220,21 @@ function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, i
           )}
         </div>
       </div>
-      {isFavorite && (
-        <Star className="w-3 h-3 text-amber-500 absolute top-2 right-2" fill="currentColor" />
-      )}
+      <button
+        onClick={handleFavoriteClick}
+        className="absolute top-2 right-2 p-1 rounded hover:bg-[var(--bg-tertiary)] transition-colors z-10"
+        title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+        data-testid={`favorite-btn-${tool.id}`}
+      >
+        <Star 
+          className={`w-3.5 h-3.5 transition-all ${
+            isFavorite 
+              ? 'text-amber-500' 
+              : 'text-gray-400 group-hover:text-amber-400'
+          }`}
+          fill={isFavorite ? 'currentColor' : 'none'}
+        />
+      </button>
     </button>
   );
 }

@@ -30,6 +30,7 @@ function ToolWrapper({ toolId, tab, tabs, setTabs, editorTheme }) {
   // Render the tool component with all necessary props
   return (
     <ToolComponent
+      toolId={toolId}
       tab={tab}
       tabs={tabs}
       setTabs={setTabs}
