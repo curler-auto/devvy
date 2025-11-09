@@ -84,3 +84,10 @@ android-sdk/ -e
 !backend/.env.desktop
 !backend/.env.example
 !frontend/.env.electron
+
+# Database files
+*.db
+*.db-journal
+*.db-*
+*.sqlite
+*.sqlite3
