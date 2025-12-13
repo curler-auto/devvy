@@ -21,6 +21,7 @@ from auth import (
     Folder, FolderCreate, SavedItem, SavedItemCreate
 )
 from database import get_db_instance as get_db
+from database.base import DatabaseBase
 
 
 ROOT_DIR = Path(__file__).parent
@@ -650,43 +651,27 @@ async def beautify_json(request: JSONBeautifyRequest):
 
 # Favorites Management
 @api_router.post("/favorites/add")
-async def add_favorite(request: FavoriteToolRequest):
-    # Check if already exists
-    existing = await db.favorites.find_one({
-        "tool_id": request.tool_id,
-        "user_id": request.user_id
-    }, {"_id": 0})
-    
-    if existing:
-        return {"message": "Already in favorites", "favorite_id": existing["id"]}
-    
-    favorite = FavoriteTool(**request.model_dump())
-    doc = favorite.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    await db.favorites.insert_one(doc)
-    return {"message": "Added to favorites", "favorite_id": favorite.id}
+async def add_favorite(request: FavoriteToolRequest, db: DatabaseBase = Depends(get_database)):
+    try:
+        result = await db.add_favorite(request.user_id, request.tool_id)
+        return {"message": "Added to favorites", "favorite": result}
+    except Exception as e:
+        # If already exists, some implementations might raise an error
+        return {"message": "Already in favorites or error occurred", "error": str(e)}
 
 @api_router.post("/favorites/remove")
-async def remove_favorite(request: FavoriteToolRequest):
-    result = await db.favorites.delete_one({
-        "tool_id": request.tool_id,
-        "user_id": request.user_id
-    })
+async def remove_favorite(request: FavoriteToolRequest, db: DatabaseBase = Depends(get_database)):
+    result = await db.remove_favorite(request.user_id, request.tool_id)
     
-    if result.deleted_count > 0:
+    if result:
         return {"message": "Removed from favorites"}
     else:
         return {"message": "Not found in favorites"}
 
 @api_router.get("/favorites/list")
-async def list_favorites(user_id: str = "default_user"):
-    favorites = await db.favorites.find(
-        {"user_id": user_id},
-        {"_id": 0}
-    ).to_list(1000)
-    
-    return {"favorites": [fav["tool_id"] for fav in favorites]}
+async def list_favorites(user_id: str = "default_user", db: DatabaseBase = Depends(get_database)):
+    favorites = await db.get_favorites(user_id)
+    return {"favorites": favorites}
 
 
 # ========== gRPC PROXY ENDPOINT ==========

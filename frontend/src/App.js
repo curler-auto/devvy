@@ -788,22 +788,25 @@ function MainApp() {
                 <>
                   {filteredCategories.map((category) => {
                     const Icon = category.icon;
+                    const toolCount = tools.filter(t => t.enabled && t.category === category.id).length;
                     return (
                       <button
                         key={category.id}
-                        className="pane-item"
+                        className="pane-item relative"
                         data-category={category.id}
                         onClick={() => handleCategorySelect(category)}
                         data-testid={`pane-category-${category.id}`}
                       >
+                        {toolCount > 0 && (
+                          <div className="absolute top-2 right-2 bg-[var(--accent-primary)] text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center z-10">
+                            {toolCount}
+                          </div>
+                        )}
                         <div className="pane-item-icon">
                           <Icon className="w-6 h-6" />
                         </div>
                         <div className="pane-item-content">
                           <div className="pane-item-name">{category.name}</div>
-                          <div className="pane-item-desc">
-                            {tools.filter(t => t.enabled && t.category === category.id).length} tools
-                          </div>
                         </div>
                       </button>
                     );
