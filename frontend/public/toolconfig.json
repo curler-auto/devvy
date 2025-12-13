@@ -23,7 +23,7 @@
       "id": "rest-api-tester",
       "name": "REST API Tester",
       "category": "api-testing",
-      "enabled": false,
+      "enabled": true,
       "tier": "premium",
       "icon": "Globe",
       "description": "Test REST APIs like Postman"
@@ -32,7 +32,7 @@
       "id": "grpc-tester",
       "name": "gRPC Tester",
       "category": "api-testing",
-      "enabled": false,
+      "enabled": true,
       "tier": "premium",
       "icon": "Network",
       "description": "Test gRPC services"
@@ -41,7 +41,7 @@
       "id": "graphql-playground",
       "name": "GraphQL Playground",
       "category": "api-testing",
-      "enabled": false,
+      "enabled": true,
       "tier": "premium",
       "icon": "GitBranch",
       "description": "Test GraphQL APIs"
@@ -50,7 +50,7 @@
       "id": "websocket-tester",
       "name": "WebSocket Tester",
       "category": "api-testing",
-      "enabled": false,
+      "enabled": true,
       "tier": "premium",
       "icon": "Radio",
       "description": "Test WebSocket connections"
@@ -59,7 +59,7 @@
       "id": "ui-recorder",
       "name": "UI Recorder",
       "category": "automation",
-      "enabled": false,
+      "enabled": true,
       "tier": "premium",
       "icon": "Globe",
       "description": "Record UI interactions and generate Playwright code"
@@ -275,7 +275,7 @@
       "id": "diff-checker",
       "name": "Diff Checker",
       "category": "text-tools",
-      "enabled": false,
+      "enabled": true,
       "tier": "premium",
       "icon": "GitCompare",
       "description": "Compare text differences"
@@ -293,7 +293,7 @@
       "id": "sql-formatter",
       "name": "SQL Formatter",
       "category": "formatters",
-      "enabled": false,
+      "enabled": true,
       "tier": "premium",
       "icon": "Database",
       "description": "Format SQL queries"
@@ -329,7 +329,7 @@
       "id": "image-optimizer",
       "name": "Image Optimizer",
       "category": "design",
-      "enabled": false,
+      "enabled": true,
       "tier": "premium",
       "icon": "Image",
       "description": "Optimize and compress images"

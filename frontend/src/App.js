@@ -798,7 +798,7 @@ function MainApp() {
                         data-testid={`pane-category-${category.id}`}
                       >
                         {toolCount > 0 && (
-                          <div className="absolute top-2 right-2 bg-[var(--accent-primary)] text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center z-10">
+                          <div className="absolute top-2 right-2 bg-gray-500/20 text-gray-400 text-[10px] font-normal rounded-full w-5 h-5 flex items-center justify-center z-10">
                             {toolCount}
                           </div>
                         )}
