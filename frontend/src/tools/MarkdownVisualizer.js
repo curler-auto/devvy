@@ -50,47 +50,8 @@ function MarkdownVisualizer({ tab, tabs, setTabs }) {
         return;
       }
 
-      // Store original styles
-      const originalBg = element.style.backgroundColor;
-      const originalColor = element.style.color;
-      
-      // Temporarily modify styles for PDF
-      element.style.backgroundColor = '#ffffff';
-      element.style.color = '#000000';
-      
-      // Override all text colors to black for PDF
-      const allElements = element.querySelectorAll('*');
-      const originalStyles = [];
-      allElements.forEach(el => {
-        originalStyles.push({
-          element: el,
-          color: el.style.color,
-          backgroundColor: el.style.backgroundColor
-        });
-        el.style.color = '#000000';
-        el.style.backgroundColor = 'transparent';
-      });
-      
-      // Style code blocks
-      const codeBlocks = element.querySelectorAll('pre, code');
-      codeBlocks.forEach(el => {
-        el.style.backgroundColor = '#f5f5f5';
-        el.style.color = '#000000';
-        el.style.border = '1px solid #ddd';
-      });
-      
-      // Style links
-      const links = element.querySelectorAll('a');
-      links.forEach(el => {
-        el.style.color = '#0066cc';
-      });
-      
-      // Style headings
-      const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      headings.forEach(el => {
-        el.style.color = '#000000';
-        el.style.fontWeight = 'bold';
-      });
+      // Add PDF export class
+      element.classList.add('pdf-export-mode');
 
       const opt = {
         margin: [10, 10, 10, 10],
@@ -110,73 +71,70 @@ function MarkdownVisualizer({ tab, tabs, setTabs }) {
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
       };
 
-      // Generate PDF as blob to get the file
-      const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
-      
-      // Create download link
-      const url = URL.createObjectURL(pdfBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'markdown-export.pdf';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Restore original styles
-      element.style.backgroundColor = originalBg;
-      element.style.color = originalColor;
-      originalStyles.forEach(({ element: el, color, backgroundColor }) => {
-        el.style.color = color;
-        el.style.backgroundColor = backgroundColor;
-      });
-      
-      // Show success with view link
-      toast.success('PDF downloaded!', {
-        duration: 5000,
-        action: {
-          label: 'Open',
-          onClick: () => {
-            // Create a temporary iframe to view the PDF
-            const iframe = document.createElement('iframe');
-            iframe.style.position = 'fixed';
-            iframe.style.top = '0';
-            iframe.style.left = '0';
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.zIndex = '9999';
-            iframe.style.border = 'none';
-            iframe.src = url;
-            
-            // Add close button
-            const closeBtn = document.createElement('button');
-            closeBtn.innerHTML = '✕ Close';
-            closeBtn.style.position = 'fixed';
-            closeBtn.style.top = '10px';
-            closeBtn.style.right = '10px';
-            closeBtn.style.zIndex = '10000';
-            closeBtn.style.padding = '10px 20px';
-            closeBtn.style.backgroundColor = '#ef4444';
-            closeBtn.style.color = 'white';
-            closeBtn.style.border = 'none';
-            closeBtn.style.borderRadius = '6px';
-            closeBtn.style.cursor = 'pointer';
-            closeBtn.style.fontSize = '14px';
-            closeBtn.style.fontWeight = '600';
-            closeBtn.onclick = () => {
-              document.body.removeChild(iframe);
-              document.body.removeChild(closeBtn);
-            };
-            
-            document.body.appendChild(iframe);
-            document.body.appendChild(closeBtn);
+      try {
+        // Generate PDF as blob to get the file
+        const pdfBlob = await html2pdf().set(opt).from(element).output('blob');
+
+        // Create download link
+        const url = URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'markdown-export.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Show success with view link
+        toast.success('PDF downloaded!', {
+          duration: 5000,
+          action: {
+            label: 'Open',
+            onClick: () => {
+              // Create a temporary iframe to view the PDF
+              const iframe = document.createElement('iframe');
+              iframe.style.position = 'fixed';
+              iframe.style.top = '0';
+              iframe.style.left = '0';
+              iframe.style.width = '100%';
+              iframe.style.height = '100%';
+              iframe.style.zIndex = '9999';
+              iframe.style.border = 'none';
+              iframe.src = url;
+
+              // Add close button
+              const closeBtn = document.createElement('button');
+              closeBtn.innerHTML = '✕ Close';
+              closeBtn.style.position = 'fixed';
+              closeBtn.style.top = '10px';
+              closeBtn.style.right = '10px';
+              closeBtn.style.zIndex = '10000';
+              closeBtn.style.padding = '10px 20px';
+              closeBtn.style.backgroundColor = '#ef4444';
+              closeBtn.style.color = 'white';
+              closeBtn.style.border = 'none';
+              closeBtn.style.borderRadius = '6px';
+              closeBtn.style.cursor = 'pointer';
+              closeBtn.style.fontSize = '14px';
+              closeBtn.style.fontWeight = '600';
+              closeBtn.onclick = () => {
+                document.body.removeChild(iframe);
+                document.body.removeChild(closeBtn);
+              };
+
+              document.body.appendChild(iframe);
+              document.body.appendChild(closeBtn);
+            }
           }
-        }
-      });
-      
-      // Clean up URL after longer delay to ensure button works
-      setTimeout(() => {
-        URL.revokeObjectURL(url);
-      }, 30000);
+        });
+
+        // Clean up URL after longer delay to ensure button works
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 30000);
+      } finally {
+        // Remove PDF export class
+        element.classList.remove('pdf-export-mode');
+      }
     } catch (err) {
       console.error('PDF export error:', err);
       toast.error(`Failed to export PDF: ${err.message}`);
@@ -500,6 +458,37 @@ function hello() {
         }
         .markdown-preview input[type="checkbox"] {
           margin-right: 0.5em;
+        }
+
+        /* PDF Export Styles */
+        .markdown-preview.pdf-export-mode {
+          background-color: #ffffff !important;
+          color: #000000 !important;
+        }
+        .markdown-preview.pdf-export-mode * {
+          color: #000000 !important;
+          background-color: transparent !important;
+        }
+        .markdown-preview.pdf-export-mode pre,
+        .markdown-preview.pdf-export-mode code {
+          background-color: #f5f5f5 !important;
+          color: #000000 !important;
+          border: 1px solid #ddd !important;
+        }
+        .markdown-preview.pdf-export-mode a {
+          color: #0066cc !important;
+          text-decoration: underline !important;
+        }
+        .markdown-preview.pdf-export-mode h1,
+        .markdown-preview.pdf-export-mode h2,
+        .markdown-preview.pdf-export-mode h3,
+        .markdown-preview.pdf-export-mode h4,
+        .markdown-preview.pdf-export-mode h5,
+        .markdown-preview.pdf-export-mode h6 {
+          font-weight: bold !important;
+        }
+        .markdown-preview.pdf-export-mode th {
+          background-color: #f0f0f0 !important;
         }
       `}</style>
     </div>
