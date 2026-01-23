@@ -6,15 +6,6 @@
     "main"
   ],
   "permissions": [
-    "core:default",
-    {
-      "identifier": "shell:allow-execute",
-      "allow": [
-        {
-          "name": "devtools-desktop",
-          "args": true
-        }
-      ]
-    }
+    "core:default"
   ]
 }
