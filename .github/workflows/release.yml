@@ -47,6 +47,7 @@ jobs:
           pip install pyinstaller
 
       - name: build backend sidecar
+        shell: bash
         run: |
           # Build using PyInstaller
           cd ../backend
