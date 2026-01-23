@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import * as ReactJSONTree from 'react-json-tree';
 import { beautifyJSON } from '@/utils/jsonUtils';
+import useDebounce from '@/hooks/useDebounce';
 
 /**
  * JSON Tree View Tool
@@ -13,6 +14,8 @@ import { beautifyJSON } from '@/utils/jsonUtils';
  */
 function JSONTreeView({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   const [inputJSON, setInputJSON] = useState(tab.data?.input || '');
+  // Debounce input to prevent expensive JSON parsing on every keystroke
+  const debouncedInputJSON = useDebounce(inputJSON, 300);
   const [parsedJSON, setParsedJSON] = useState(null);
   const [isValid, setIsValid] = useState(true);
   const [error, setError] = useState(null);
@@ -20,11 +23,11 @@ function JSONTreeView({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   const [expandLevel, setExpandLevel] = useState(tab.data?.expandLevel || 1);
   const [showRawKeys, setShowRawKeys] = useState(tab.data?.showRawKeys || false);
 
-  // Parse JSON when input changes
+  // Parse JSON when debounced input changes
   useEffect(() => {
     try {
-      if (inputJSON.trim()) {
-        const parsed = JSON.parse(inputJSON);
+      if (debouncedInputJSON.trim()) {
+        const parsed = JSON.parse(debouncedInputJSON);
         setParsedJSON(parsed);
         setIsValid(true);
         setError(null);
@@ -33,7 +36,7 @@ function JSONTreeView({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
         const updatedTabs = tabs.map(t => 
           t.tabId === tab.tabId 
             ? { ...t, data: { 
-                input: inputJSON,
+                input: debouncedInputJSON,
                 expanded: expandedPaths,
                 expandLevel,
                 showRawKeys
@@ -49,7 +52,7 @@ function JSONTreeView({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       setIsValid(false);
       setError(err.message);
     }
-  }, [inputJSON]);
+  }, [debouncedInputJSON]);
 
   // Update tab data when settings change
   useEffect(() => {
