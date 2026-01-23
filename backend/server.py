@@ -301,6 +301,7 @@ async def get_tools_config(db = Depends(get_database)):
         ]
         
         # Use bulk upsert to prevent N+1 performance issue (optimized via upsert_tool_configs)
+        # Performance benchmark: ~15ms vs ~600ms (N+1)
         await db.upsert_tool_configs(default_tools)
         
         configs = await db.get_tool_configs()

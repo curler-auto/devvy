@@ -2,7 +2,7 @@
 SQLAlchemy models for SQLite (desktop mode).
 """
 from sqlalchemy import Column, String, Boolean, DateTime, Text, Integer, JSON
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from datetime import datetime, timezone
 
 Base = declarative_base()
