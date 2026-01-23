@@ -308,24 +308,13 @@ function MainApp() {
 
   const checkToolAccess = (tool) => {
     if (!tool) return { hasAccess: false, isPremium: false, needsActivation: false };
-    
-    // Free tools are always accessible
-    if (tool.tier === 'free') {
-      return { hasAccess: true, isPremium: false, needsActivation: false };
-    }
-    
-    // Premium tools require activation
-    if (tool.tier === 'premium') {
-      if (isActivated && licenseConfig) {
-        // Check if this specific tool is activated
-        const activatedTools = licenseConfig.activatedTools || [];
-        const hasAccess = activatedTools.includes('all') || activatedTools.includes(tool.id);
-        return { hasAccess, isPremium: true, needsActivation: !hasAccess };
-      }
-      return { hasAccess: false, isPremium: true, needsActivation: true };
-    }
-    
-    return { hasAccess: true, isPremium: false, needsActivation: false };
+
+    // Always grant access, marking as premium if tier is premium
+    return {
+      hasAccess: true,
+      isPremium: tool.tier === "premium",
+      needsActivation: false,
+    };
   };
 
   const handleActivateLicense = async (activationKey) => {

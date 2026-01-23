@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   const organization = {
     id: 'desktop-org',
     name: 'Desktop Organization',
-    license_tier: 'basic'
+    license_tier: 'premium'
   };
 
   const token = 'desktop-token';
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
         getAuthHeader,
         isAuthenticated: true, // Always authenticated in desktop
         isAdmin: false,
-        isPremium: false // Basic license by default
+        isPremium: true // Basic license by default
       }}
     >
       {children}
