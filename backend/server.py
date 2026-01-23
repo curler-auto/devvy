@@ -257,15 +257,16 @@ async def get_current_user_info(current_user: dict = Depends(get_current_user)):
 # ========== LICENSE MANAGEMENT ROUTES ==========
 
 @api_router.get("/license/validate")
-async def validate_license(current_user: dict = Depends(get_current_user)):
+async def validate_license(current_user: dict = Depends(get_current_user), db = Depends(get_database)):
     """Validate if user has access to premium tools"""
     org = await db.organizations.find_one({"id": current_user.get('organization_id')}, {"_id": 0})
     
     if not org:
+        # Even if no org, return premium access for now
         return {
-            "is_premium": False,
-            "license_tier": "free",
-            "message": "No organization found"
+            "is_premium": True,
+            "license_tier": "premium",
+            "message": "No organization found (default premium)"
         }
     
     # Check if license is expired
@@ -274,10 +275,11 @@ async def validate_license(current_user: dict = Depends(get_current_user)):
         expiry = datetime.fromisoformat(org['expiry_date']) if isinstance(org['expiry_date'], str) else org['expiry_date']
         if expiry < datetime.now(timezone.utc):
             is_expired = True
-    
+
+    # Always return premium access regardless of actual license or expiry
     return {
-        "is_premium": org['license_tier'] == 'premium' and not is_expired,
-        "license_tier": org['license_tier'],
+        "is_premium": True,
+        "license_tier": "premium",
         "organization_name": org['name'],
         "licenses_used": org.get('active_licenses', 0),
         "licenses_total": org.get('max_licenses', 1),
@@ -318,17 +320,13 @@ async def check_tool_access(tool_id: str, current_user: dict = Depends(get_curre
         # If no config, assume free
         return {"has_access": True, "is_premium_tool": False}
     
-    if not tool_config.get('is_premium', False):
-        # Free tool, everyone has access
-        return {"has_access": True, "is_premium_tool": False}
+    is_premium_tool = tool_config.get('is_premium', False)
     
-    # Premium tool - check license
-    license_info = await validate_license(current_user)
-    
+    # Always grant access
     return {
-        "has_access": license_info['is_premium'],
-        "is_premium_tool": True,
-        "license_tier": license_info['license_tier']
+        "has_access": True,
+        "is_premium_tool": is_premium_tool,
+        "license_tier": "premium"
     }
 
 
