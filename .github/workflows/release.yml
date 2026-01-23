@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-22.04, windows-latest]
+        platform: [macos-latest]
 
     runs-on: ${{ matrix.platform }}
     defaults:
@@ -49,9 +49,17 @@ jobs:
       - name: build backend sidecar
         shell: bash
         run: |
+          # Debug: Check Rust info
+          echo "Rust version info:"
+          rustc -vV
+
           # Build using PyInstaller
           cd ../backend
           pyinstaller --clean desktop.spec
+
+          # Debug: Check PyInstaller output
+          echo "Backend dist contents:"
+          ls -l dist/
 
           # Return to frontend to use relative paths for target dir
           cd ../frontend
@@ -61,13 +69,20 @@ jobs:
 
           # Get Rust target triple
           rust_target=$(rustc -vV | sed -n 's/host: //p')
+          echo "Detected Rust target: ${rust_target}"
 
           # Move and rename binary
           if [ "$RUNNER_OS" == "Windows" ]; then
             mv ../backend/dist/devtools-desktop.exe src-tauri/binaries/devtools-desktop-${rust_target}.exe
           else
             mv ../backend/dist/devtools-desktop src-tauri/binaries/devtools-desktop-${rust_target}
+            # Fix: Ensure binary is executable (Tauri requires this)
+            chmod +x src-tauri/binaries/devtools-desktop-${rust_target}
           fi
+
+          # Debug: Check final binaries
+          echo "Final src-tauri/binaries contents:"
+          ls -Rx src-tauri/binaries/
 
       - name: install frontend dependencies
         run: npm install --force  --legacy-peer-deps
