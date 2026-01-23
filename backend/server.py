@@ -14,11 +14,13 @@ import json
 import subprocess
 import tempfile
 import io
+import asyncio
+import sys
 from auth import (
     User, UserCreate, UserLogin, Token, Organization, OrganizationCreate,
     ToolConfig, ToolConfigUpdate, get_password_hash, verify_password,
     create_access_token, decode_token, Collection, CollectionCreate,
-    Folder, FolderCreate, SavedItem, SavedItemCreate
+    Folder, FolderCreate, SavedItem, SavedItemCreate, SavedItemBulkCreate
 )
 from database import get_db_instance as get_db
 from database.base import DatabaseBase
@@ -298,8 +300,7 @@ async def get_tools_config(db = Depends(get_database)):
             {"tool_id": "ui-recorder", "tool_name": "UI Automation Recorder", "is_premium": False},
         ]
         
-        for tool_data in default_tools:
-            await db.upsert_tool_config(tool_data["tool_id"], tool_data)
+        await db.upsert_tool_configs(default_tools)
         
         configs = await db.get_tool_configs()
     
@@ -426,6 +427,31 @@ async def create_saved_item(item_data: SavedItemCreate, current_user: dict = Dep
     
     result = await db.create_saved_item(item_dict)
     return result
+
+@api_router.post("/saved-items/create-bulk")
+async def create_saved_items_bulk(bulk_data: SavedItemBulkCreate, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+    """
+    Bulk save tabs/snippets to a collection.
+    Optimized to prevent N+1 insert performance issues.
+    """
+    items_to_create = []
+
+    for item_data in bulk_data.items:
+        item_dict = item_data.model_dump()
+        item_dict['user_id'] = current_user['id']
+        item_dict['created_at'] = datetime.now(timezone.utc)
+
+        # Map tool_data to data for SQLite model compatibility
+        if 'tool_data' in item_dict:
+            item_dict['data'] = item_dict.pop('tool_data')
+
+        # Remove description if not in SQLite model
+        item_dict.pop('description', None)
+
+        items_to_create.append(item_dict)
+
+    result = await db.create_saved_items_bulk(items_to_create)
+    return {"count": len(result), "items": result}
 
 @api_router.get("/saved-items/list/{collection_id}")
 async def list_saved_items(collection_id: str, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
@@ -702,7 +728,6 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
         from google.protobuf.message_factory import MessageFactory
         from google.protobuf import json_format
         import tempfile
-        import subprocess
         import os as os_module
         
         # Save proto content to a temporary file
@@ -713,17 +738,27 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
         # Compile the proto file to get descriptor
         descriptor_set_file = proto_file_path + '.desc'
         proto_dir = os_module.path.dirname(proto_file_path)
-        compile_result = subprocess.run(
-            ['protoc', f'--proto_path={proto_dir}', f'--descriptor_set_out={descriptor_set_file}', 
-             f'--include_imports', proto_file_path],
-            capture_output=True,
-            text=True
+
+        cmd = [
+            sys.executable, '-m', 'grpc_tools.protoc',
+            f'--proto_path={proto_dir}',
+            f'--descriptor_set_out={descriptor_set_file}',
+            '--include_imports',
+            proto_file_path
+        ]
+
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
         )
+        stdout, stderr = await process.communicate()
         
-        if compile_result.returncode != 0:
+        if process.returncode != 0:
+            error_msg = stderr.decode() if stderr else "Unknown error"
             raise HTTPException(
                 status_code=400,
-                detail=f"Failed to compile proto file: {compile_result.stderr}"
+                detail=f"Failed to compile proto file: {error_msg}"
             )
         
         # Load the descriptor
@@ -1237,9 +1272,6 @@ async def verify_jwt(request: JWTVerifyRequest):
         )
 
 
-# Include the router in the main app
-app.include_router(api_router)
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -1373,29 +1405,40 @@ async def execute_script(request: ScriptExecuteRequest):
         
         # Execute script with timeout
         try:
-            result = subprocess.run(
-                ['/bin/bash', script_path],
+            process = await asyncio.create_subprocess_exec(
+                '/bin/bash', script_path,
                 cwd=request.workingDir if request.workingDir else None,
                 env=env,
-                capture_output=True,
-                text=True,
-                timeout=300  # 5 minute timeout
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
             )
-            
-            output = result.stdout
-            if result.stderr:
-                output += f"\n--- STDERR ---\n{result.stderr}"
-            
+
+            try:
+                stdout, stderr = await asyncio.wait_for(
+                    process.communicate(), timeout=300
+                )
+            except asyncio.TimeoutError:
+                try:
+                    process.kill()
+                    await process.communicate()
+                except Exception:
+                    pass
+                raise HTTPException(
+                    status_code=408,
+                    detail="Script execution timed out (5 minutes)"
+                )
+
+            output = stdout.decode()
+            if stderr:
+                output += f"\n--- STDERR ---\n{stderr.decode()}"
+
             execution_time = time.time() - start_time
-            
+
             return ScriptExecuteResponse(
                 output=output,
-                exitCode=result.returncode,
+                exitCode=process.returncode,
                 executionTime=execution_time
             )
-            
-        except subprocess.TimeoutExpired:
-            raise HTTPException(status_code=408, detail="Script execution timed out (5 minutes)")
         finally:
             # Clean up temp file
             try:
@@ -2009,8 +2052,8 @@ async def execute_code(request: CodeExecutionRequest):
     try:
         # This would execute code on remote/local environment
         # For now, return mock execution result
-        import time
-        time.sleep(0.5)  # Simulate execution time
+        # Use asyncio.sleep to ensure non-blocking execution
+        await asyncio.sleep(0.5)  # Simulate execution time
         
         result = {
             "output": f"Executed {request.language} code successfully!\n",
@@ -2291,6 +2334,9 @@ Be concise and actionable."""
     except Exception as e:
         logger.error(f"AI chat error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# Include the router in the main app
+app.include_router(api_router)
 
 @app.on_event("startup")
 async def startup_db_client():

@@ -631,8 +631,6 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
     }
     if (current.trim()) columnDefs.push(current.trim());
     
-    console.log('Parsed column definitions:', columnDefs); // Debug log
-    
     columnDefs.forEach((colDef) => {
       const trimmed = colDef.trim();
       
@@ -667,7 +665,6 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       });
     });
 
-    console.log('Parsed fields:', fields); // Debug log
     return fields;
   };
 

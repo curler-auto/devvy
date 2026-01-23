@@ -58,6 +58,10 @@ class DatabaseBase(ABC):
     async def upsert_tool_config(self, tool_id: str, config_data: Dict[str, Any]) -> Dict[str, Any]:
         pass
     
+    @abstractmethod
+    async def upsert_tool_configs(self, configs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        pass
+
     # Collection operations
     @abstractmethod
     async def create_collection(self, user_id: str, collection_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -101,6 +105,10 @@ class DatabaseBase(ABC):
     async def create_saved_item(self, item_data: Dict[str, Any]) -> Dict[str, Any]:
         pass
     
+    @abstractmethod
+    async def create_saved_items_bulk(self, items_data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        pass
+
     @abstractmethod
     async def get_saved_items(self, collection_id: str, user_id: str) -> List[Dict[str, Any]]:
         pass

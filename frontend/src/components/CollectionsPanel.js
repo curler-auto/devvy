@@ -303,16 +303,19 @@ export default function CollectionsPanel({ onOpenItem }) {
       await createFoldersRecursively();
 
       // Create items
-      for (const item of importData.items) {
+      if (importData.items && importData.items.length > 0) {
+        const itemsToCreate = importData.items.map(item => ({
+          collection_id: newCollectionId,
+          folder_id: item.folder_id ? folderIdMap[item.folder_id] : null,
+          name: item.name,
+          tool_id: item.tool_id,
+          tool_data: item.tool_data || item.data || {}
+        }));
+
+        // Use bulk create to avoid N+1 performance issue
         await axios.post(
-          `${API}/saved-items/save`,
-          {
-            collection_id: newCollectionId,
-            folder_id: item.folder_id ? folderIdMap[item.folder_id] : null,
-            name: item.name,
-            tool_id: item.tool_id,
-            data: item.data
-          },
+          `${API}/saved-items/create-bulk`,
+          { items: itemsToCreate },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       }
