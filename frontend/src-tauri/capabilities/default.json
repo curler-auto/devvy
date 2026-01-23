@@ -8,7 +8,7 @@
   "permissions": [
     "core:default",
     {
-      "identifier": "shell:allow-sidecar-start",
+      "identifier": "shell:allow-execute",
       "allow": [
         {
           "name": "devtools-desktop",
