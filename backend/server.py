@@ -15,6 +15,7 @@ import subprocess
 import tempfile
 import io
 import asyncio
+import sys
 from auth import (
     User, UserCreate, UserLogin, Token, Organization, OrganizationCreate,
     ToolConfig, ToolConfigUpdate, get_password_hash, verify_password,
@@ -713,17 +714,27 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
         # Compile the proto file to get descriptor
         descriptor_set_file = proto_file_path + '.desc'
         proto_dir = os_module.path.dirname(proto_file_path)
-        compile_result = subprocess.run(
-            ['protoc', f'--proto_path={proto_dir}', f'--descriptor_set_out={descriptor_set_file}', 
-             f'--include_imports', proto_file_path],
-            capture_output=True,
-            text=True
+
+        cmd = [
+            sys.executable, '-m', 'grpc_tools.protoc',
+            f'--proto_path={proto_dir}',
+            f'--descriptor_set_out={descriptor_set_file}',
+            '--include_imports',
+            proto_file_path
+        ]
+
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
         )
+        stdout, stderr = await process.communicate()
         
-        if compile_result.returncode != 0:
+        if process.returncode != 0:
+            error_msg = stderr.decode() if stderr else "Unknown error"
             raise HTTPException(
                 status_code=400,
-                detail=f"Failed to compile proto file: {compile_result.stderr}"
+                detail=f"Failed to compile proto file: {error_msg}"
             )
         
         # Load the descriptor
