@@ -89,6 +89,7 @@ function ToolHeader({ toolId, toolName, children }) {
           disabled={isLoading}
           className="p-1.5 rounded-lg hover:bg-[var(--bg-tertiary)] transition-colors disabled:opacity-50"
           title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
           data-testid={`tool-header-favorite-${toolId}`}
         >
           <Star
@@ -98,6 +99,7 @@ function ToolHeader({ toolId, toolName, children }) {
                 : 'text-gray-400 hover:text-amber-400'
             }`}
             fill={isFavorite ? 'currentColor' : 'none'}
+            aria-hidden="true"
           />
         </button>
       </div>

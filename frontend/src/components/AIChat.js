@@ -122,8 +122,9 @@ function AIChat({ toolContext, isOpen, onClose, onMinimize, isMinimized }) {
           onClick={onMinimize}
           className="rounded-full w-14 h-14 shadow-lg"
           size="lg"
+          aria-label="Open AI Assistant"
         >
-          <MessageSquare className="w-6 h-6" />
+          <MessageSquare className="w-6 h-6" aria-hidden="true" />
         </Button>
       </div>
     );
@@ -141,17 +142,17 @@ function AIChat({ toolContext, isOpen, onClose, onMinimize, isMinimized }) {
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Button onClick={() => setShowSettings(!showSettings)} size="sm" variant="ghost">
-            <Settings className="w-4 h-4" />
+          <Button onClick={() => setShowSettings(!showSettings)} size="sm" variant="ghost" aria-label="Settings">
+            <Settings className="w-4 h-4" aria-hidden="true" />
           </Button>
-          <Button onClick={clearChat} size="sm" variant="ghost">
-            <Trash2 className="w-4 h-4" />
+          <Button onClick={clearChat} size="sm" variant="ghost" aria-label="Clear chat">
+            <Trash2 className="w-4 h-4" aria-hidden="true" />
           </Button>
-          <Button onClick={onMinimize} size="sm" variant="ghost">
-            <Minimize2 className="w-4 h-4" />
+          <Button onClick={onMinimize} size="sm" variant="ghost" aria-label="Minimize chat">
+            <Minimize2 className="w-4 h-4" aria-hidden="true" />
           </Button>
-          <Button onClick={onClose} size="sm" variant="ghost">
-            <X className="w-4 h-4" />
+          <Button onClick={onClose} size="sm" variant="ghost" aria-label="Close chat">
+            <X className="w-4 h-4" aria-hidden="true" />
           </Button>
         </div>
       </div>
@@ -197,11 +198,12 @@ function AIChat({ toolContext, isOpen, onClose, onMinimize, isMinimized }) {
                     size="sm"
                     variant="ghost"
                     className="h-6 w-6 p-0"
+                    aria-label="Copy message"
                   >
                     {copied === index ? (
-                      <Check className="w-3 h-3" />
+                      <Check className="w-3 h-3" aria-hidden="true" />
                     ) : (
-                      <Copy className="w-3 h-3" />
+                      <Copy className="w-3 h-3" aria-hidden="true" />
                     )}
                   </Button>
                 )}
@@ -239,8 +241,9 @@ function AIChat({ toolContext, isOpen, onClose, onMinimize, isMinimized }) {
             disabled={!input.trim() || loading}
             size="sm"
             className="self-end"
+            aria-label="Send message"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-4 h-4" aria-hidden="true" />
           </Button>
         </div>
       </div>
