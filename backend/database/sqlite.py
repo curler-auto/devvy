@@ -105,11 +105,35 @@ class SQLiteDatabase(DatabaseBase):
                 for key, value in config_data.items():
                     setattr(config, key, value)
             else:
-                config = ToolConfig(tool_id=tool_id, **config_data)
+                # Handle case where tool_id might be in config_data
+                clean_data = {k: v for k, v in config_data.items() if k != "tool_id"}
+                config = ToolConfig(tool_id=tool_id, **clean_data)
                 session.add(config)
             await session.commit()
             await session.refresh(config)
             return self._model_to_dict(config)
+
+    async def upsert_tool_configs(self, configs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        async with self.SessionLocal() as session:
+            results = []
+            for config_data in configs:
+                tool_id = config_data.get("tool_id")
+                if not tool_id:
+                    continue
+
+                config = await session.get(ToolConfig, tool_id)
+                if config:
+                    for key, value in config_data.items():
+                        setattr(config, key, value)
+                else:
+                    # Handle case where tool_id might be in config_data
+                    clean_data = {k: v for k, v in config_data.items() if k != "tool_id"}
+                    config = ToolConfig(tool_id=tool_id, **clean_data)
+                    session.add(config)
+                results.append(config)
+
+            await session.commit()
+            return [self._model_to_dict(config) for config in results]
     
     # Collection operations
     async def create_collection(self, user_id: str, collection_data: Dict[str, Any]) -> Dict[str, Any]:
