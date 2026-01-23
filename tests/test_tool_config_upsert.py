@@ -11,7 +11,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from backend.database.sqlite import SQLiteDatabase
 
 # Mock the database connection for testing
-class TestSQLiteDatabase(SQLiteDatabase):
+class MockSQLiteDatabase(SQLiteDatabase):
     def __init__(self, db_path):
         super().__init__(db_path)
 
@@ -24,7 +24,7 @@ def db_path():
 
 @pytest_asyncio.fixture
 async def db(db_path):
-    database = TestSQLiteDatabase(f"sqlite+aiosqlite:///{db_path}")
+    database = MockSQLiteDatabase(f"sqlite+aiosqlite:///{db_path}")
     await database.connect()
     yield database
     await database.disconnect()
