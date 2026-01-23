@@ -300,6 +300,7 @@ async def get_tools_config(db = Depends(get_database)):
             {"tool_id": "ui-recorder", "tool_name": "UI Automation Recorder", "is_premium": False},
         ]
         
+        # Use bulk upsert to prevent N+1 performance issue
         await db.upsert_tool_configs(default_tools)
         
         configs = await db.get_tool_configs()

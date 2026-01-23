@@ -134,6 +134,7 @@ class SQLiteDatabase(DatabaseBase):
     async def upsert_tool_configs(
         self, configs: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
+        """Bulk upsert tool configurations for performance"""
         async with self.SessionLocal() as session:
             if not configs:
                 return []
