@@ -228,6 +228,22 @@ class SQLiteDatabase(DatabaseBase):
             await session.refresh(item)
             return self._model_to_dict(item)
     
+    async def create_saved_items_bulk(self, items_data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        async with self.SessionLocal() as session:
+            items = []
+            for data in items_data:
+                if 'id' not in data:
+                    data['id'] = str(uuid.uuid4())
+                items.append(SavedItem(**data))
+
+            session.add_all(items)
+            await session.commit()
+            # No refresh needed as we set all IDs and other fields are provided or defaults
+            # (timestamp is default but for bulk import slightly inaccurate timestamp is acceptable
+            # or we could set it explicitly if needed)
+
+            return [self._model_to_dict(item) for item in items]
+
     async def get_saved_items(self, collection_id: str, user_id: str) -> List[Dict[str, Any]]:
         async with self.SessionLocal() as session:
             result = await session.execute(

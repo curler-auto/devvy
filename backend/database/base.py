@@ -102,6 +102,10 @@ class DatabaseBase(ABC):
         pass
     
     @abstractmethod
+    async def create_saved_items_bulk(self, items_data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        pass
+
+    @abstractmethod
     async def get_saved_items(self, collection_id: str, user_id: str) -> List[Dict[str, Any]]:
         pass
     

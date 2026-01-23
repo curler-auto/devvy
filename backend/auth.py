@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Optional, List
 import jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
@@ -112,6 +112,9 @@ class SavedItemBase(BaseModel):
 
 class SavedItemCreate(SavedItemBase):
     pass
+
+class SavedItemBulkCreate(BaseModel):
+    items: List[SavedItemCreate]
 
 class SavedItem(SavedItemBase):
     model_config = ConfigDict(extra="ignore")
