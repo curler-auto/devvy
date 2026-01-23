@@ -43,25 +43,29 @@ jobs:
 
       - name: install backend dependencies
         run: |
-          pip install -r backend/requirements.txt
+          pip install -r ../backend/requirements.txt
           pip install pyinstaller
 
       - name: build backend sidecar
         run: |
           # Build using PyInstaller
-          pyinstaller --clean backend/desktop.spec
+          cd ../backend
+          pyinstaller --clean desktop.spec
+
+          # Return to frontend to use relative paths for target dir
+          cd ../frontend
 
           # Prepare binary destination
-          mkdir -p frontend/src-tauri/binaries
+          mkdir -p src-tauri/binaries
 
           # Get Rust target triple
           rust_target=$(rustc -vV | sed -n 's/host: //p')
 
           # Move and rename binary
           if [ "$RUNNER_OS" == "Windows" ]; then
-            mv dist/devtools-desktop.exe frontend/src-tauri/binaries/devtools-desktop-${rust_target}.exe
+            mv ../backend/dist/devtools-desktop.exe src-tauri/binaries/devtools-desktop-${rust_target}.exe
           else
-            mv dist/devtools-desktop frontend/src-tauri/binaries/devtools-desktop-${rust_target}
+            mv ../backend/dist/devtools-desktop src-tauri/binaries/devtools-desktop-${rust_target}
           fi
 
       - name: install frontend dependencies
