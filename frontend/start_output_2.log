@@ -1,0 +1,7 @@
+
+> frontend@0.1.0 start /app/frontend
+> craco start
+
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+Something is already running on port 3000.
