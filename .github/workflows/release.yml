@@ -36,6 +36,34 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: install backend dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install pyinstaller
+
+      - name: build backend sidecar
+        run: |
+          # Build using PyInstaller
+          pyinstaller --clean backend/desktop.spec
+
+          # Prepare binary destination
+          mkdir -p frontend/src-tauri/binaries
+
+          # Get Rust target triple
+          rust_target=$(rustc -vV | sed -n 's/host: //p')
+
+          # Move and rename binary
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            mv dist/devtools-desktop.exe frontend/src-tauri/binaries/devtools-desktop-${rust_target}.exe
+          else
+            mv dist/devtools-desktop frontend/src-tauri/binaries/devtools-desktop-${rust_target}
+          fi
+
       - name: install frontend dependencies
         run: npm install --force  --legacy-peer-deps
 
