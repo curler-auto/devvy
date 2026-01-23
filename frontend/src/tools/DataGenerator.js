@@ -19,23 +19,23 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   const [activeFormat, setActiveFormat] = useState(tab.data?.activeFormat || 'basic');
   const [showResultsSidebar, setShowResultsSidebar] = useState(false);
   const [blinkResults, setBlinkResults] = useState(false);
-  
+
   // Common config
   const [count, setCount] = useState(tab.data?.count || 10);
   const [seed, setSeed] = useState(tab.data?.seed || 123);
-  
+
   const [basicFields, setBasicFields] = useState(tab.data?.basicFields || [
     { id: 1, name: 'fullName', template: '{{person.fullName}}' },
     { id: 2, name: 'email', template: '{{internet.email}}' },
   ]);
-  
+
   // JSON/CSV/XML/YAML/TOML  // Schema-based generation
   const [schema, setSchema] = useState(tab.data?.schema || [
     { id: 1, name: 'id', type: 'number', fakerMethod: 'number.int', isArray: false, arrayLength: 1 },
     { id: 2, name: 'name', type: 'string', fakerMethod: 'person.fullName', isArray: false, arrayLength: 1 },
   ]);
   const [nextFieldId, setNextFieldId] = useState(3);
-  
+
   // Schema import - isolated per format
   const [schemaInputs, setSchemaInputs] = useState(tab.data?.schemaInputs || {
     json: '',
@@ -49,9 +49,9 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
 
   // Update tab data
   useEffect(() => {
-    const updatedTabs = tabs.map(t => 
-      t.tabId === tab.tabId 
-        ? { ...t, data: { 
+    const updatedTabs = tabs.map(t =>
+      t.tabId === tab.tabId
+        ? { ...t, data: {
             output: generatedData,
             activeFormat,
             count,
@@ -98,14 +98,14 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       }
 
       setGeneratedData(output);
-      
+
       // Show results sidebar with animation
       setBlinkResults(true);
       setTimeout(() => {
         setBlinkResults(false);
         setShowResultsSidebar(true);
       }, 300);
-      
+
       toast.success(`Generated ${count} record(s) in ${activeFormat.toUpperCase()} format`);
     } catch (err) {
       console.error('Generation error:', err);
@@ -123,7 +123,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       });
       results.push(record);
     }
-    
+
     // Format as section by section
     let output = '';
     basicFields.forEach(field => {
@@ -169,7 +169,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       });
       results.push(obj);
     }
-    
+
     if (results.length === 0) return '';
     const headers = Object.keys(results[0]);
     const headerRow = headers.join(',');
@@ -196,7 +196,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       });
       results.push(obj);
     }
-    
+
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<records>\n';
     results.forEach(record => {
       xml += '  <record>\n';
@@ -214,7 +214,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       xml += '  </record>\n';
     });
     xml += '</records>';
-    
+
     try {
       return xmlFormatter(xml, { indentation: '  ' });
     } catch {
@@ -253,7 +253,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       });
       results.push(obj);
     }
-    
+
     let toml = '';
     results.forEach((record, idx) => {
       toml += `[[records]]\n`;
@@ -281,15 +281,15 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       });
       results.push(obj);
     }
-    
+
     if (results.length === 0) return '';
     const tableName = 'generated_data';
     const headers = Object.keys(results[0]);
-    
+
     const createTable = `CREATE TABLE ${tableName} (\n` +
       headers.map(header => `  ${header} TEXT`).join(',\n') +
       '\n);\n\n';
-    
+
     const insertStatements = results.map(item => {
       const values = headers.map(header => {
         const value = item[header];
@@ -300,7 +300,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       }).join(', ');
       return `INSERT INTO ${tableName} (${headers.join(', ')}) VALUES (${values});`;
     }).join('\n');
-    
+
     return createTable + insertStatements;
   };
 
@@ -323,7 +323,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       const [category, method] = field.fakerMethod.split('.');
       return generateFakerValue(category, method);
     }
-    
+
     switch (field.type) {
       case 'string': return faker.lorem.word();
       case 'number': return faker.number.int({ min: 1, max: 1000 });
@@ -349,10 +349,10 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
 
   // Basic format field management
   const addBasicField = () => {
-    setBasicFields([...basicFields, { 
-      id: nextFieldId, 
-      name: `field_${nextFieldId}`, 
-      template: '{{person.fullName}}' 
+    setBasicFields([...basicFields, {
+      id: nextFieldId,
+      name: `field_${nextFieldId}`,
+      template: '{{person.fullName}}'
     }]);
     setNextFieldId(nextFieldId + 1);
   };
@@ -428,7 +428,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
 
     try {
       let parsedFields = [];
-      
+
       switch (activeFormat) {
         case 'json':
           parsedFields = parseJSONSchema(currentInput);
@@ -478,7 +478,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
         const fieldName = prefix ? `${prefix}.${key}` : key;
         const isArray = Array.isArray(value);
         const actualValue = isArray ? value[0] : value;
-        
+
         if (actualValue && typeof actualValue === 'object' && !Array.isArray(actualValue)) {
           // Nested object - flatten it
           extractFields(actualValue, fieldName);
@@ -510,15 +510,15 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   const parseCSVSchema = (csvStr) => {
     const lines = csvStr.trim().split('\n');
     if (lines.length === 0) return [];
-    
+
     const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
     const firstDataRow = lines.length > 1 ? lines[1].split(',').map(v => v.trim().replace(/"/g, '')) : [];
-    
+
     return headers.map((header, idx) => {
       const sampleValue = firstDataRow[idx];
       const type = inferType(sampleValue);
       const fakerMethod = suggestFakerMethod(header, type);
-      
+
       return {
         id: idx + 1,
         name: header,
@@ -541,12 +541,12 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       if (node.nodeType === 1) { // Element node
         const tagName = node.tagName;
         const fieldName = prefix ? `${prefix}.${tagName}` : tagName;
-        
+
         if (node.children.length === 0) {
           const value = node.textContent;
           const type = inferType(value);
           const fakerMethod = suggestFakerMethod(tagName, type);
-          
+
           fields.push({
             id: id++,
             name: fieldName,
@@ -580,19 +580,19 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   // Parse SQL DDL
   const parseSQLSchema = (sqlStr) => {
     const fields = [];
-    
+
     // Find the CREATE TABLE statement and extract content between parentheses
     const tableStart = sqlStr.search(/CREATE\s+TABLE/i);
     if (tableStart === -1) {
       throw new Error('No CREATE TABLE statement found');
     }
-    
+
     // Find the opening parenthesis
     const openParen = sqlStr.indexOf('(', tableStart);
     if (openParen === -1) {
       throw new Error('Invalid CREATE TABLE syntax');
     }
-    
+
     // Find the matching closing parenthesis
     let parenDepth = 0;
     let closeParen = -1;
@@ -606,22 +606,22 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
         }
       }
     }
-    
+
     if (closeParen === -1) {
       throw new Error('Unmatched parentheses in CREATE TABLE');
     }
-    
+
     const tableContent = sqlStr.substring(openParen + 1, closeParen);
-    
+
     // Smart split: split by comma but not within parentheses
     const columnDefs = [];
     let current = '';
     parenDepth = 0;
-    
+
     for (let char of tableContent) {
       if (char === '(') parenDepth++;
       else if (char === ')') parenDepth--;
-      
+
       if (char === ',' && parenDepth === 0) {
         if (current.trim()) columnDefs.push(current.trim());
         current = '';
@@ -630,31 +630,31 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
       }
     }
     if (current.trim()) columnDefs.push(current.trim());
-    
+
     columnDefs.forEach((colDef) => {
       const trimmed = colDef.trim();
-      
+
       // Skip empty lines
       if (!trimmed) return;
-      
+
       // Skip constraint definitions (PRIMARY KEY, FOREIGN KEY, etc.)
       if (/^(PRIMARY|FOREIGN|UNIQUE|CHECK|CONSTRAINT)\s+KEY/i.test(trimmed)) {
         return;
       }
-      
+
       const parts = trimmed.split(/\s+/);
       const columnName = parts[0].replace(/[`"'\[\]]/g, '');
-      
+
       // Skip if it's a constraint keyword
       if (/^(PRIMARY|FOREIGN|UNIQUE|CHECK|CONSTRAINT)$/i.test(columnName)) {
         return;
       }
-      
+
       const sqlType = parts[1]?.toUpperCase() || 'VARCHAR';
-      
+
       const type = mapSQLTypeToJSType(sqlType);
       const fakerMethod = suggestFakerMethod(columnName, type);
-      
+
       fields.push({
         id: fields.length + 1,
         name: columnName,
@@ -690,41 +690,41 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
   // Suggest Faker method based on field name and type
   const suggestFakerMethod = (fieldName, type) => {
     const name = fieldName.toLowerCase();
-    
+
     // Email patterns
     if (name.includes('email')) return 'internet.email';
-    
+
     // Name patterns
     if (name.includes('firstname') || name === 'fname') return 'person.firstName';
     if (name.includes('lastname') || name === 'lname') return 'person.lastName';
     if (name.includes('fullname') || name === 'name') return 'person.fullName';
-    
+
     // Address patterns
     if (name.includes('address') || name.includes('street')) return 'location.streetAddress';
     if (name.includes('city')) return 'location.city';
     if (name.includes('state')) return 'location.state';
     if (name.includes('country')) return 'location.country';
     if (name.includes('zip') || name.includes('postal')) return 'location.zipCode';
-    
+
     // Contact patterns
     if (name.includes('phone') || name.includes('mobile')) return 'phone.number';
     if (name.includes('url') || name.includes('website')) return 'internet.url';
-    
+
     // Company patterns
     if (name.includes('company')) return 'company.name';
-    
+
     // ID patterns
     if (name.includes('id') || name.includes('uuid')) return 'string.uuid';
-    
+
     // Date patterns
     if (name.includes('date') || name.includes('created') || name.includes('updated')) return 'date.past';
-    
+
     // Price/Amount patterns
     if (name.includes('price') || name.includes('amount') || name.includes('cost')) return 'commerce.price';
-    
+
     // Description patterns
     if (name.includes('description') || name.includes('bio')) return 'lorem.paragraph';
-    
+
     // Default based on type
     if (type === 'number') return 'number.int';
     if (type === 'boolean') return 'datatype.boolean';
@@ -844,13 +844,13 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
                 </div>
                 {showSchemaImport ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
               </button>
-              
+
               {showSchemaImport && (
                 <div className="p-4 border-t border-[var(--border-primary)]">
                   <p className="text-xs text-[var(--text-secondary)] mb-3">
                     Paste sample {activeFormat.toUpperCase()} data below. Fields will be automatically extracted with smart Faker method suggestions.
                   </p>
-                  
+
                   <div className="mb-3">
                     <Editor
                       height="200px"
@@ -869,7 +869,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
                       }}
                     />
                   </div>
-                  
+
                   <div className="flex gap-2">
                     <Button onClick={parseSchemaFromInput} size="sm" className="bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 text-white">
                       <Upload className="w-4 h-4 mr-2" />
@@ -879,7 +879,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
                       Clear
                     </Button>
                   </div>
-                  
+
                   <div className="mt-3 p-2 bg-blue-500/10 border border-blue-500/30 rounded text-xs text-[var(--text-secondary)]">
                     <strong>Examples:</strong>
                     {activeFormat === 'json' && ' {"name": "John", "email": "john@example.com", "age": 30}'}
@@ -980,7 +980,7 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
           variant="ghost"
           className="fixed right-0 h-16 w-8 p-0 rounded-l-md bg-[var(--bg-secondary)] hover:bg-[var(--accent-primary)] hover:text-white border border-r-0 border-[var(--border-primary)] shadow-lg z-30"
           title="Open results panel"
-          style={{ 
+          style={{
             top: 'calc(5% + 50%)',
             transform: 'translateY(-50%)'
           }}
@@ -998,9 +998,9 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
           variant="ghost"
           className="absolute -left-8 h-16 w-8 p-0 rounded-l-md bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] border border-r-0 border-[var(--border-primary)] shadow-lg z-[60]"
           title="Close results panel"
-          style={{ 
-            display: showResultsSidebar ? 'flex' : 'none', 
-            alignItems: 'center', 
+          style={{
+            display: showResultsSidebar ? 'flex' : 'none',
+            alignItems: 'center',
             justifyContent: 'center',
             top: '50%',
             transform: 'translateY(-50%)'
@@ -1008,14 +1008,14 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
         >
           <ChevronsRight className="w-5 h-5 text-[var(--text-primary)]" />
         </Button>
-        
+
         <div className="h-full flex flex-col">
           {/* Header with Copy and Download - Theme Aligned */}
           <div className="flex items-center justify-between px-4 py-2 border-b border-[var(--border-primary)] bg-[var(--bg-secondary)]">
             <h3 className="text-sm font-medium text-[var(--text-primary)]">Generated Data · {activeFormat.toUpperCase()}</h3>
             <div className="flex gap-2">
-              <Button 
-                onClick={copyToClipboard} 
+              <Button
+                onClick={copyToClipboard}
                 size="sm"
                 variant="outline"
                 disabled={!generatedData}
@@ -1033,8 +1033,8 @@ function DataGenerator({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
                   </>
                 )}
               </Button>
-              <Button 
-                onClick={downloadData} 
+              <Button
+                onClick={downloadData}
                 size="sm"
                 variant="outline"
                 disabled={!generatedData}
