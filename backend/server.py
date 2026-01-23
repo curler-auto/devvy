@@ -430,7 +430,10 @@ async def create_saved_item(item_data: SavedItemCreate, current_user: dict = Dep
 
 @api_router.post("/saved-items/create-bulk")
 async def create_saved_items_bulk(bulk_data: SavedItemBulkCreate, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
-    """Bulk save tabs/snippets to a collection"""
+    """
+    Bulk save tabs/snippets to a collection.
+    Optimized to prevent N+1 insert performance issues.
+    """
     items_to_create = []
 
     for item_data in bulk_data.items:

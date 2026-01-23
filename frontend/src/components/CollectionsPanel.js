@@ -312,6 +312,7 @@ export default function CollectionsPanel({ onOpenItem }) {
           tool_data: item.tool_data || item.data || {}
         }));
 
+        // Use bulk create to avoid N+1 performance issue
         await axios.post(
           `${API}/saved-items/create-bulk`,
           { items: itemsToCreate },
