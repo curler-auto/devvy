@@ -14,6 +14,7 @@ import json
 import subprocess
 import tempfile
 import io
+import asyncio
 from auth import (
     User, UserCreate, UserLogin, Token, Organization, OrganizationCreate,
     ToolConfig, ToolConfigUpdate, get_password_hash, verify_password,
@@ -1236,9 +1237,6 @@ async def verify_jwt(request: JWTVerifyRequest):
         )
 
 
-# Include the router in the main app
-app.include_router(api_router)
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -1372,29 +1370,40 @@ async def execute_script(request: ScriptExecuteRequest):
         
         # Execute script with timeout
         try:
-            result = subprocess.run(
-                ['/bin/bash', script_path],
+            process = await asyncio.create_subprocess_exec(
+                '/bin/bash', script_path,
                 cwd=request.workingDir if request.workingDir else None,
                 env=env,
-                capture_output=True,
-                text=True,
-                timeout=300  # 5 minute timeout
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
             )
-            
-            output = result.stdout
-            if result.stderr:
-                output += f"\n--- STDERR ---\n{result.stderr}"
-            
+
+            try:
+                stdout, stderr = await asyncio.wait_for(
+                    process.communicate(), timeout=300
+                )
+            except asyncio.TimeoutError:
+                try:
+                    process.kill()
+                    await process.communicate()
+                except Exception:
+                    pass
+                raise HTTPException(
+                    status_code=408,
+                    detail="Script execution timed out (5 minutes)"
+                )
+
+            output = stdout.decode()
+            if stderr:
+                output += f"\n--- STDERR ---\n{stderr.decode()}"
+
             execution_time = time.time() - start_time
-            
+
             return ScriptExecuteResponse(
                 output=output,
-                exitCode=result.returncode,
+                exitCode=process.returncode,
                 executionTime=execution_time
             )
-            
-        except subprocess.TimeoutExpired:
-            raise HTTPException(status_code=408, detail="Script execution timed out (5 minutes)")
         finally:
             # Clean up temp file
             try:
@@ -2290,6 +2299,9 @@ Be concise and actionable."""
     except Exception as e:
         logger.error(f"AI chat error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# Include the router in the main app
+app.include_router(api_router)
 
 @app.on_event("startup")
 async def startup_db_client():
