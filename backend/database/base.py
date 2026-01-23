@@ -60,6 +60,7 @@ class DatabaseBase(ABC):
     
     @abstractmethod
     async def upsert_tool_configs(self, configs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Bulk upsert tool configurations"""
         pass
 
     # Collection operations
