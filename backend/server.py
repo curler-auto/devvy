@@ -726,7 +726,7 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
         import grpc
         from google.protobuf import descriptor_pb2
         from google.protobuf.descriptor_pool import DescriptorPool
-        from google.protobuf.message_factory import MessageFactory
+        from google.protobuf.message_factory import GetMessageClass
         from google.protobuf import json_format
         import tempfile
         import os as os_module
@@ -772,9 +772,6 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
         for file_descriptor_proto in descriptor_set.file:
             pool.Add(file_descriptor_proto)
         
-        # Create a message factory
-        factory = MessageFactory(pool)
-        
         # Find the service and method descriptors
         service_descriptor = None
         for file_descriptor_proto in descriptor_set.file:
@@ -803,8 +800,8 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
         response_type = pool.FindMessageTypeByName(method_descriptor.output_type.lstrip('.'))
         
         # Create message instances
-        request_message_class = factory.GetPrototype(request_type)
-        response_message_class = factory.GetPrototype(response_type)
+        request_message_class = GetMessageClass(request_type)
+        response_message_class = GetMessageClass(response_type)
         
         # Convert JSON request to protobuf message
         request_message = json_format.ParseDict(request.request, request_message_class())
