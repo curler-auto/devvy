@@ -298,8 +298,7 @@ async def get_tools_config(db = Depends(get_database)):
             {"tool_id": "ui-recorder", "tool_name": "UI Automation Recorder", "is_premium": False},
         ]
         
-        for tool_data in default_tools:
-            await db.upsert_tool_config(tool_data["tool_id"], tool_data)
+        await db.upsert_tool_configs(default_tools)
         
         configs = await db.get_tool_configs()
     
