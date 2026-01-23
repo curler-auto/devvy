@@ -20,7 +20,7 @@ from auth import (
     User, UserCreate, UserLogin, Token, Organization, OrganizationCreate,
     ToolConfig, ToolConfigUpdate, get_password_hash, verify_password,
     create_access_token, decode_token, Collection, CollectionCreate,
-    Folder, FolderCreate, SavedItem, SavedItemCreate
+    Folder, FolderCreate, SavedItem, SavedItemCreate, SavedItemBulkCreate
 )
 from database import get_db_instance as get_db
 from database.base import DatabaseBase
@@ -427,6 +427,28 @@ async def create_saved_item(item_data: SavedItemCreate, current_user: dict = Dep
     
     result = await db.create_saved_item(item_dict)
     return result
+
+@api_router.post("/saved-items/create-bulk")
+async def create_saved_items_bulk(bulk_data: SavedItemBulkCreate, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):
+    """Bulk save tabs/snippets to a collection"""
+    items_to_create = []
+
+    for item_data in bulk_data.items:
+        item_dict = item_data.model_dump()
+        item_dict['user_id'] = current_user['id']
+        item_dict['created_at'] = datetime.now(timezone.utc)
+
+        # Map tool_data to data for SQLite model compatibility
+        if 'tool_data' in item_dict:
+            item_dict['data'] = item_dict.pop('tool_data')
+
+        # Remove description if not in SQLite model
+        item_dict.pop('description', None)
+
+        items_to_create.append(item_dict)
+
+    result = await db.create_saved_items_bulk(items_to_create)
+    return {"count": len(result), "items": result}
 
 @api_router.get("/saved-items/list/{collection_id}")
 async def list_saved_items(collection_id: str, current_user: dict = Depends(get_current_user_optional), db = Depends(get_database)):

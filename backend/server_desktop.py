@@ -90,6 +90,7 @@ def init_database():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS saved_items (
             id TEXT PRIMARY KEY,
+            user_id TEXT,
             collection_id TEXT,
             folder_id TEXT,
             tool_id TEXT,
@@ -131,6 +132,15 @@ def init_database():
             INSERT INTO tool_configs (tool_id, tool_name, is_premium, description)
             VALUES (?, ?, ?, ?)
         """, default_tools)
+
+    # Migration: Add user_id to saved_items if missing
+    try:
+        cursor.execute("SELECT user_id FROM saved_items LIMIT 1")
+    except sqlite3.OperationalError:
+        # Column missing, add it
+        cursor.execute("ALTER TABLE saved_items ADD COLUMN user_id TEXT")
+        cursor.execute("UPDATE saved_items SET user_id = 'desktop_user'")
+        conn.commit()
     
     conn.commit()
     conn.close()
@@ -187,6 +197,9 @@ class JSONBeautifyResponse(BaseModel):
     beautified: str
     valid: bool
     error: Optional[str] = None
+
+class SavedItemBulkCreate(BaseModel):
+    items: List[SavedItemCreate]
 
 # License endpoints
 @app.get("/api/license/status", response_model=LicenseStatus)
@@ -512,6 +525,54 @@ async def create_saved_item(item: SavedItemCreate):
         "tool_data": item.tool_data,
         "created_at": created_at
     }
+
+@app.post("/api/saved-items/create-bulk")
+async def create_saved_items_bulk(bulk_data: SavedItemBulkCreate):
+    """Bulk create saved items"""
+    items = bulk_data.items
+    created_items = []
+
+    created_at = datetime.now(timezone.utc).isoformat()
+    user_id = "desktop_user"
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    insert_data = []
+
+    for item in items:
+        item_id = str(uuid.uuid4())
+        insert_data.append((
+            item_id,
+            user_id,
+            item.collection_id,
+            item.folder_id,
+            item.name,
+            item.tool_id,
+            json.dumps(item.tool_data),
+            created_at
+        ))
+
+        created_items.append({
+            "id": item_id,
+            "user_id": user_id,
+            "collection_id": item.collection_id,
+            "folder_id": item.folder_id,
+            "name": item.name,
+            "tool_id": item.tool_id,
+            "tool_data": item.tool_data,
+            "created_at": created_at
+        })
+
+    cursor.executemany("""
+        INSERT INTO saved_items (id, user_id, collection_id, folder_id, name, tool_id, data, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    """, insert_data)
+
+    conn.commit()
+    conn.close()
+
+    return {"items": created_items, "count": len(created_items)}
 
 @app.get("/api/saved-items/list/{collection_id}")
 async def list_saved_items(collection_id: str, folder_id: Optional[str] = None):

@@ -139,6 +139,17 @@ class MongoDBDatabase(DatabaseBase):
         await self.db.saved_items.insert_one(item_data)
         return item_data
     
+    async def create_saved_items_bulk(self, items_data: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        if not items_data:
+            return []
+
+        for data in items_data:
+            if 'id' not in data:
+                data['id'] = str(uuid.uuid4())
+
+        await self.db.saved_items.insert_many(items_data)
+        return items_data
+
     async def get_saved_items(self, collection_id: str, user_id: str) -> List[Dict[str, Any]]:
         return await self.db.saved_items.find(
             {"collection_id": collection_id, "user_id": user_id},
