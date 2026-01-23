@@ -81,9 +81,11 @@ jobs:
             
             # Shotgun approach: Also copy without suffix just in case Tauri v2 resolution is weird
             cp src-tauri/binaries/devtools-desktop-${rust_target} src-tauri/binaries/devtools-desktop
-            
-            # Also try copying to src-tauri/binaries/devtools-desktop-${rust_target}.exe (even on unix? unlikely but safe)
-            # cp src-tauri/binaries/devtools-desktop-${rust_target} src-tauri/binaries/devtools-desktop-${rust_target}.exe
+
+            # Fix: Clear quarantine/extended attributes which might block access
+            if [[ "$RUNNER_OS" == "macOS" ]]; then
+              xattr -cr src-tauri/binaries/ || true
+            fi
           fi
 
           # Debug: Check final binaries with permissions
