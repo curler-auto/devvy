@@ -728,7 +728,6 @@ async def grpc_call(request: GrpcCallRequest, current_user: dict = Depends(get_c
         from google.protobuf.message_factory import MessageFactory
         from google.protobuf import json_format
         import tempfile
-        import subprocess
         import os as os_module
         
         # Save proto content to a temporary file
