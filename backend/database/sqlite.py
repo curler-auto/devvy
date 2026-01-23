@@ -306,6 +306,7 @@ class SQLiteDatabase(DatabaseBase):
     async def create_saved_items_bulk(
         self, items_data: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
+        """Create multiple saved items in a single transaction"""
         async with self.SessionLocal() as session:
             items = []
             for data in items_data:
