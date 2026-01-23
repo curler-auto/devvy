@@ -2052,6 +2052,7 @@ async def execute_code(request: CodeExecutionRequest):
     try:
         # This would execute code on remote/local environment
         # For now, return mock execution result
+        # Use asyncio.sleep to ensure non-blocking execution
         await asyncio.sleep(0.5)  # Simulate execution time
         
         result = {
