@@ -105,7 +105,9 @@ def init_database():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS favorites (
             id INTEGER PRIMARY KEY,
-            tool_id TEXT UNIQUE
+            user_id TEXT,
+            tool_id TEXT,
+            UNIQUE(user_id, tool_id)
         )
     """)
     
@@ -140,6 +142,18 @@ def init_database():
         # Column missing, add it
         cursor.execute("ALTER TABLE saved_items ADD COLUMN user_id TEXT")
         cursor.execute("UPDATE saved_items SET user_id = 'desktop_user'")
+        conn.commit()
+
+    # Migration: Add user_id to favorites if missing
+    try:
+        cursor.execute("SELECT user_id FROM favorites LIMIT 1")
+    except sqlite3.OperationalError:
+        # Column missing, add it
+        cursor.execute("ALTER TABLE favorites ADD COLUMN user_id TEXT")
+        cursor.execute("UPDATE favorites SET user_id = 'desktop_user'")
+        # Re-create unique index if needed (SQLite doesn't support easy constraint updates, 
+        # so for now we just ensure the column exists. Duplicate cleanup handles the rest)
+        cursor.execute("DELETE FROM favorites WHERE rowid NOT IN (SELECT MIN(rowid) FROM favorites GROUP BY user_id, tool_id)")
         conn.commit()
     
     conn.commit()
