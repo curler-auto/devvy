@@ -78,11 +78,17 @@ jobs:
             mv ../backend/dist/devtools-desktop src-tauri/binaries/devtools-desktop-${rust_target}
             # Fix: Ensure binary is executable (Tauri requires this)
             chmod +x src-tauri/binaries/devtools-desktop-${rust_target}
+            
+            # Shotgun approach: Also copy without suffix just in case Tauri v2 resolution is weird
+            cp src-tauri/binaries/devtools-desktop-${rust_target} src-tauri/binaries/devtools-desktop
+            
+            # Also try copying to src-tauri/binaries/devtools-desktop-${rust_target}.exe (even on unix? unlikely but safe)
+            # cp src-tauri/binaries/devtools-desktop-${rust_target} src-tauri/binaries/devtools-desktop-${rust_target}.exe
           fi
 
-          # Debug: Check final binaries
-          echo "Final src-tauri/binaries contents:"
-          ls -Rx src-tauri/binaries/
+          # Debug: Check final binaries with permissions
+          echo "Final src-tauri/binaries contents (ls -l):"
+          ls -lR src-tauri/binaries/
 
       - name: install frontend dependencies
         run: npm install --force  --legacy-peer-deps
