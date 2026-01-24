@@ -134,6 +134,10 @@ class SQLiteDatabase(DatabaseBase):
     async def upsert_tool_configs(
         self, configs: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
+        """
+        Bulk upsert tool configurations for performance.
+        Prevents N+1 database round-trips by using a single transaction.
+        """
         async with self.SessionLocal() as session:
             if not configs:
                 return []
@@ -150,6 +154,8 @@ class SQLiteDatabase(DatabaseBase):
             existing_configs = {c.tool_id: c for c in result.scalars().all()}
 
             results = []
+            new_configs = []
+
             for config_data in configs:
                 tool_id = config_data.get("tool_id")
                 if not tool_id:
@@ -165,10 +171,13 @@ class SQLiteDatabase(DatabaseBase):
                         k: v for k, v in config_data.items() if k != "tool_id"
                     }
                     config = ToolConfig(tool_id=tool_id, **clean_data)
-                    session.add(config)
+                    new_configs.append(config)
                     # Add to map in case duplicate IDs in input list
                     existing_configs[tool_id] = config
                 results.append(config)
+
+            if new_configs:
+                session.add_all(new_configs)
 
             await session.commit()
             return [self._model_to_dict(config) for config in results]

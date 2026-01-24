@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, ubuntu-22.04, windows-latest]
+        platform: [macos-latest]
 
     runs-on: ${{ matrix.platform }}
     defaults:
@@ -35,6 +35,62 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: install backend dependencies
+        run: |
+          pip install -r ../backend/requirements.txt
+          pip install pyinstaller
+
+      - name: build backend sidecar
+        shell: bash
+        run: |
+          # Debug: Check Rust info
+          echo "Rust version info:"
+          rustc -vV
+
+          # Build using PyInstaller
+          cd ../backend
+          pyinstaller --clean desktop.spec
+
+          # Debug: Check PyInstaller output
+          echo "Backend dist contents:"
+          ls -l dist/
+
+          # Return to frontend to use relative paths for target dir
+          cd ../frontend
+
+          # Prepare binary destination
+          mkdir -p src-tauri/binaries
+
+          # Get Rust target triple
+          rust_target=$(rustc -vV | sed -n 's/host: //p')
+          echo "Detected Rust target: ${rust_target}"
+
+          # Move and rename binary
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            mv ../backend/dist/devtools-desktop.exe src-tauri/binaries/devtools-desktop-${rust_target}.exe
+          else
+            mv ../backend/dist/devtools-desktop src-tauri/binaries/devtools-desktop-${rust_target}
+            # Fix: Ensure binary is executable (Tauri requires this)
+            chmod +x src-tauri/binaries/devtools-desktop-${rust_target}
+            
+            # Shotgun approach: Also copy without suffix just in case Tauri v2 resolution is weird
+            cp src-tauri/binaries/devtools-desktop-${rust_target} src-tauri/binaries/devtools-desktop
+
+            # Fix: Clear quarantine/extended attributes which might block access
+            if [[ "$RUNNER_OS" == "macOS" ]]; then
+              xattr -cr src-tauri/binaries/ || true
+            fi
+          fi
+
+          # Debug: Check final binaries with permissions
+          echo "Final src-tauri/binaries contents (ls -l):"
+          ls -lR src-tauri/binaries/
 
       - name: install frontend dependencies
         run: npm install --force  --legacy-peer-deps

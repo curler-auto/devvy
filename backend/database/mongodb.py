@@ -63,6 +63,7 @@ class MongoDBDatabase(DatabaseBase):
         return config_data
     
     async def upsert_tool_configs(self, configs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Bulk upsert tool configurations"""
         if not configs:
             return []
 
