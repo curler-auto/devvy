@@ -43,17 +43,7 @@ const Converter = ({ file, mode, onClose }) => {
 
       let blob;
       if (mode === 'pdf-to-image') {
-          // Use utils/pdfConverter if available, but since I didn't verify its existence,
-          // I'll skip it or mock it. Wait, `ToolsGrid` imported it.
-          // I didn't create `utils/pdfConverter.js` in my plan. I should probably add a basic implementation here or in services.
-          // For now, let's assume conversionService can handle it or just fail gracefully.
-          // Actually, let's use a dummy implementation if not available.
-          // In `ToolsGrid.tsx` it used `convertPdfToImages`.
-          // I will assume for this step I missed `utils/pdfConverter.ts` download.
-          // I'll skip pdf-to-image implementation detail or use a placeholder.
-          alert("PDF to Image conversion requires additional libraries. Skipping implementation.");
-          setIsProcessing(false);
-          return;
+          blob = await convertPdfToImages(file, 'png', (p) => setProgress(p));
       } else {
           blob = await details.fn(file);
       }

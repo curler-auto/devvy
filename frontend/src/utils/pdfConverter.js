@@ -2,7 +2,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import JSZip from 'jszip';
 
 // Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 export const convertPdfToImages = async (file, format, onProgress) => {
   return new Promise(async (resolve, reject) => {

@@ -2,7 +2,7 @@ import { jsPDF } from 'jspdf';
 import * as pdfjsLib from 'pdfjs-dist';
 
 // Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 const getConcurrencyLimit = () => {
   if (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) {
