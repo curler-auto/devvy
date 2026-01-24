@@ -2,6 +2,195 @@
   "version": "1.0.0",
   "tools": [
     {
+      "id": "pdf-editor",
+      "name": "PDF Editor",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Edit, sign, and annotate PDF documents"
+    },
+    {
+      "id": "pdf-organizer",
+      "name": "PDF Organizer",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Layers",
+      "description": "Reorder and delete pages from PDF"
+    },
+    {
+      "id": "pdf-rotator",
+      "name": "PDF Rotator",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "RotateCw",
+      "description": "Rotate pages in your PDF"
+    },
+    {
+      "id": "pdf-splitter",
+      "name": "PDF Splitter",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Scissors",
+      "description": "Split PDF into multiple files or extract pages"
+    },
+    {
+      "id": "pdf-scan",
+      "name": "Scan to PDF",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Camera",
+      "description": "Capture documents from camera"
+    },
+    {
+      "id": "pdf-crop",
+      "name": "Crop PDF",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Crop",
+      "description": "Trim margins from PDF pages"
+    },
+    {
+      "id": "pdf-compare",
+      "name": "Compare PDF",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "GitCompare",
+      "description": "Compare two PDF files"
+    },
+    {
+      "id": "pdf-compress",
+      "name": "Compress PDF",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Minimize",
+      "description": "Reduce PDF file size"
+    },
+    {
+      "id": "pdf-repair",
+      "name": "Repair PDF",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Wrench",
+      "description": "Repair corrupted PDF files"
+    },
+    {
+      "id": "pdf-ocr",
+      "name": "OCR PDF",
+      "category": "image",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Eye",
+      "description": "Recognize text in scanned documents"
+    },
+    {
+      "id": "pdf-to-word",
+      "name": "PDF to Word",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Convert PDF to Word Document"
+    },
+    {
+      "id": "pdf-to-excel",
+      "name": "PDF to Excel",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileSpreadsheet",
+      "description": "Convert PDF to Excel Spreadsheet"
+    },
+    {
+      "id": "pdf-to-ppt",
+      "name": "PDF to PPT",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Convert PDF to PowerPoint Presentation"
+    },
+    {
+      "id": "word-to-pdf",
+      "name": "Word to PDF",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Convert Word Document to PDF"
+    },
+    {
+      "id": "excel-to-pdf",
+      "name": "Excel to PDF",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileSpreadsheet",
+      "description": "Convert Excel Spreadsheet to PDF"
+    },
+    {
+      "id": "ppt-to-pdf",
+      "name": "PPT to PDF",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileCode",
+      "description": "Convert PowerPoint Presentation to PDF"
+    },
+    {
+      "id": "image-to-pdf",
+      "name": "Image to PDF",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Convert Images to PDF"
+    },
+    {
+      "id": "pdf-to-image",
+      "name": "PDF to Image",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Image",
+      "description": "Convert PDF pages to Images"
+    },
+    {
+      "id": "html-to-pdf",
+      "name": "HTML to PDF",
+      "category": "converters",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Globe",
+      "description": "Convert HTML to PDF"
+    },
+    {
+      "id": "pdf-protect",
+      "name": "Protect PDF",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Lock",
+      "description": "Encrypt PDF with password"
+    },
+    {
+      "id": "pdf-unlock",
+      "name": "Unlock PDF",
+      "category": "security",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Unlock",
+      "description": "Remove PDF password security"
+    },
+    {
       "id": "sheet-vue",
       "name": "SheetVue",
       "category": "excel",
@@ -1766,15 +1955,6 @@
       "description": "Merge multiple PDF files into one"
     },
     {
-      "id": "pdf-splitter",
-      "name": "PDF Splitter",
-      "category": "file",
-      "enabled": true,
-      "tier": "free",
-      "icon": "Scissors",
-      "description": "Split PDF files into separate pages"
-    },
-    {
       "id": "pdf-to-images",
       "name": "PDF to Images",
       "category": "file",
@@ -3042,33 +3222,6 @@
       "tier": "free",
       "icon": "AlertCircle",
       "description": "Generate issue templates for GitHub/GitLab"
-    },
-    {
-      "id": "pdf-editor",
-      "name": "PDF Editor",
-      "category": "file",
-      "enabled": true,
-      "tier": "free",
-      "icon": "FileText",
-      "description": "Edit, sign, and annotate PDF documents"
-    },
-    {
-      "id": "pdf-organizer",
-      "name": "PDF Organizer",
-      "category": "file",
-      "enabled": true,
-      "tier": "free",
-      "icon": "Layers",
-      "description": "Reorder and delete pages from PDF"
-    },
-    {
-      "id": "pdf-rotator",
-      "name": "PDF Rotator",
-      "category": "file",
-      "enabled": true,
-      "tier": "free",
-      "icon": "RotateCw",
-      "description": "Rotate pages in your PDF"
     }
   ],
   "categories": [

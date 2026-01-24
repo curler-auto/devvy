@@ -72,6 +72,14 @@ import PDFEditorTool from './PDFEditorTool';
 import PDFOrganizerTool from './PDFOrganizerTool';
 import PDFSplitterTool from './PDFSplitterTool';
 import PDFRotatorTool from './PDFRotatorTool';
+import PDFScanTool from './PDFScanTool';
+import PDFCropTool from './PDFCropTool';
+import PDFCompareTool from './PDFCompareTool';
+import PDFCompressTool from './PDFCompressTool';
+import PDFRepairTool from './PDFRepairTool';
+import PDFOCRTool from './PDFOCRTool';
+import PDFConverterTool from './PDFConverterTool';
+import PDFProtectionTool from './PDFProtectionTool';
 
 /**
  * Tool Components Registry
@@ -135,6 +143,27 @@ export const TOOL_COMPONENTS = {
   'pdf-organizer': PDFOrganizerTool,
   'pdf-splitter': PDFSplitterTool,
   'pdf-rotator': PDFRotatorTool,
+  'pdf-scan': PDFScanTool,
+  'pdf-crop': PDFCropTool,
+  'pdf-compare': PDFCompareTool,
+  'pdf-compress': PDFCompressTool,
+  'pdf-repair': PDFRepairTool,
+  'pdf-ocr': PDFOCRTool,
+
+  // Converters
+  'pdf-to-word': (props) => <PDFConverterTool mode="pdf-to-word" title="PDF to Word" description="Convert PDF to Word Document" {...props} />,
+  'pdf-to-excel': (props) => <PDFConverterTool mode="pdf-to-excel" title="PDF to Excel" description="Convert PDF to Excel Spreadsheet" {...props} />,
+  'pdf-to-ppt': (props) => <PDFConverterTool mode="pdf-to-ppt" title="PDF to PPT" description="Convert PDF to PowerPoint Presentation" {...props} />,
+  'word-to-pdf': (props) => <PDFConverterTool mode="word-to-pdf" title="Word to PDF" description="Convert Word Document to PDF" {...props} />,
+  'excel-to-pdf': (props) => <PDFConverterTool mode="excel-to-pdf" title="Excel to PDF" description="Convert Excel Spreadsheet to PDF" {...props} />,
+  'ppt-to-pdf': (props) => <PDFConverterTool mode="ppt-to-pdf" title="PPT to PDF" description="Convert PowerPoint Presentation to PDF" {...props} />,
+  'image-to-pdf': (props) => <PDFConverterTool mode="image-to-pdf" title="Image to PDF" description="Convert Images to PDF" {...props} />,
+  'pdf-to-image': (props) => <PDFConverterTool mode="pdf-to-image" title="PDF to Image" description="Convert PDF pages to Images" {...props} />,
+  'html-to-pdf': (props) => <PDFConverterTool mode="html-to-pdf" title="HTML to PDF" description="Convert HTML to PDF" {...props} />,
+
+  // Protection
+  'pdf-protect': (props) => <PDFProtectionTool mode="protect" {...props} />,
+  'pdf-unlock': (props) => <PDFProtectionTool mode="unlock" {...props} />,
 };
 
 /**
