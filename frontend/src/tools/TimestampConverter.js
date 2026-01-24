@@ -123,6 +123,7 @@ function TimestampConverter({ tab, tabs, setTabs }) {
               variant="ghost"
               className="h-8 w-8 p-0"
               title="Refresh"
+              aria-label="Refresh current timestamp"
             >
               <RefreshCw className="w-4 h-4" />
             </Button>
@@ -141,6 +142,7 @@ function TimestampConverter({ tab, tabs, setTabs }) {
                 size="sm"
                 variant="ghost"
                 className="h-8 w-8 p-0"
+                aria-label="Copy timestamp (seconds)"
               >
                 <Copy className="w-4 h-4" />
               </Button>
@@ -158,6 +160,7 @@ function TimestampConverter({ tab, tabs, setTabs }) {
                 size="sm"
                 variant="ghost"
                 className="h-8 w-8 p-0"
+                aria-label="Copy timestamp (milliseconds)"
               >
                 <Copy className="w-4 h-4" />
               </Button>
@@ -197,6 +200,7 @@ function TimestampConverter({ tab, tabs, setTabs }) {
                 value={inputTimestamp}
                 onChange={(e) => setInputTimestamp(e.target.value)}
                 placeholder="Enter Unix timestamp (seconds or milliseconds)"
+                aria-label="Enter Unix timestamp"
                 className="flex-1 px-4 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)] placeholder-[var(--text-tertiary)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
                 onKeyPress={(e) => e.key === 'Enter' && handleTimestampConvert()}
               />
@@ -244,12 +248,14 @@ function TimestampConverter({ tab, tabs, setTabs }) {
                 type="date"
                 value={inputDate}
                 onChange={(e) => setInputDate(e.target.value)}
+                aria-label="Select date"
                 className="flex-1 px-4 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
               />
               <input
                 type="time"
                 value={inputTime}
                 onChange={(e) => setInputTime(e.target.value)}
+                aria-label="Select time"
                 className="px-4 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)] focus:border-[var(--accent-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
               />
               <Button
@@ -274,6 +280,7 @@ function TimestampConverter({ tab, tabs, setTabs }) {
                     size="sm"
                     variant="ghost"
                     className="h-8 w-8 p-0"
+                    aria-label="Copy timestamp seconds"
                   >
                     <Copy className="w-4 h-4" />
                   </Button>
@@ -291,6 +298,7 @@ function TimestampConverter({ tab, tabs, setTabs }) {
                     size="sm"
                     variant="ghost"
                     className="h-8 w-8 p-0"
+                    aria-label="Copy timestamp milliseconds"
                   >
                     <Copy className="w-4 h-4" />
                   </Button>
