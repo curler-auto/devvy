@@ -62,6 +62,7 @@ const extractRowsFromPage = async (page) => {
     for (let i = 0; i < len; i++) {
         const item = textContent.items[i];
         const tx = item.transform;
+        if (!tx) continue;
         xs[i] = tx[4];
         ys[i] = viewport.height - tx[5];
         strs[i] = item.str;
@@ -157,6 +158,7 @@ export const convertPDFToPPT = async (file) => {
 
     for (const item of textContent.items) {
       const tx = item.transform;
+      if (!tx) continue;
       const x = tx[4];
       const y = viewport.height - tx[5];
 
