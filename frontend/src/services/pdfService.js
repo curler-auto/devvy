@@ -136,14 +136,15 @@ export const compressPDF = async (
 
 export const flattenPDF = async (
   file,
-  onProgress
+  onProgress,
+  password
 ) => {
   return new Promise(async (resolve, reject) => {
     try {
         const arrayBuffer = await file.arrayBuffer();
         const data = new Uint8Array(arrayBuffer);
 
-        const loadingTask = pdfjsLib.getDocument({ data });
+        const loadingTask = pdfjsLib.getDocument({ data, password });
         const pdf = await loadingTask.promise;
         const totalPages = pdf.numPages;
 

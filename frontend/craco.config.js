@@ -140,4 +140,15 @@ if (config.enableVisualEdits || config.enableHealthCheck) {
   };
 }
 
+webpackConfig.jest = {
+  configure: {
+    transformIgnorePatterns: [
+      "node_modules/(?!pdfjs-dist)"
+    ],
+    moduleNameMapper: {
+       "^pdfjs-dist$": "<rootDir>/src/__mocks__/pdfjs-dist.js"
+    }
+  }
+};
+
 module.exports = webpackConfig;
