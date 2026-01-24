@@ -1,7 +1,9 @@
 import { PDFDocument } from 'pdf-lib';
+import { flattenPDF } from './pdfService';
 
 export const repairPDF = async (file) => {
   try {
+    // Attempt non-destructive repair using pdf-lib
     const arrayBuffer = await file.arrayBuffer();
 
     // pdf-lib automatically attempts to repair XRef tables when loading
@@ -16,7 +18,13 @@ export const repairPDF = async (file) => {
     const savedBytes = await newDoc.save();
     return new Blob([savedBytes], { type: 'application/pdf' });
   } catch (error) {
-    console.error("Repair failed:", error);
-    throw new Error("Failed to repair PDF. The file might be too corrupted.");
+    console.warn("Standard repair failed, attempting robust repair (flattening)...", error);
+    try {
+        // Fallback to destructive repair (rasterization)
+        return await flattenPDF(file);
+    } catch (flattenError) {
+        console.error("Robust repair failed:", flattenError);
+        throw new Error("Failed to repair PDF. The file might be too corrupted.");
+    }
   }
 };

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Lock, Unlock, Loader2 } from 'lucide-react';
 import { PDFDocument } from 'pdf-lib';
 import { saveAs } from 'file-saver';
+import { flattenPDF } from '@/services/pdfService';
 import PDFToolWrapper from '@/components/PDFToolWrapper';
 
 const ProtectPDF = ({ file, mode, onClose }) => {
@@ -27,9 +28,16 @@ const ProtectPDF = ({ file, mode, onClose }) => {
             saveAs(blob, file.name.replace('.pdf', '_protected.pdf'));
         } else {
             // Unlock
-            const pdfDoc = await PDFDocument.load(arrayBuffer, { password });
-            const savedBytes = await pdfDoc.save();
-            const blob = new Blob([savedBytes], { type: 'application/pdf' });
+            let blob;
+            try {
+                 const pdfDoc = await PDFDocument.load(arrayBuffer, { password });
+                 const savedBytes = await pdfDoc.save();
+                 blob = new Blob([savedBytes], { type: 'application/pdf' });
+            } catch (unlockError) {
+                 console.warn("Standard unlock failed, attempting robust unlock...", unlockError);
+                 // Fallback to destructive unlock (flattening with password)
+                 blob = await flattenPDF(file, null, password);
+            }
             saveAs(blob, file.name.replace('.pdf', '_unlocked.pdf'));
         }
 

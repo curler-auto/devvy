@@ -35,7 +35,9 @@ export default function PDFToolWrapper({ children, title, description }) {
         name: selectedFile.name,
         content: content,
         type: selectedFile.type,
-        size: selectedFile.size
+        size: selectedFile.size,
+        originalFile: selectedFile,
+        arrayBuffer: async () => await selectedFile.arrayBuffer()
       });
     } catch (err) {
       console.error(err);
