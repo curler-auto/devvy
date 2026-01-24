@@ -119,13 +119,22 @@ const extractRowsFromPage = async (page) => {
 };
 
 export const convertPDFToExcel = async (file) => {
+  if (!XLSX.utils || !XLSX.write) {
+     throw new Error('XLSX library not loaded correctly');
+  }
+
   const pdf = await getPDFDocument(file);
   const wb = XLSX.utils.book_new();
 
   const processPage = async (pageNum) => {
-    const page = await pdf.getPage(pageNum);
-    const rows = await extractRowsFromPage(page);
-    return rows;
+    try {
+      const page = await pdf.getPage(pageNum);
+      const rows = await extractRowsFromPage(page);
+      return rows;
+    } catch (e) {
+      console.warn(`Error extracting text from page ${pageNum}:`, e);
+      return [];
+    }
   };
 
   const allPageRows = await processPagesInBatches(pdf, getConcurrencyLimit(), processPage);
@@ -231,7 +240,8 @@ export const convertWordToPDF = async (file) => {
   document.body.appendChild(element);
 
   try {
-    const html2pdf = await import('html2pdf.js').then(module => module.default);
+    const module = await import('html2pdf.js');
+    const html2pdf = module.default || module;
     const opt = {
       margin: 10,
       filename: 'document.pdf',
@@ -270,7 +280,8 @@ export const convertExcelToPDF = async (file) => {
   document.body.appendChild(element);
 
   try {
-    const html2pdf = await import('html2pdf.js').then(module => module.default);
+    const module = await import('html2pdf.js');
+    const html2pdf = module.default || module;
     const opt = {
         margin: 10,
         filename: 'spreadsheet.pdf',
@@ -391,7 +402,8 @@ export const convertHTMLToPDF = async (content) => {
     document.body.appendChild(element);
 
     try {
-        const html2pdf = await import('html2pdf.js').then(module => module.default);
+        const module = await import('html2pdf.js');
+        const html2pdf = module.default || module;
         const opt = {
           margin: 10,
           filename: 'document.pdf',
