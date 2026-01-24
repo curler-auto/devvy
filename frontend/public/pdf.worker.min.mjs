@@ -1,3 +1,4 @@
+if(!Promise.withResolvers){Promise.withResolvers=function(){let a,b;const c=new Promise((d,e)=>{a=d;b=e});return{promise:c,resolve:a,reject:b}}};
 /**
  * @licstart The following is the entire license notice for the
  * JavaScript code in this page
