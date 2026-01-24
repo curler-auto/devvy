@@ -1,5 +1,6 @@
 // craco.config.js
 const path = require("path");
+const webpack = require("webpack");
 require("dotenv").config();
 
 // Environment variable overrides
@@ -35,6 +36,21 @@ const webpackConfig = {
       "@": path.resolve(__dirname, "src"),
     },
     configure: (webpackConfig) => {
+      // Fix for packages using node: protocol (like pptxgenjs)
+      webpackConfig.resolve.fallback = {
+        ...webpackConfig.resolve.fallback,
+        fs: false,
+        path: false,
+        crypto: false,
+        stream: false,
+      };
+
+      webpackConfig.plugins.push(
+        new webpack.NormalModuleReplacementPlugin(/^node:/, (resource) => {
+          resource.request = resource.request.replace(/^node:/, "");
+        })
+      );
+
       // Disable hot reload completely if environment variable is set
       if (config.disableHotReload) {
         // Remove hot reload related plugins
@@ -123,5 +139,16 @@ if (config.enableVisualEdits || config.enableHealthCheck) {
     return devServerConfig;
   };
 }
+
+webpackConfig.jest = {
+  configure: {
+    transformIgnorePatterns: [
+      "node_modules/(?!pdfjs-dist)"
+    ],
+    moduleNameMapper: {
+       "^pdfjs-dist$": "<rootDir>/src/__mocks__/pdfjs-dist.js"
+    }
+  }
+};
 
 module.exports = webpackConfig;
