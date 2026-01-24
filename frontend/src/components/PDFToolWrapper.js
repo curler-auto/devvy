@@ -15,7 +15,7 @@ const readFileAsBase64 = (file) => {
   });
 };
 
-export default function PDFToolWrapper({ children, title, description }) {
+export default function PDFToolWrapper({ children, title, description, allowedTypes = '.pdf,application/pdf' }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -23,7 +23,8 @@ export default function PDFToolWrapper({ children, title, description }) {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
 
-    if (selectedFile.type !== 'application/pdf') {
+    // Basic type check if allowedTypes is strictly PDF
+    if (allowedTypes === '.pdf,application/pdf' && selectedFile.type !== 'application/pdf') {
         alert('Please select a PDF file.');
         return;
     }
@@ -36,8 +37,8 @@ export default function PDFToolWrapper({ children, title, description }) {
         content: content,
         type: selectedFile.type,
         size: selectedFile.size,
-        originalFile: selectedFile,
-        arrayBuffer: async () => await selectedFile.arrayBuffer()
+        arrayBuffer: () => selectedFile.arrayBuffer(),
+        originalFile: selectedFile
       });
     } catch (err) {
       console.error(err);
@@ -67,7 +68,7 @@ export default function PDFToolWrapper({ children, title, description }) {
         <div className="border-2 border-dashed border-[var(--border-primary)] rounded-xl p-10 flex flex-col items-center justify-center space-y-4 hover:border-[var(--accent-primary)] transition-colors cursor-pointer relative bg-[var(--bg-secondary)]">
             <input
                 type="file"
-                accept=".pdf,application/pdf"
+                accept={allowedTypes}
                 onChange={handleFileChange}
                 className="absolute inset-0 opacity-0 cursor-pointer"
             />
@@ -75,8 +76,8 @@ export default function PDFToolWrapper({ children, title, description }) {
                 <Upload className="w-8 h-8 text-[var(--accent-primary)]" />
             </div>
             <div className="space-y-1">
-                <p className="font-medium text-[var(--text-primary)]">Click or drag PDF file here</p>
-                <p className="text-sm text-[var(--text-tertiary)]">PDF up to 50MB</p>
+                <p className="font-medium text-[var(--text-primary)]">Click or drag file here</p>
+                <p className="text-sm text-[var(--text-tertiary)]">Up to 50MB</p>
             </div>
         </div>
 
