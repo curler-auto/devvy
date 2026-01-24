@@ -26,7 +26,8 @@ export const performOCR = async (
         return await Tesseract.createWorker('eng', 1, {
             logger: () => {}, // Silence logger
             workerPath: '/tesseract/worker.min.js',
-            corePath: '/tesseract/tesseract-core.wasm.js'
+            corePath: '/tesseract/tesseract-core.wasm.js',
+            langPath: '/tesseract/'
         });
     };
 
