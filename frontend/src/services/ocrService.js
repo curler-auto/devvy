@@ -3,7 +3,7 @@ import Tesseract from 'tesseract.js';
 import { jsPDF } from 'jspdf';
 
 // Configure PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 export const performOCR = async (
   file,
@@ -24,7 +24,9 @@ export const performOCR = async (
         // Note: You might need to configure worker paths for Tesseract.js depending on deployment
         // Default CDN is usually fine
         return await Tesseract.createWorker('eng', 1, {
-            logger: () => {} // Silence logger
+            logger: () => {}, // Silence logger
+            workerPath: '/tesseract/worker.min.js',
+            corePath: '/tesseract/tesseract-core.wasm.js'
         });
     };
 
