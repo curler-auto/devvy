@@ -27,6 +27,7 @@ const Converter = ({ file, mode, onClose }) => {
           case 'word-to-pdf': return { fn: convertWordToPDF, ext: '.pdf', icon: FileText, color: 'text-blue-600', bg: 'bg-blue-100', name: 'Word to PDF' };
           case 'excel-to-pdf': return { fn: convertExcelToPDF, ext: '.pdf', icon: FileSpreadsheet, color: 'text-green-600', bg: 'bg-green-100', name: 'Excel to PDF' };
           case 'ppt-to-pdf': return { fn: convertPPTToPDF, ext: '.pdf', icon: FileOutput, color: 'text-orange-600', bg: 'bg-orange-100', name: 'PowerPoint to PDF' };
+          case 'html-to-pdf': return { fn: convertHTMLToPDF, ext: '.pdf', icon: Globe, color: 'text-blue-500', bg: 'bg-blue-100', name: 'HTML to PDF' };
           case 'image-to-pdf': return { fn: convertImageToPDF, ext: '.pdf', icon: Image, color: 'text-purple-600', bg: 'bg-purple-100', name: 'Image to PDF' };
           case 'pdf-to-image': return { fn: null, ext: '.zip', icon: Image, color: 'text-purple-600', bg: 'bg-purple-100', name: 'PDF to Image' }; // Special case
           default: return { fn: null, ext: '.pdf', icon: FileText, color: 'text-gray-600', bg: 'bg-gray-100', name: 'Converter' };
@@ -123,8 +124,18 @@ const Converter = ({ file, mode, onClose }) => {
 };
 
 const PDFConverterTool = ({ mode, title, description }) => {
+    let allowedTypes = '.pdf,application/pdf';
+    switch (mode) {
+        case 'html-to-pdf': allowedTypes = '.html,text/html'; break;
+        case 'image-to-pdf': allowedTypes = 'image/*'; break;
+        case 'word-to-pdf': allowedTypes = '.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document'; break;
+        case 'excel-to-pdf': allowedTypes = '.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; break;
+        case 'ppt-to-pdf': allowedTypes = '.pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation'; break;
+        default: allowedTypes = '.pdf,application/pdf';
+    }
+
     return (
-        <PDFToolWrapper title={title} description={description}>
+        <PDFToolWrapper title={title} description={description} allowedTypes={allowedTypes}>
             <Converter mode={mode} />
         </PDFToolWrapper>
     );
