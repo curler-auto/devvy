@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Lock, Unlock, Loader2 } from 'lucide-react';
-import { encryptPDF } from '@pdfsmaller/pdf-encrypt-lite';
 import { PDFDocument } from 'pdf-lib';
 import { saveAs } from 'file-saver';
 import PDFToolWrapper from '@/components/PDFToolWrapper';
@@ -19,8 +18,11 @@ const ProtectPDF = ({ file, mode, onClose }) => {
         const arrayBuffer = await file.arrayBuffer();
 
         if (mode === 'protect') {
-            const pdfBytes = new Uint8Array(arrayBuffer);
-            const encryptedBytes = await encryptPDF(pdfBytes, password, password);
+            const pdfDoc = await PDFDocument.load(arrayBuffer);
+            const encryptedBytes = await pdfDoc.save({
+                userPassword: password,
+                ownerPassword: password,
+            });
             const blob = new Blob([encryptedBytes], { type: 'application/pdf' });
             saveAs(blob, file.name.replace('.pdf', '_protected.pdf'));
         } else {

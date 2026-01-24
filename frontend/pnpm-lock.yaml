@@ -23,9 +23,6 @@ importers:
       '@monaco-editor/react':
         specifier: ^4.7.0
         version: 4.7.0(monaco-editor@0.55.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@pdfsmaller/pdf-encrypt-lite':
-        specifier: ^1.0.1
-        version: 1.0.1(pdf-lib@1.17.1)
       '@radix-ui/react-accordion':
         specifier: ^1.2.8
         version: 1.2.12(@types/react@19.2.9)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1702,12 +1699,6 @@ packages:
 
   '@pdf-lib/upng@1.0.1':
     resolution: {integrity: sha512-dQK2FUMQtowVP00mtIksrlZhdFXQZPC+taih1q4CvPZ5vqdxR/LKBaFg0oAfzd1GlHZXXSPdQfzQnt+ViGvEIQ==}
-
-  '@pdfsmaller/pdf-encrypt-lite@1.0.1':
-    resolution: {integrity: sha512-9giOp0WRqGqV/dwDSMJFBLaYe3IFmyQWvmQDeY//VZOGTQIvWHAfncV+6NSgdAjoCpUilHdXTJx0X/6YF1gegw==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      pdf-lib: ^1.17.1
 
   '@pmmmwh/react-refresh-webpack-plugin@0.5.17':
     resolution: {integrity: sha512-tXDyE1/jzFsHXjhRZQ3hMl0IVhYe5qula43LDWIhVfjp9G/nT5OQY5AORVOrkEGAUltBJOfOWeETbmhm6kHhuQ==}
@@ -10162,10 +10153,6 @@ snapshots:
   '@pdf-lib/upng@1.0.1':
     dependencies:
       pako: 1.0.11
-
-  '@pdfsmaller/pdf-encrypt-lite@1.0.1(pdf-lib@1.17.1)':
-    dependencies:
-      pdf-lib: 1.17.1
 
   '@pmmmwh/react-refresh-webpack-plugin@0.5.17(react-refresh@0.11.0)(type-fest@0.21.3)(webpack-dev-server@4.15.2(webpack@5.104.1))(webpack@5.104.1)':
     dependencies:
