@@ -229,18 +229,16 @@ export const convertWordToPDF = async (file) => {
   document.body.appendChild(element);
 
   try {
-    const pdf = new jsPDF('p', 'pt', 'a4');
-    await new Promise((resolve) => {
-      pdf.html(element, {
-        callback: () => resolve(),
-        x: 10,
-        y: 10,
-        width: 575,
-        windowWidth: 800
-      });
-    });
+    const html2pdf = await import('html2pdf.js').then(module => module.default);
+    const opt = {
+      margin: 10,
+      filename: 'document.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, logging: false, windowWidth: 800 },
+      jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+    };
 
-    return pdf.output('blob');
+    return await html2pdf().set(opt).from(element).output('blob');
   } finally {
     document.body.removeChild(element);
   }
@@ -270,18 +268,16 @@ export const convertExcelToPDF = async (file) => {
   document.body.appendChild(element);
 
   try {
-    const pdf = new jsPDF('l', 'pt', 'a4');
-    await new Promise((resolve) => {
-      pdf.html(element, {
-        callback: () => resolve(),
-        x: 10,
-        y: 10,
-        width: 820,
-        windowWidth: 1000
-      });
-    });
+    const html2pdf = await import('html2pdf.js').then(module => module.default);
+    const opt = {
+        margin: 10,
+        filename: 'spreadsheet.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, logging: false, windowWidth: 1000 },
+        jsPDF: { unit: 'pt', format: 'a4', orientation: 'landscape' }
+    };
 
-    return pdf.output('blob');
+    return await html2pdf().set(opt).from(element).output('blob');
   } finally {
     document.body.removeChild(element);
   }
@@ -393,17 +389,15 @@ export const convertHTMLToPDF = async (content) => {
     document.body.appendChild(element);
 
     try {
-        const pdf = new jsPDF('p', 'pt', 'a4');
-        await new Promise((resolve) => {
-            pdf.html(element, {
-                callback: () => resolve(),
-                x: 10,
-                y: 10,
-                width: 575,
-                windowWidth: 800
-            });
-        });
-        return pdf.output('blob');
+        const html2pdf = await import('html2pdf.js').then(module => module.default);
+        const opt = {
+          margin: 10,
+          filename: 'document.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, logging: false, windowWidth: 800 },
+          jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
+        };
+        return await html2pdf().set(opt).from(element).output('blob');
     } finally {
         document.body.removeChild(element);
     }
