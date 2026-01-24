@@ -3042,6 +3042,33 @@
       "tier": "free",
       "icon": "AlertCircle",
       "description": "Generate issue templates for GitHub/GitLab"
+    },
+    {
+      "id": "pdf-editor",
+      "name": "PDF Editor",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "FileText",
+      "description": "Edit, sign, and annotate PDF documents"
+    },
+    {
+      "id": "pdf-organizer",
+      "name": "PDF Organizer",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "Layers",
+      "description": "Reorder and delete pages from PDF"
+    },
+    {
+      "id": "pdf-rotator",
+      "name": "PDF Rotator",
+      "category": "file",
+      "enabled": true,
+      "tier": "free",
+      "icon": "RotateCw",
+      "description": "Rotate pages in your PDF"
     }
   ],
   "categories": [

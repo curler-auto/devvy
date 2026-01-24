@@ -68,6 +68,10 @@ import DataCompare from './DataCompare';
 import CodeExecutor from './CodeExecutor';
 import OpenAPIToTests from './OpenAPIToTests';
 import SheetVue from './SheetVue';
+import PDFEditorTool from './PDFEditorTool';
+import PDFOrganizerTool from './PDFOrganizerTool';
+import PDFSplitterTool from './PDFSplitterTool';
+import PDFRotatorTool from './PDFRotatorTool';
 
 /**
  * Tool Components Registry
@@ -127,6 +131,10 @@ export const TOOL_COMPONENTS = {
   'code-executor': CodeExecutor,
   'openapi-to-tests': OpenAPIToTests,
   'sheet-vue': SheetVue,
+  'pdf-editor': PDFEditorTool,
+  'pdf-organizer': PDFOrganizerTool,
+  'pdf-splitter': PDFSplitterTool,
+  'pdf-rotator': PDFRotatorTool,
 };
 
 /**
