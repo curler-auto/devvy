@@ -1750,9 +1750,11 @@ async def list_s3_buckets(config: S3Config):
         if config.endpoint:
             client_kwargs["endpoint_url"] = config.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _list_buckets():
+            s3 = boto3.client("s3", **client_kwargs)
+            return s3.list_buckets()
 
-        response = s3.list_buckets()
+        response = await run_in_threadpool(_list_buckets)
         buckets = [
             {"name": bucket["Name"], "creationDate": bucket["CreationDate"].isoformat()}
             for bucket in response.get("Buckets", [])
@@ -1782,12 +1784,14 @@ async def list_s3_objects(request: S3ListObjectsRequest):
         if request.endpoint:
             client_kwargs["endpoint_url"] = request.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _list_objects():
+            s3 = boto3.client("s3", **client_kwargs)
+            return s3.list_objects_v2(
+                Bucket=request.bucket, Prefix=request.prefix or "", Delimiter="/"
+            )
 
         # List objects with delimiter to get folders
-        response = s3.list_objects_v2(
-            Bucket=request.bucket, Prefix=request.prefix or "", Delimiter="/"
-        )
+        response = await run_in_threadpool(_list_objects)
 
         objects = []
 
@@ -1841,15 +1845,18 @@ async def download_s3_object(request: S3DownloadRequest):
         if request.endpoint:
             client_kwargs["endpoint_url"] = request.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _get_object():
+            s3 = boto3.client("s3", **client_kwargs)
+            response = s3.get_object(Bucket=request.bucket, Key=request.key)
+            return io.BytesIO(response["Body"].read()), response.get("ContentType", "application/octet-stream")
 
-        # Get object
-        response = s3.get_object(Bucket=request.bucket, Key=request.key)
+        # Get object content in threadpool
+        content_stream, content_type = await run_in_threadpool(_get_object)
 
         # Stream the file
         return StreamingResponse(
-            io.BytesIO(response["Body"].read()),
-            media_type=response.get("ContentType", "application/octet-stream"),
+            content_stream,
+            media_type=content_type,
             headers={
                 "Content-Disposition": f'attachment; filename="{request.key.split("/")[-1]}"'
             },
@@ -1877,21 +1884,22 @@ async def preview_s3_object(request: S3DownloadRequest):
         if request.endpoint:
             client_kwargs["endpoint_url"] = request.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _preview_object():
+            s3 = boto3.client("s3", **client_kwargs)
+            response = s3.get_object(Bucket=request.bucket, Key=request.key)
+            content = response["Body"].read()
 
-        # Get object
-        response = s3.get_object(Bucket=request.bucket, Key=request.key)
-        content = response["Body"].read()
+            # Try to decode as text
+            try:
+                text_content = content.decode("utf-8")
+                # Limit preview to first 10000 characters
+                if len(text_content) > 10000:
+                    text_content = text_content[:10000] + "\n\n... (truncated)"
+                return {"content": text_content}
+            except:
+                return {"content": "[Binary file - cannot preview]"}
 
-        # Try to decode as text
-        try:
-            text_content = content.decode("utf-8")
-            # Limit preview to first 10000 characters
-            if len(text_content) > 10000:
-                text_content = text_content[:10000] + "\n\n... (truncated)"
-            return {"content": text_content}
-        except:
-            return {"content": "[Binary file - cannot preview]"}
+        return await run_in_threadpool(_preview_object)
     except Exception as e:
         logger.error(f"S3 preview error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -1915,10 +1923,12 @@ async def delete_s3_object(request: S3DownloadRequest):
         if request.endpoint:
             client_kwargs["endpoint_url"] = request.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _delete_object():
+            s3 = boto3.client("s3", **client_kwargs)
+            s3.delete_object(Bucket=request.bucket, Key=request.key)
 
         # Delete object
-        s3.delete_object(Bucket=request.bucket, Key=request.key)
+        await run_in_threadpool(_delete_object)
 
         return {"message": "Object deleted"}
     except Exception as e:
@@ -1944,14 +1954,16 @@ async def get_presigned_url(request: S3DownloadRequest):
         if request.endpoint:
             client_kwargs["endpoint_url"] = request.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _generate_presigned_url():
+            s3 = boto3.client("s3", **client_kwargs)
+            return s3.generate_presigned_url(
+                "get_object",
+                Params={"Bucket": request.bucket, "Key": request.key},
+                ExpiresIn=3600,
+            )
 
         # Generate presigned URL (valid for 1 hour)
-        url = s3.generate_presigned_url(
-            "get_object",
-            Params={"Bucket": request.bucket, "Key": request.key},
-            ExpiresIn=3600,
-        )
+        url = await run_in_threadpool(_generate_presigned_url)
 
         return {"url": url}
     except Exception as e:
@@ -1987,11 +1999,14 @@ async def upload_s3_object(
         if config_data.get("endpoint"):
             client_kwargs["endpoint_url"] = config_data["endpoint"]
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _upload_file():
+            s3 = boto3.client("s3", **client_kwargs)
+            key = f"{prefix or ''}{file.filename}"
+            s3.upload_fileobj(file.file, bucket, key)
+            return key
 
         # Upload file
-        key = f"{prefix or ''}{file.filename}"
-        s3.upload_fileobj(file.file, bucket, key)
+        key = await run_in_threadpool(_upload_file)
 
         return {"message": "File uploaded", "key": key}
     except Exception as e:
