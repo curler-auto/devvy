@@ -106,7 +106,7 @@
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
     "build:tauri": "cross-env REACT_APP_BACKEND_URL=http://127.0.0.1:8001 npm run build",
-    "tauri:build:windows": "PATH=\"$HOME/.cargo/bin:$PATH\" tauri build --target x86_64-pc-windows-msvc",
+    "tauri:build:windows": "PATH=\"/opt/homebrew/opt/llvm/bin:$HOME/.cargo/bin:$PATH\" tauri build --target x86_64-pc-windows-msvc",
     "tauri:install": "./build-and-install.sh"
   },
   "browserslist": {
