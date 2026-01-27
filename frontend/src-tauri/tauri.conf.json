@@ -35,6 +35,9 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "category": "DeveloperTool"
+    "category": "DeveloperTool",
+    "macOS": {
+      "entitlements": "./entitlements.plist"
+    }
   }
 }
