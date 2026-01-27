@@ -91,3 +91,6 @@ android-sdk/ -e
 *.db-*
 *.sqlite
 *.sqlite3
+
+frontend/build_garbage*
+frontend/src-tauri/target_garbage*
