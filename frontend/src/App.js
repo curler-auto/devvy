@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import '@/App.css';
 import axios from 'axios';
 import Editor from '@monaco-editor/react';
@@ -59,6 +59,18 @@ const ICON_MAP = {
   'RefreshCw': RefreshCw,
 };
 
+// Helper function to check tool access
+const checkToolAccess = (tool) => {
+  if (!tool) return { hasAccess: false, isPremium: false, needsActivation: false };
+
+  // Always grant access, marking as premium if tier is premium
+  return {
+    hasAccess: true,
+    isPremium: tool.tier === "premium",
+    needsActivation: false,
+  };
+};
+
 function MainApp() {
   // Desktop version - no authentication needed
   const user = { name: 'Desktop User' };
@@ -88,6 +100,24 @@ function MainApp() {
   const [editorTheme, setEditorTheme] = useState(getMonacoTheme(getStoredTheme()));
   const [unsavedTabs, setUnsavedTabs] = useState(new Set()); // Track tabs with unsaved changes
 
+  // Use a ref to access current favorites in stable callbacks
+  const favoritesRef = useRef(favorites);
+  useEffect(() => {
+    favoritesRef.current = favorites;
+  }, [favorites]);
+
+  // Load favorites is wrapped in useCallback to be stable
+  const loadFavorites = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/favorites/list`);
+      const favs = response.data.favorites || [];
+      console.log('Loaded favorites:', favs);
+      setFavorites(favs);
+    } catch (error) {
+      console.error('Failed to load favorites:', error);
+    }
+  }, []);
+
   useEffect(() => {
     // Apply saved theme on startup
     const savedTheme = getStoredTheme();
@@ -111,7 +141,7 @@ function MainApp() {
     return () => {
       window.removeEventListener('favoritesChanged', handleFavoritesChanged);
     };
-  }, []);
+  }, [loadFavorites]);
 
   // Keyboard shortcut handler for Ctrl/Cmd+S and Ctrl/Cmd+Shift+S
   useEffect(() => {
@@ -222,17 +252,6 @@ function MainApp() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeTab, tabs]);
 
-  const loadFavorites = async () => {
-    try {
-      const response = await axios.get(`${API}/favorites/list`);
-      const favs = response.data.favorites || [];
-      console.log('Loaded favorites:', favs);
-      setFavorites(favs);
-    } catch (error) {
-      console.error('Failed to load favorites:', error);
-    }
-  };
-
   const loadToolsConfig = async () => {
     try {
       const response = await axios.get(`${API}/tools/config`, {
@@ -306,17 +325,6 @@ function MainApp() {
     }
   };
 
-  const checkToolAccess = (tool) => {
-    if (!tool) return { hasAccess: false, isPremium: false, needsActivation: false };
-
-    // Always grant access, marking as premium if tier is premium
-    return {
-      hasAccess: true,
-      isPremium: tool.tier === "premium",
-      needsActivation: false,
-    };
-  };
-
   const handleActivateLicense = async (activationKey) => {
     try {
       const result = await licenseService.activateLicense(activationKey);
@@ -338,20 +346,21 @@ function MainApp() {
     }
   };
 
-  const toggleFavorite = async (toolId) => {
+  const toggleFavorite = useCallback(async (toolId) => {
     try {
       console.log('Toggling favorite for:', toolId);
-      console.log('Current favorites:', favorites);
+      const currentFavorites = favoritesRef.current;
+      console.log('Current favorites:', currentFavorites);
       
-      if (favorites.includes(toolId)) {
+      if (currentFavorites.includes(toolId)) {
         await axios.post(`${API}/favorites/remove`, { tool_id: toolId });
-        const newFavorites = favorites.filter(id => id !== toolId);
+        const newFavorites = currentFavorites.filter(id => id !== toolId);
         setFavorites(newFavorites);
         console.log('Removed from favorites. New list:', newFavorites);
         toast.success('Removed from favorites');
       } else {
         await axios.post(`${API}/favorites/add`, { tool_id: toolId });
-        const newFavorites = [...favorites, toolId];
+        const newFavorites = [...currentFavorites, toolId];
         setFavorites(newFavorites);
         console.log('Added to favorites. New list:', newFavorites);
         toast.success('Added to favorites');
@@ -367,9 +376,9 @@ function MainApp() {
       console.error('Failed to toggle favorite:', error);
       toast.error('Failed to update favorites');
     }
-  };
+  }, [loadFavorites]);
 
-  const openTool = (tool) => {
+  const openTool = useCallback((tool) => {
     // Check if user has access to this tool
     const access = checkToolAccess(tool);
     
@@ -379,16 +388,19 @@ function MainApp() {
       return;
     }
 
-    // Allow multiple instances of the same tool
+    // Create the new tab object
+    const newTabId = `${tool.id}-${Date.now()}`;
     const newTab = {
-      tabId: `${tool.id}-${Date.now()}`,
+      tabId: newTabId,
       ...tool,
       customName: null,
       data: {}
     };
-    setTabs([...tabs, newTab]);
-    setActiveTab(newTab.tabId);
-  };
+
+    // Use functional update to avoid dependency on tabs
+    setTabs(prevTabs => [...prevTabs, newTab]);
+    setActiveTab(newTabId);
+  }, []);
 
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
@@ -556,48 +568,71 @@ function MainApp() {
   }
 
   // Filter tools based on search query and enabled status
-  // Strictly enforce the enabled flag from toolconfig.json
-  const enabledTools = tools.filter(tool => tool.enabled === true);
+  // strictly enforce the enabled flag from toolconfig.json
+  // Memoize all filtering logic to prevent unnecessary re-calculations
   
-  const filteredTools = searchQuery
-    ? enabledTools.filter(tool => 
-        tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tool.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : enabledTools;
+  const enabledTools = useMemo(() =>
+    tools.filter(tool => tool.enabled === true),
+    [tools]
+  );
 
-  const categoryTools = selectedCategory
-    ? enabledTools.filter(tool => {
-        const matchesCategory = tool.category === selectedCategory.id;
-        const matchesSearch = !searchQuery || 
+  const filteredTools = useMemo(() =>
+    searchQuery
+      ? enabledTools.filter(tool =>
           tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          tool.description.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCategory && matchesSearch;
-      })
-    : [];
+          tool.description.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : enabledTools,
+    [enabledTools, searchQuery]
+  );
 
-  const favoriteTools = enabledTools.filter(tool => favorites.includes(tool.id));
+  const categoryTools = useMemo(() =>
+    selectedCategory
+      ? enabledTools.filter(tool => {
+          const matchesCategory = tool.category === selectedCategory.id;
+          const matchesSearch = !searchQuery ||
+            tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            tool.description.toLowerCase().includes(searchQuery.toLowerCase());
+          return matchesCategory && matchesSearch;
+        })
+      : [],
+    [enabledTools, selectedCategory, searchQuery]
+  );
+
+  const favoriteTools = useMemo(() =>
+    enabledTools.filter(tool => favorites.includes(tool.id)),
+    [enabledTools, favorites]
+  );
   
   // Filter favorites based on search query
-  const filteredFavorites = searchQuery
-    ? favoriteTools.filter(tool =>
-        tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        tool.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : favoriteTools;
+  const filteredFavorites = useMemo(() =>
+    searchQuery
+      ? favoriteTools.filter(tool =>
+          tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          tool.description.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : favoriteTools,
+    [favoriteTools, searchQuery]
+  );
 
   // Filter out categories with no enabled tools
-  const categoriesWithTools = categories.filter(category => {
-    // Check if this category has any enabled tools
-    return enabledTools.some(tool => tool.category === category.id);
-  });
+  const categoriesWithTools = useMemo(() =>
+    categories.filter(category => {
+      // Check if this category has any enabled tools
+      return enabledTools.some(tool => tool.category === category.id);
+    }),
+    [categories, enabledTools]
+  );
   
   // Then apply search filter if needed
-  const filteredCategories = searchQuery
-    ? categoriesWithTools.filter(cat =>
-        cat.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : categoriesWithTools;
+  const filteredCategories = useMemo(() =>
+    searchQuery
+      ? categoriesWithTools.filter(cat =>
+          cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : categoriesWithTools,
+    [categoriesWithTools, searchQuery]
+  );
 
   return (
     <div className="App" data-testid="productivity-app">
@@ -1182,7 +1217,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
   );
 }
 
-function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, isLocked }) {
+const ToolPaneItem = React.memo(({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, isLocked }) => {
   const Icon = tool.icon;
   
   const handleFavoriteClick = (e) => {
@@ -1229,7 +1264,7 @@ function ToolPaneItem({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, i
       </button>
     </button>
   );
-}
+});
 
 // Main App with Auth Provider
 export default function App() {
