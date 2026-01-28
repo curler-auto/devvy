@@ -146,7 +146,9 @@ webpackConfig.jest = {
       "node_modules/(?!pdfjs-dist)"
     ],
     moduleNameMapper: {
-       "^pdfjs-dist$": "<rootDir>/src/__mocks__/pdfjs-dist.js"
+       "^pdfjs-dist$": "<rootDir>/src/__mocks__/pdfjs-dist.js",
+       "^axios$": "<rootDir>/src/__mocks__/axios.js",
+       "^@/(.*)$": "<rootDir>/src/$1"
     }
   }
 };
