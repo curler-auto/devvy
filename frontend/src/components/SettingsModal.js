@@ -187,6 +187,8 @@ const ThemeOption = ({ theme, isSelected, onSelect }) => {
   return (
     <button
       onClick={onSelect}
+      aria-label={`Select ${theme.name} theme`}
+      aria-pressed={isSelected}
       className={`
         relative flex items-center gap-3 p-3 rounded-lg border-2 transition-all
         ${isSelected 
@@ -582,6 +584,7 @@ const ArrayConfig = ({ config, category, onSave }) => {
                   value={editData.name || ''}
                   onChange={(e) => setEditData({...editData, name: e.target.value})}
                   placeholder="Name"
+                  aria-label="Configuration Name"
                   className="w-full px-3 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
                 />
                 {Object.keys(getDefaultFields(category)).map(field => (
@@ -591,6 +594,7 @@ const ArrayConfig = ({ config, category, onSave }) => {
                     value={editData[field] || ''}
                     onChange={(e) => setEditData({...editData, [field]: e.target.value})}
                     placeholder={field}
+                    aria-label={`Configuration ${field}`}
                     className="w-full px-3 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
                   />
                 ))}

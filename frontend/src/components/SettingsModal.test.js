@@ -105,4 +105,35 @@ describe('SettingsModal Accessibility', () => {
     const deleteButton = screen.getByRole('button', { name: 'Delete Test Repo' });
     expect(deleteButton).toBeInTheDocument();
   });
+
+  test('theme options should have accessible names and state', () => {
+    render(<SettingsModal {...defaultProps} />);
+    // Default is appearance tab
+    const darkThemeButton = screen.getByRole('button', { name: /Select Dark theme/i });
+    expect(darkThemeButton).toBeInTheDocument();
+    expect(darkThemeButton).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('environment config inputs should have accessible names', () => {
+    render(<SettingsModal {...defaultProps} />);
+
+    // Switch to Environment tab
+    const envTab = screen.getByText(/Environment/i);
+    fireEvent.click(envTab);
+
+    // Switch to Git Repositories
+    const gitTab = screen.getByText(/Git Repositories/i);
+    fireEvent.click(gitTab);
+
+    // Add a new item
+    const addButton = screen.getByText(/Add New/i);
+    fireEvent.click(addButton);
+
+    // Check for labelled inputs
+    const nameInput = screen.getByRole('textbox', { name: 'Configuration Name' });
+    expect(nameInput).toBeInTheDocument();
+
+    const ownerInput = screen.getByRole('textbox', { name: 'Configuration owner' });
+    expect(ownerInput).toBeInTheDocument();
+  });
 });
