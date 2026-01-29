@@ -875,26 +875,31 @@ class GrpcCallRequest(BaseModel):
 
 
 @api_router.post("/grpc/call")
-async def grpc_call(
+def grpc_call(
     request: GrpcCallRequest, current_user: dict = Depends(get_current_user)
 ):
     """
     Proxy endpoint for making gRPC calls.
     This endpoint receives proto file content, parses it, and makes a gRPC call.
+    Defined as a synchronous function to run in a threadpool and avoid blocking the main event loop.
     """
     # Validate proto content
     if not request.proto_content or not request.proto_content.strip():
         raise HTTPException(status_code=400, detail="Proto content is required")
 
-    try:
-        import grpc
-        from google.protobuf import descriptor_pb2
-        from google.protobuf.descriptor_pool import DescriptorPool
-        from google.protobuf.message_factory import GetMessageClass
-        from google.protobuf import json_format
-        import tempfile
-        import os as os_module
+    import grpc
+    from google.protobuf import descriptor_pb2
+    from google.protobuf.descriptor_pool import DescriptorPool
+    from google.protobuf.message_factory import GetMessageClass
+    from google.protobuf import json_format
+    import tempfile
+    import os as os_module
 
+    proto_file_path = None
+    descriptor_set_file = None
+    channel = None
+
+    try:
         # Save proto content to a temporary file
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".proto", delete=False
@@ -916,16 +921,12 @@ async def grpc_call(
             proto_file_path,
         ]
 
-        process = await asyncio.create_subprocess_exec(
-            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-        )
-        stdout, stderr = await process.communicate()
+        # Use synchronous subprocess.run instead of asyncio
+        result = subprocess.run(cmd, capture_output=True)
 
-        if process.returncode != 0:
-            error_msg = stderr.decode() if stderr else "Unknown error"
-            raise HTTPException(
-                status_code=400, detail=f"Failed to compile proto file: {error_msg}"
-            )
+        if result.returncode != 0:
+            error_msg = result.stderr.decode() if result.stderr else "Unknown error"
+            raise ValueError(f"Failed to compile proto file: {error_msg}")
 
         # Load the descriptor
         with open(descriptor_set_file, "rb") as f:
@@ -939,18 +940,23 @@ async def grpc_call(
 
         # Find the service and method descriptors
         service_descriptor = None
+        service_full_name = None
+
         for file_descriptor_proto in descriptor_set.file:
             for service in file_descriptor_proto.service:
                 if service.name == request.service:
                     service_descriptor = service
+                    package = file_descriptor_proto.package
+                    if package:
+                        service_full_name = f"{package}.{service.name}"
+                    else:
+                        service_full_name = service.name
                     break
             if service_descriptor:
                 break
 
         if not service_descriptor:
-            raise HTTPException(
-                status_code=400, detail=f"Service '{request.service}' not found"
-            )
+            raise ValueError(f"Service '{request.service}' not found")
 
         # Find the method
         method_descriptor = None
@@ -960,9 +966,7 @@ async def grpc_call(
                 break
 
         if not method_descriptor:
-            raise HTTPException(
-                status_code=400, detail=f"Method '{request.method}' not found"
-            )
+            raise ValueError(f"Method '{request.method}' not found")
 
         # Get the request and response message types
         request_type = pool.FindMessageTypeByName(
@@ -988,7 +992,7 @@ async def grpc_call(
         metadata_list = [(k, v) for k, v in request.metadata.items()]
 
         # Make the unary-unary call
-        method_full_name = f"/{service_descriptor.full_name}/{request.method}"
+        method_full_name = f"/{service_full_name}/{request.method}"
         response = channel.unary_unary(
             method_full_name,
             request_serializer=lambda x: x.SerializeToString(),
@@ -999,24 +1003,21 @@ async def grpc_call(
         response_dict = json_format.MessageToDict(
             response, preserving_proto_field_name=True
         )
-
-        # Clean up temporary files
-        os_module.unlink(proto_file_path)
-        os_module.unlink(descriptor_set_file)
-
-        channel.close()
-
         return {"response": response_dict, "metadata": {}}
 
-    except HTTPException:
-        # Re-raise HTTPExceptions (like 400 errors) as-is
-        raise
-    except grpc.RpcError as e:
-        raise HTTPException(
-            status_code=500, detail=f"gRPC Error: {e.code()}: {e.details()}"
-        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        logger.error(f"gRPC call error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error making gRPC call: {str(e)}")
+    finally:
+        # Clean up
+        if channel:
+            channel.close()
+        if proto_file_path and os_module.path.exists(proto_file_path):
+            os_module.unlink(proto_file_path)
+        if descriptor_set_file and os_module.path.exists(descriptor_set_file):
+            os_module.unlink(descriptor_set_file)
 
 
 # ========== UI AUTOMATION RECORDER ENDPOINTS ==========
