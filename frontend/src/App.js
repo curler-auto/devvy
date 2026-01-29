@@ -961,7 +961,7 @@ function MainApp() {
                         <p>JSON Validator - Coming Soon</p>
                       </div>
                     )}
-                    {tab.id === 'api-tester' && (
+                    {(tab.id === 'api-tester' || tab.id === 'rest-api-tester') && (
                       <RestApiTester tab={tab} tabs={tabs} setTabs={setTabs} />
                     )}
                     {tab.id === 'grpc-tester' && (
@@ -971,7 +971,7 @@ function MainApp() {
                       <UiRecorder tab={tab} tabs={tabs} setTabs={setTabs} />
                     )}
                     {/* Default fallback for unimplemented tools */}
-                    {!['json-validator', 'api-tester', 'grpc-tester', 'ui-recorder'].includes(tab.id) && (
+                    {!['json-validator', 'api-tester', 'rest-api-tester', 'grpc-tester', 'ui-recorder'].includes(tab.id) && (
                       <div className="p-8 text-center text-gray-400">
                         <AlertCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
                         <p>{tab.name} - Coming Soon</p>

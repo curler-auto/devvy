@@ -221,7 +221,7 @@ export default function RestApiTester({ tab, tabs, setTabs }) {
             className="api-send-button"
             data-testid="send-button"
           >
-            <Send className="w-4 h-4 mr-2" />
+            <Send className="w-4 h-4 mr-2" aria-hidden="true" />
             {loading ? 'Sending...' : 'Send'}
           </Button>
         </div>
@@ -249,6 +249,7 @@ export default function RestApiTester({ tab, tabs, setTabs }) {
                     checked={param.enabled}
                     onChange={(e) => updateParam(idx, 'enabled', e.target.checked)}
                     className="api-kv-checkbox"
+                    aria-label="Enable parameter"
                   />
                   <Input
                     value={param.key}
@@ -262,13 +263,13 @@ export default function RestApiTester({ tab, tabs, setTabs }) {
                     placeholder="Value"
                     size="sm"
                   />
-                  <button onClick={() => removeParam(idx)} className="api-kv-delete">
-                    <X className="w-4 h-4" />
+                  <button onClick={() => removeParam(idx)} className="api-kv-delete" aria-label="Remove parameter">
+                    <X className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               ))}
               <Button onClick={addParam} variant="outline" size="sm">
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4 mr-2" aria-hidden="true" />
                 Add Parameter
               </Button>
             </div>
@@ -288,6 +289,7 @@ export default function RestApiTester({ tab, tabs, setTabs }) {
                     checked={header.enabled}
                     onChange={(e) => updateHeader(idx, 'enabled', e.target.checked)}
                     className="api-kv-checkbox"
+                    aria-label="Enable header"
                   />
                   <Input
                     value={header.key}
@@ -301,13 +303,13 @@ export default function RestApiTester({ tab, tabs, setTabs }) {
                     placeholder="Value"
                     size="sm"
                   />
-                  <button onClick={() => removeHeader(idx)} className="api-kv-delete">
-                    <X className="w-4 h-4" />
+                  <button onClick={() => removeHeader(idx)} className="api-kv-delete" aria-label="Remove header">
+                    <X className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               ))}
               <Button onClick={addHeader} variant="outline" size="sm">
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4 mr-2" aria-hidden="true" />
                 Add Header
               </Button>
             </div>
@@ -438,8 +440,8 @@ export default function RestApiTester({ tab, tabs, setTabs }) {
               <span className="response-time">{response.time}ms</span>
               {response.size && <span className="response-size">{(response.size / 1024).toFixed(2)} KB</span>}
             </div>
-            <Button onClick={copyResponse} variant="outline" size="sm">
-              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+            <Button onClick={copyResponse} variant="outline" size="sm" aria-label="Copy response">
+              {copied ? <Check className="w-4 h-4" aria-hidden="true" /> : <Copy className="w-4 h-4" aria-hidden="true" />}
             </Button>
           </div>
 
