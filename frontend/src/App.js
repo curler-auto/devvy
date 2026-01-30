@@ -225,15 +225,14 @@ function MainApp() {
 
   // Listen for theme changes
   useEffect(() => {
-    const handleThemeChange = () => {
-      const newTheme = getStoredTheme();
+    const handleThemeChange = (e) => {
+      const newTheme = e.detail?.themeId || getStoredTheme();
       setCurrentTheme(newTheme);
       setEditorTheme(getMonacoTheme(newTheme));
     };
 
-    // Check for theme changes every 100ms (when settings modal updates theme)
-    const interval = setInterval(handleThemeChange, 100);
-    return () => clearInterval(interval);
+    window.addEventListener('themeChanged', handleThemeChange);
+    return () => window.removeEventListener('themeChanged', handleThemeChange);
   }, []);
 
   // Keyboard shortcut for save (Cmd+S / Ctrl+S)

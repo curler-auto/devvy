@@ -220,6 +220,9 @@ export const applyTheme = (themeId) => {
   
   // Store theme preference
   localStorage.setItem('devvy-theme', themeId);
+
+  // Dispatch event for components to listen to
+  window.dispatchEvent(new CustomEvent('themeChanged', { detail: { themeId } }));
 };
 
 export const getStoredTheme = () => {
