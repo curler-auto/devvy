@@ -29,13 +29,15 @@ cd frontend
 npm run tauri build
 ```
 
-
 ### Build Windows App from mac
+
 ```bash
+cd frontend
 rustup target add x86_64-pc-windows-msvc
 cargo install cargo-xwin
 brew install makensis
-npm run tauri build:windows
+brew install lld
+npm run tauri:build:windows
 ```
 
 ## License

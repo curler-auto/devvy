@@ -98,7 +98,8 @@ async def run_benchmark():
         print(f"Total time for {num_requests} requests: {total_time:.4f} seconds")
 
         # If blocking, the probe should be delayed by roughly (num_requests * protoc_time) or at least > 0.1s
-        if probe_duration > 0.2:
+        # Stricter threshold: 50ms. Localhost requests should be < 10ms.
+        if probe_duration > 0.05:
             print(f"FAIL: Probe was blocked (took {probe_duration:.4f}s)")
             return False
         else:

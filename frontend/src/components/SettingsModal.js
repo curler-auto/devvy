@@ -43,8 +43,9 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
           <button
             onClick={onClose}
             className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors"
+            aria-label="Close settings"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
 
@@ -186,6 +187,8 @@ const ThemeOption = ({ theme, isSelected, onSelect }) => {
   return (
     <button
       onClick={onSelect}
+      aria-label={`Select ${theme.name} theme`}
+      aria-pressed={isSelected}
       className={`
         relative flex items-center gap-3 p-3 rounded-lg border-2 transition-all
         ${isSelected 
@@ -581,6 +584,7 @@ const ArrayConfig = ({ config, category, onSave }) => {
                   value={editData.name || ''}
                   onChange={(e) => setEditData({...editData, name: e.target.value})}
                   placeholder="Name"
+                  aria-label="Configuration Name"
                   className="w-full px-3 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
                 />
                 {Object.keys(getDefaultFields(category)).map(field => (
@@ -590,6 +594,7 @@ const ArrayConfig = ({ config, category, onSave }) => {
                     value={editData[field] || ''}
                     onChange={(e) => setEditData({...editData, [field]: e.target.value})}
                     placeholder={field}
+                    aria-label={`Configuration ${field}`}
                     className="w-full px-3 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
                   />
                 ))}
@@ -605,11 +610,19 @@ const ArrayConfig = ({ config, category, onSave }) => {
                   <div className="text-xs text-[var(--text-secondary)]">{item.apiUrl || item.host}</div>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => { setEditIndex(index); setEditData(item); }} className="p-1 hover:bg-[var(--bg-secondary)] rounded">
-                    <Edit2 className="w-4 h-4" />
+                  <button
+                    onClick={() => { setEditIndex(index); setEditData(item); }}
+                    className="p-1 hover:bg-[var(--bg-secondary)] rounded"
+                    aria-label={`Edit ${item.name || 'item'}`}
+                  >
+                    <Edit2 className="w-4 h-4" aria-hidden="true" />
                   </button>
-                  <button onClick={() => deleteItem(index)} className="p-1 hover:bg-red-500/10 text-red-500 rounded">
-                    <Trash2 className="w-4 h-4" />
+                  <button
+                    onClick={() => deleteItem(index)}
+                    className="p-1 hover:bg-red-500/10 text-red-500 rounded"
+                    aria-label={`Delete ${item.name || 'item'}`}
+                  >
+                    <Trash2 className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>

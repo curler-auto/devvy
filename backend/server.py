@@ -875,26 +875,31 @@ class GrpcCallRequest(BaseModel):
 
 
 @api_router.post("/grpc/call")
-async def grpc_call(
+def grpc_call(
     request: GrpcCallRequest, current_user: dict = Depends(get_current_user)
 ):
     """
     Proxy endpoint for making gRPC calls.
     This endpoint receives proto file content, parses it, and makes a gRPC call.
+    Defined as a synchronous function to run in a threadpool and avoid blocking the main event loop.
     """
     # Validate proto content
     if not request.proto_content or not request.proto_content.strip():
         raise HTTPException(status_code=400, detail="Proto content is required")
 
-    try:
-        import grpc
-        from google.protobuf import descriptor_pb2
-        from google.protobuf.descriptor_pool import DescriptorPool
-        from google.protobuf.message_factory import GetMessageClass
-        from google.protobuf import json_format
-        import tempfile
-        import os as os_module
+    import grpc
+    from google.protobuf import descriptor_pb2
+    from google.protobuf.descriptor_pool import DescriptorPool
+    from google.protobuf.message_factory import GetMessageClass
+    from google.protobuf import json_format
+    import tempfile
+    import os as os_module
 
+    proto_file_path = None
+    descriptor_set_file = None
+    channel = None
+
+    try:
         # Save proto content to a temporary file
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".proto", delete=False
@@ -916,16 +921,12 @@ async def grpc_call(
             proto_file_path,
         ]
 
-        process = await asyncio.create_subprocess_exec(
-            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-        )
-        stdout, stderr = await process.communicate()
+        # Use synchronous subprocess.run instead of asyncio
+        result = subprocess.run(cmd, capture_output=True)
 
-        if process.returncode != 0:
-            error_msg = stderr.decode() if stderr else "Unknown error"
-            raise HTTPException(
-                status_code=400, detail=f"Failed to compile proto file: {error_msg}"
-            )
+        if result.returncode != 0:
+            error_msg = result.stderr.decode() if result.stderr else "Unknown error"
+            raise ValueError(f"Failed to compile proto file: {error_msg}")
 
         # Load the descriptor
         with open(descriptor_set_file, "rb") as f:
@@ -939,18 +940,23 @@ async def grpc_call(
 
         # Find the service and method descriptors
         service_descriptor = None
+        service_full_name = None
+
         for file_descriptor_proto in descriptor_set.file:
             for service in file_descriptor_proto.service:
                 if service.name == request.service:
                     service_descriptor = service
+                    package = file_descriptor_proto.package
+                    if package:
+                        service_full_name = f"{package}.{service.name}"
+                    else:
+                        service_full_name = service.name
                     break
             if service_descriptor:
                 break
 
         if not service_descriptor:
-            raise HTTPException(
-                status_code=400, detail=f"Service '{request.service}' not found"
-            )
+            raise ValueError(f"Service '{request.service}' not found")
 
         # Find the method
         method_descriptor = None
@@ -960,9 +966,7 @@ async def grpc_call(
                 break
 
         if not method_descriptor:
-            raise HTTPException(
-                status_code=400, detail=f"Method '{request.method}' not found"
-            )
+            raise ValueError(f"Method '{request.method}' not found")
 
         # Get the request and response message types
         request_type = pool.FindMessageTypeByName(
@@ -988,7 +992,7 @@ async def grpc_call(
         metadata_list = [(k, v) for k, v in request.metadata.items()]
 
         # Make the unary-unary call
-        method_full_name = f"/{service_descriptor.full_name}/{request.method}"
+        method_full_name = f"/{service_full_name}/{request.method}"
         response = channel.unary_unary(
             method_full_name,
             request_serializer=lambda x: x.SerializeToString(),
@@ -999,24 +1003,21 @@ async def grpc_call(
         response_dict = json_format.MessageToDict(
             response, preserving_proto_field_name=True
         )
-
-        # Clean up temporary files
-        os_module.unlink(proto_file_path)
-        os_module.unlink(descriptor_set_file)
-
-        channel.close()
-
         return {"response": response_dict, "metadata": {}}
 
-    except HTTPException:
-        # Re-raise HTTPExceptions (like 400 errors) as-is
-        raise
-    except grpc.RpcError as e:
-        raise HTTPException(
-            status_code=500, detail=f"gRPC Error: {e.code()}: {e.details()}"
-        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
+        logger.error(f"gRPC call error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error making gRPC call: {str(e)}")
+    finally:
+        # Clean up
+        if channel:
+            channel.close()
+        if proto_file_path and os_module.path.exists(proto_file_path):
+            os_module.unlink(proto_file_path)
+        if descriptor_set_file and os_module.path.exists(descriptor_set_file):
+            os_module.unlink(descriptor_set_file)
 
 
 # ========== UI AUTOMATION RECORDER ENDPOINTS ==========
@@ -1750,9 +1751,11 @@ async def list_s3_buckets(config: S3Config):
         if config.endpoint:
             client_kwargs["endpoint_url"] = config.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _list_buckets():
+            s3 = boto3.client("s3", **client_kwargs)
+            return s3.list_buckets()
 
-        response = s3.list_buckets()
+        response = await run_in_threadpool(_list_buckets)
         buckets = [
             {"name": bucket["Name"], "creationDate": bucket["CreationDate"].isoformat()}
             for bucket in response.get("Buckets", [])
@@ -1782,12 +1785,14 @@ async def list_s3_objects(request: S3ListObjectsRequest):
         if request.endpoint:
             client_kwargs["endpoint_url"] = request.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _list_objects():
+            s3 = boto3.client("s3", **client_kwargs)
+            return s3.list_objects_v2(
+                Bucket=request.bucket, Prefix=request.prefix or "", Delimiter="/"
+            )
 
         # List objects with delimiter to get folders
-        response = s3.list_objects_v2(
-            Bucket=request.bucket, Prefix=request.prefix or "", Delimiter="/"
-        )
+        response = await run_in_threadpool(_list_objects)
 
         objects = []
 
@@ -1841,15 +1846,18 @@ async def download_s3_object(request: S3DownloadRequest):
         if request.endpoint:
             client_kwargs["endpoint_url"] = request.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _get_object():
+            s3 = boto3.client("s3", **client_kwargs)
+            response = s3.get_object(Bucket=request.bucket, Key=request.key)
+            return io.BytesIO(response["Body"].read()), response.get("ContentType", "application/octet-stream")
 
-        # Get object
-        response = s3.get_object(Bucket=request.bucket, Key=request.key)
+        # Get object content in threadpool
+        content_stream, content_type = await run_in_threadpool(_get_object)
 
         # Stream the file
         return StreamingResponse(
-            io.BytesIO(response["Body"].read()),
-            media_type=response.get("ContentType", "application/octet-stream"),
+            content_stream,
+            media_type=content_type,
             headers={
                 "Content-Disposition": f'attachment; filename="{request.key.split("/")[-1]}"'
             },
@@ -1877,21 +1885,22 @@ async def preview_s3_object(request: S3DownloadRequest):
         if request.endpoint:
             client_kwargs["endpoint_url"] = request.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _preview_object():
+            s3 = boto3.client("s3", **client_kwargs)
+            response = s3.get_object(Bucket=request.bucket, Key=request.key)
+            content = response["Body"].read()
 
-        # Get object
-        response = s3.get_object(Bucket=request.bucket, Key=request.key)
-        content = response["Body"].read()
+            # Try to decode as text
+            try:
+                text_content = content.decode("utf-8")
+                # Limit preview to first 10000 characters
+                if len(text_content) > 10000:
+                    text_content = text_content[:10000] + "\n\n... (truncated)"
+                return {"content": text_content}
+            except:
+                return {"content": "[Binary file - cannot preview]"}
 
-        # Try to decode as text
-        try:
-            text_content = content.decode("utf-8")
-            # Limit preview to first 10000 characters
-            if len(text_content) > 10000:
-                text_content = text_content[:10000] + "\n\n... (truncated)"
-            return {"content": text_content}
-        except:
-            return {"content": "[Binary file - cannot preview]"}
+        return await run_in_threadpool(_preview_object)
     except Exception as e:
         logger.error(f"S3 preview error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -1915,10 +1924,12 @@ async def delete_s3_object(request: S3DownloadRequest):
         if request.endpoint:
             client_kwargs["endpoint_url"] = request.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _delete_object():
+            s3 = boto3.client("s3", **client_kwargs)
+            s3.delete_object(Bucket=request.bucket, Key=request.key)
 
         # Delete object
-        s3.delete_object(Bucket=request.bucket, Key=request.key)
+        await run_in_threadpool(_delete_object)
 
         return {"message": "Object deleted"}
     except Exception as e:
@@ -1944,14 +1955,16 @@ async def get_presigned_url(request: S3DownloadRequest):
         if request.endpoint:
             client_kwargs["endpoint_url"] = request.endpoint
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _generate_presigned_url():
+            s3 = boto3.client("s3", **client_kwargs)
+            return s3.generate_presigned_url(
+                "get_object",
+                Params={"Bucket": request.bucket, "Key": request.key},
+                ExpiresIn=3600,
+            )
 
         # Generate presigned URL (valid for 1 hour)
-        url = s3.generate_presigned_url(
-            "get_object",
-            Params={"Bucket": request.bucket, "Key": request.key},
-            ExpiresIn=3600,
-        )
+        url = await run_in_threadpool(_generate_presigned_url)
 
         return {"url": url}
     except Exception as e:
@@ -1987,11 +2000,14 @@ async def upload_s3_object(
         if config_data.get("endpoint"):
             client_kwargs["endpoint_url"] = config_data["endpoint"]
 
-        s3 = boto3.client("s3", **client_kwargs)
+        def _upload_file():
+            s3 = boto3.client("s3", **client_kwargs)
+            key = f"{prefix or ''}{file.filename}"
+            s3.upload_fileobj(file.file, bucket, key)
+            return key
 
         # Upload file
-        key = f"{prefix or ''}{file.filename}"
-        s3.upload_fileobj(file.file, bucket, key)
+        key = await run_in_threadpool(_upload_file)
 
         return {"message": "File uploaded", "key": key}
     except Exception as e:
@@ -2006,26 +2022,27 @@ async def upload_s3_object(
 async def list_docker_containers():
     """List all Docker containers"""
     try:
-        import docker
+        def _list_containers():
+            import docker
+            client = docker.from_env()
+            containers = []
+            for container in client.containers.list(all=True):
+                containers.append(
+                    {
+                        "id": container.id,
+                        "name": container.name,
+                        "image": (
+                            container.image.tags[0]
+                            if container.image.tags
+                            else container.image.id[:12]
+                        ),
+                        "state": container.status,
+                        "created": container.attrs["Created"],
+                    }
+                )
+            return containers
 
-        client = docker.from_env()
-
-        containers = []
-        for container in client.containers.list(all=True):
-            containers.append(
-                {
-                    "id": container.id,
-                    "name": container.name,
-                    "image": (
-                        container.image.tags[0]
-                        if container.image.tags
-                        else container.image.id[:12]
-                    ),
-                    "state": container.status,
-                    "created": container.attrs["Created"],
-                }
-            )
-
+        containers = await run_in_threadpool(_list_containers)
         return {"containers": containers}
     except Exception as e:
         logger.error(f"Docker containers list error: {str(e)}")
@@ -2036,16 +2053,17 @@ async def list_docker_containers():
 async def list_docker_images():
     """List all Docker images"""
     try:
-        import docker
+        def _list_images():
+            import docker
+            client = docker.from_env()
+            images = []
+            for image in client.images.list():
+                images.append(
+                    {"id": image.id, "tags": image.tags, "size": image.attrs.get("Size", 0)}
+                )
+            return images
 
-        client = docker.from_env()
-
-        images = []
-        for image in client.images.list():
-            images.append(
-                {"id": image.id, "tags": image.tags, "size": image.attrs.get("Size", 0)}
-            )
-
+        images = await run_in_threadpool(_list_images)
         return {"images": images}
     except Exception as e:
         logger.error(f"Docker images list error: {str(e)}")
@@ -2056,11 +2074,13 @@ async def list_docker_images():
 async def start_docker_container(container_id: str):
     """Start a Docker container"""
     try:
-        import docker
+        def _start_container():
+            import docker
+            client = docker.from_env()
+            container = client.containers.get(container_id)
+            container.start()
 
-        client = docker.from_env()
-        container = client.containers.get(container_id)
-        container.start()
+        await run_in_threadpool(_start_container)
         return {"message": "Container started"}
     except Exception as e:
         logger.error(f"Docker start error: {str(e)}")
@@ -2071,11 +2091,13 @@ async def start_docker_container(container_id: str):
 async def stop_docker_container(container_id: str):
     """Stop a Docker container"""
     try:
-        import docker
+        def _stop_container():
+            import docker
+            client = docker.from_env()
+            container = client.containers.get(container_id)
+            container.stop()
 
-        client = docker.from_env()
-        container = client.containers.get(container_id)
-        container.stop()
+        await run_in_threadpool(_stop_container)
         return {"message": "Container stopped"}
     except Exception as e:
         logger.error(f"Docker stop error: {str(e)}")
@@ -2086,11 +2108,13 @@ async def stop_docker_container(container_id: str):
 async def remove_docker_container(container_id: str):
     """Remove a Docker container"""
     try:
-        import docker
+        def _remove_container():
+            import docker
+            client = docker.from_env()
+            container = client.containers.get(container_id)
+            container.remove(force=True)
 
-        client = docker.from_env()
-        container = client.containers.get(container_id)
-        container.remove(force=True)
+        await run_in_threadpool(_remove_container)
         return {"message": "Container removed"}
     except Exception as e:
         logger.error(f"Docker remove error: {str(e)}")
@@ -2101,11 +2125,13 @@ async def remove_docker_container(container_id: str):
 async def get_docker_logs(container_id: str):
     """Get container logs"""
     try:
-        import docker
+        def _get_logs():
+            import docker
+            client = docker.from_env()
+            container = client.containers.get(container_id)
+            return container.logs(tail=1000).decode("utf-8")
 
-        client = docker.from_env()
-        container = client.containers.get(container_id)
-        logs = container.logs(tail=1000).decode("utf-8")
+        logs = await run_in_threadpool(_get_logs)
         return {"logs": logs}
     except Exception as e:
         logger.error(f"Docker logs error: {str(e)}")
@@ -2116,10 +2142,12 @@ async def get_docker_logs(container_id: str):
 async def remove_docker_image(image_id: str):
     """Remove a Docker image"""
     try:
-        import docker
+        def _remove_image():
+            import docker
+            client = docker.from_env()
+            client.images.remove(image_id, force=True)
 
-        client = docker.from_env()
-        client.images.remove(image_id, force=True)
+        await run_in_threadpool(_remove_image)
         return {"message": "Image removed"}
     except Exception as e:
         logger.error(f"Docker image remove error: {str(e)}")
@@ -2136,27 +2164,30 @@ class DockerBuildRequest(BaseModel):
 async def build_docker_image(request: DockerBuildRequest):
     """Build a Docker image"""
     try:
-        import docker
-        import io
+        def _build_image():
+            import docker
+            import io
+            client = docker.from_env()
 
-        client = docker.from_env()
+            # Create Dockerfile in memory
+            dockerfile_content = request.dockerfile.encode("utf-8")
+            fileobj = io.BytesIO(dockerfile_content)
 
-        # Create Dockerfile in memory
-        dockerfile_content = request.dockerfile.encode("utf-8")
-        fileobj = io.BytesIO(dockerfile_content)
+            # Build image
+            image, build_logs = client.images.build(
+                fileobj=fileobj, tag=request.imageName, rm=True
+            )
 
-        # Build image
-        image, build_logs = client.images.build(
-            fileobj=fileobj, tag=request.imageName, rm=True
-        )
+            # Collect build output
+            output = []
+            for log in build_logs:
+                if "stream" in log:
+                    output.append(log["stream"])
 
-        # Collect build output
-        output = []
-        for log in build_logs:
-            if "stream" in log:
-                output.append(log["stream"])
+            return "".join(output), image.id
 
-        return {"output": "".join(output), "imageId": image.id}
+        output_str, image_id = await run_in_threadpool(_build_image)
+        return {"output": output_str, "imageId": image_id}
     except Exception as e:
         logger.error(f"Docker build error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -2170,10 +2201,12 @@ class DockerPullRequest(BaseModel):
 async def pull_docker_image(request: DockerPullRequest):
     """Pull a Docker image"""
     try:
-        import docker
+        def _pull_image():
+            import docker
+            client = docker.from_env()
+            client.images.pull(request.image)
 
-        client = docker.from_env()
-        client.images.pull(request.image)
+        await run_in_threadpool(_pull_image)
         return {"message": "Image pulled"}
     except Exception as e:
         logger.error(f"Docker pull error: {str(e)}")

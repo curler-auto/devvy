@@ -417,7 +417,7 @@ const PDFEditor = ({ file, onClose }) => {
       {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-white shadow-sm flex items-center justify-between px-4 z-10 border-b border-slate-200">
         <div className="flex items-center space-x-3">
-            <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500">
+            <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500" aria-label="Close editor">
                 <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex items-center space-x-2">
@@ -433,6 +433,7 @@ const PDFEditor = ({ file, onClose }) => {
                     onClick={() => setInteractionMode('hand')}
                     className={`p-1.5 rounded-md transition-colors ${interactionMode === 'hand' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
                     title="Pan"
+                    aria-label="Activate pan tool"
                 >
                     <Hand className="w-4 h-4" />
                 </button>
@@ -440,6 +441,7 @@ const PDFEditor = ({ file, onClose }) => {
                     onClick={() => setInteractionMode('select')}
                     className={`p-1.5 rounded-md transition-colors ${interactionMode === 'select' ? 'bg-white shadow-sm text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
                     title="Select"
+                    aria-label="Activate select tool"
                 >
                     <MousePointer2 className="w-4 h-4" />
                 </button>
@@ -448,7 +450,7 @@ const PDFEditor = ({ file, onClose }) => {
             <div className="w-px h-5 bg-slate-200 mx-1"></div>
 
             <div className="relative group">
-                <button className="p-2 rounded-lg flex items-center space-x-1 text-slate-600 hover:bg-slate-50">
+                <button className="p-2 rounded-lg flex items-center space-x-1 text-slate-600 hover:bg-slate-50" aria-label="Select color">
                      <div className="w-4 h-4 rounded-full border border-slate-300" style={{ backgroundColor: drawColor }}></div>
                      <ChevronDown className="w-3 h-3" />
                 </button>
@@ -465,6 +467,7 @@ const PDFEditor = ({ file, onClose }) => {
                 onClick={() => addElementCentered('text')}
                 className="p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition-colors"
                 title="Add Text"
+                aria-label="Add text"
             >
                 <Type className="w-5 h-5" />
             </button>
@@ -474,6 +477,7 @@ const PDFEditor = ({ file, onClose }) => {
                 <button
                     onClick={() => setActiveMenu(activeMenu === 'pencil' ? null : 'pencil')}
                     className={`p-2 rounded-lg flex items-center space-x-1 ${activeMenu === 'pencil' ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50'}`}
+                    aria-label="Show drawing tools"
                 >
                     <Pen className="w-4 h-4" />
                     <ChevronDown className="w-3 h-3" />
@@ -501,6 +505,7 @@ const PDFEditor = ({ file, onClose }) => {
                 <button
                     onClick={() => setActiveMenu(activeMenu === 'markup' ? null : 'markup')}
                     className={`p-2 rounded-lg flex items-center space-x-1 ${activeMenu === 'markup' ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50'}`}
+                    aria-label="Show markup tools"
                 >
                     <div className="flex items-center bg-slate-100 px-1 rounded border border-slate-200">
                         <span className="text-xs font-serif font-bold">A</span>
@@ -535,6 +540,7 @@ const PDFEditor = ({ file, onClose }) => {
                 <button
                     onClick={() => setActiveMenu(activeMenu === 'shape' ? null : 'shape')}
                     className={`p-2 rounded-lg flex items-center space-x-1 ${activeMenu === 'shape' ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50'}`}
+                    aria-label="Show shape tools"
                 >
                     <Square className="w-4 h-4" />
                     <ChevronDown className="w-3 h-3" />
@@ -574,6 +580,7 @@ const PDFEditor = ({ file, onClose }) => {
                 <button
                     onClick={() => setActiveMenu(activeMenu === 'sign' ? null : 'sign')}
                     className={`p-2 rounded-lg flex items-center space-x-1 ${activeMenu === 'sign' ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50'}`}
+                    aria-label="Show signature tools"
                 >
                     <FileSignature className="w-4 h-4" />
                     <ChevronDown className="w-3 h-3" />
@@ -596,6 +603,7 @@ const PDFEditor = ({ file, onClose }) => {
                 onClick={() => addElementCentered('text', { content: 'Date: ' + new Date().toLocaleDateString() })}
                 className="p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition-colors"
                 title="Insert Field"
+                aria-label="Insert current date"
             >
                 <AlignLeft className="w-5 h-5" />
             </button>
@@ -604,6 +612,7 @@ const PDFEditor = ({ file, onClose }) => {
                 onClick={() => imageInputRef.current?.click()}
                 className="p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition-colors"
                 title="Add Image"
+                aria-label="Upload image"
             >
                 <ImageIcon className="w-5 h-5" />
                 <input
@@ -617,10 +626,10 @@ const PDFEditor = ({ file, onClose }) => {
 
             <div className="w-px h-5 bg-slate-200 mx-1"></div>
 
-             <button onClick={handleUndo} disabled={historyIndex <= 0} className="p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-30">
+             <button onClick={handleUndo} disabled={historyIndex <= 0} className="p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-30" aria-label="Undo last action">
                 <Undo className="w-4 h-4" />
             </button>
-            <button onClick={handleRedo} disabled={historyIndex >= history.length - 1} className="p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-30">
+            <button onClick={handleRedo} disabled={historyIndex >= history.length - 1} className="p-2 text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition-colors disabled:opacity-30" aria-label="Redo last action">
                 <Redo className="w-4 h-4" />
             </button>
 
@@ -719,6 +728,7 @@ const PDFEditor = ({ file, onClose }) => {
                                     onClick={(e) => { e.stopPropagation(); removeElement(el.id); }}
                                     className="p-1 bg-white text-red-500 border border-slate-200 rounded shadow-sm hover:bg-red-50"
                                     title="Delete"
+                                    aria-label="Delete selected element"
                                 >
                                     <Trash2 className="w-3 h-3" />
                                 </button>
