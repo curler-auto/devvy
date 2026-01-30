@@ -313,7 +313,7 @@ const EnvironmentSettings = () => {
 };
 
 const LLMConfig = ({ config, onSave }) => {
-  const [formData, setFormData] = useState(config || {
+  const defaultConfig = {
     provider: 'openai',
     apiKey: '',
     model: 'gpt-4',
@@ -322,19 +322,12 @@ const LLMConfig = ({ config, onSave }) => {
     maxTokens: 2000,
     customHeaders: {},
     requestFormat: 'openai'
-  });
+  };
+
+  const [formData, setFormData] = useState({ ...defaultConfig, ...config });
 
   useEffect(() => {
-    setFormData(config || {
-      provider: 'openai',
-      apiKey: '',
-      model: 'gpt-4',
-      apiUrl: 'https://api.openai.com/v1',
-      temperature: 0.7,
-      maxTokens: 2000,
-      customHeaders: {},
-      requestFormat: 'openai'
-    });
+    setFormData({ ...defaultConfig, ...config });
   }, [config]);
 
   const handleSave = () => {
@@ -384,8 +377,9 @@ const LLMConfig = ({ config, onSave }) => {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Provider</label>
+          <label htmlFor="llm-provider" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Provider</label>
           <select
+            id="llm-provider"
             value={formData.provider}
             onChange={(e) => handleProviderChange(e.target.value)}
             className="w-full px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
@@ -398,8 +392,9 @@ const LLMConfig = ({ config, onSave }) => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Model</label>
+          <label htmlFor="llm-model" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Model</label>
           <input
+            id="llm-model"
             type="text"
             value={formData.model}
             onChange={(e) => setFormData({...formData, model: e.target.value})}
@@ -409,8 +404,9 @@ const LLMConfig = ({ config, onSave }) => {
         </div>
       </div>
       <div>
-        <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">API Key</label>
+        <label htmlFor="llm-apikey" className="block text-sm font-medium text-[var(--text-primary)] mb-1">API Key</label>
         <input
+          id="llm-apikey"
           type="password"
           value={formData.apiKey}
           onChange={(e) => setFormData({...formData, apiKey: e.target.value})}
@@ -419,8 +415,9 @@ const LLMConfig = ({ config, onSave }) => {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">API URL</label>
+        <label htmlFor="llm-apiurl" className="block text-sm font-medium text-[var(--text-primary)] mb-1">API URL</label>
         <input
+          id="llm-apiurl"
           type="text"
           value={formData.apiUrl}
           onChange={(e) => setFormData({...formData, apiUrl: e.target.value})}
@@ -430,8 +427,9 @@ const LLMConfig = ({ config, onSave }) => {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Temperature</label>
+          <label htmlFor="llm-temp" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Temperature</label>
           <input
+            id="llm-temp"
             type="number"
             step="0.1"
             min="0"
@@ -442,8 +440,9 @@ const LLMConfig = ({ config, onSave }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Max Tokens</label>
+          <label htmlFor="llm-tokens" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Max Tokens</label>
           <input
+            id="llm-tokens"
             type="number"
             value={formData.maxTokens}
             onChange={(e) => setFormData({...formData, maxTokens: parseInt(e.target.value)})}
@@ -457,8 +456,9 @@ const LLMConfig = ({ config, onSave }) => {
           <h4 className="text-sm font-semibold text-[var(--text-primary)]">Custom Configuration</h4>
           
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Request Format</label>
+            <label htmlFor="llm-format" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Request Format</label>
             <select
+              id="llm-format"
               value={formData.requestFormat}
               onChange={(e) => setFormData({...formData, requestFormat: e.target.value})}
               className="w-full px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
@@ -475,8 +475,9 @@ const LLMConfig = ({ config, onSave }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Custom Headers (JSON)</label>
+            <label htmlFor="llm-headers" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Custom Headers (JSON)</label>
             <textarea
+              id="llm-headers"
               value={typeof formData.customHeaders === 'string' ? formData.customHeaders : JSON.stringify(formData.customHeaders, null, 2)}
               onChange={(e) => {
                 try {
