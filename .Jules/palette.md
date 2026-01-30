@@ -7,3 +7,7 @@
 ## 2026-05-23 - Dynamic Forms Relying on Placeholders
 **Learning:** The `ArrayConfig` component in `SettingsModal` used `placeholder` attributes as the sole label for dynamic inputs. This makes the inputs inaccessible to screen readers and difficult to use for users with cognitive disabilities once text is entered (as the label disappears).
 **Action:** When creating dynamic forms or list editors, ensuring every input has an associated `aria-label` (or visible label) is critical, even if a visible label is omitted for space reasons.
+
+## 2026-05-24 - Disconnected Labels in Custom Settings Forms
+**Learning:** Custom form layouts in modals (like `SettingsModal`'s `LLMConfig`) often use visual proximity for labels (`<div><label>...<input>...</div>`) without programmatic association (`htmlFor` + `id`). This fails WCAG 1.3.1 and breaks click-to-focus behavior.
+**Action:** Always enforce explicit `htmlFor` and `id` pairing on custom form inputs, especially when not using the standardized `Form` components which handle this automatically.
