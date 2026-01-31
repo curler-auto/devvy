@@ -240,7 +240,12 @@ function CodeExecutor({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
             <TerminalIcon className="w-4 h-4 mr-2" />
             {showTerminal ? 'Hide' : 'Show'} Terminal
           </Button>
-          <Button onClick={() => setShowSettings(!showSettings)} size="sm" variant="outline">
+          <Button
+            onClick={() => setShowSettings(!showSettings)}
+            size="sm"
+            variant="outline"
+            aria-label="Execution settings"
+          >
             <Settings className="w-4 h-4" />
           </Button>
         </div>
@@ -257,14 +262,22 @@ function CodeExecutor({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
 
       <div className="p-4 border-b border-[var(--border-primary)] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <select value={selectedConfig} onChange={(e) => setSelectedConfig(e.target.value)}
-            className="px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)]">
+          <select
+            value={selectedConfig}
+            onChange={(e) => setSelectedConfig(e.target.value)}
+            className="px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)]"
+            aria-label="Select execution environment"
+          >
             <option value="">Select Environment</option>
             {executionConfigs.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
 
-          <select value={language} onChange={(e) => changeLanguage(e.target.value)}
-            className="px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)]">
+          <select
+            value={language}
+            onChange={(e) => changeLanguage(e.target.value)}
+            className="px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)]"
+            aria-label="Select programming language"
+          >
             <option value="python">Python</option>
             <option value="javascript">JavaScript</option>
             <option value="typescript">TypeScript</option>
@@ -334,6 +347,7 @@ function CodeExecutor({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
               value={stdin}
               onChange={(e) => setStdin(e.target.value)}
               placeholder="Enter input for your program..."
+              aria-label="Standard input"
               className="h-20 px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)] font-mono text-sm resize-none"
             />
           </div>
@@ -343,13 +357,31 @@ function CodeExecutor({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold">Output</h3>
             <div className="flex gap-1">
-              <Button onClick={copyOutput} size="sm" variant="ghost" disabled={!output}>
+              <Button
+                onClick={copyOutput}
+                size="sm"
+                variant="ghost"
+                disabled={!output}
+                aria-label="Copy output"
+              >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               </Button>
-              <Button onClick={downloadOutput} size="sm" variant="ghost" disabled={!output}>
+              <Button
+                onClick={downloadOutput}
+                size="sm"
+                variant="ghost"
+                disabled={!output}
+                aria-label="Download output"
+              >
                 <Download className="w-4 h-4" />
               </Button>
-              <Button onClick={clearOutput} size="sm" variant="ghost" disabled={!output}>
+              <Button
+                onClick={clearOutput}
+                size="sm"
+                variant="ghost"
+                disabled={!output}
+                aria-label="Clear output"
+              >
                 <Trash2 className="w-4 h-4" />
               </Button>
             </div>
@@ -367,7 +399,12 @@ function CodeExecutor({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
               <TerminalIcon className="w-4 h-4" />
               <span className="text-sm font-semibold">Terminal</span>
             </div>
-            <Button onClick={clearTerminal} size="sm" variant="ghost">
+            <Button
+              onClick={clearTerminal}
+              size="sm"
+              variant="ghost"
+              aria-label="Clear terminal"
+            >
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>
@@ -385,6 +422,7 @@ function CodeExecutor({ tab, tabs, setTabs, editorTheme = 'vs-dark' }) {
               onChange={(e) => setTerminalCommand(e.target.value)}
               onKeyDown={handleTerminalKeyDown}
               placeholder="Enter command..."
+              aria-label="Terminal command"
               className="flex-1 px-2 py-1 bg-black text-green-400 font-mono text-sm border-none outline-none"
             />
           </div>
