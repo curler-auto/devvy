@@ -192,7 +192,7 @@ class FavoriteTool(BaseModel):
 
 
 @api_router.post("/auth/register", response_model=Token)
-async def register(user_data: UserCreate):
+async def register(user_data: UserCreate, db=Depends(get_database)):
     # Check if user already exists
     existing_user = await db.users.find_one({"email": user_data.email}, {"_id": 0})
     if existing_user:
@@ -230,7 +230,10 @@ async def register(user_data: UserCreate):
     user = User(email=user_data.email, role=user_data.role, organization_id=org_id)
 
     user_doc = user.model_dump()
-    user_doc["password_hash"] = get_password_hash(user_data.password)
+    # Run CPU-bound bcrypt hashing in threadpool to avoid blocking event loop
+    user_doc["password_hash"] = await run_in_threadpool(
+        get_password_hash, user_data.password
+    )
     user_doc["created_at"] = user_doc["created_at"].isoformat()
 
     await db.users.insert_one(user_doc)
@@ -251,12 +254,15 @@ async def register(user_data: UserCreate):
 
 
 @api_router.post("/auth/login", response_model=Token)
-async def login(credentials: UserLogin):
+async def login(credentials: UserLogin, db=Depends(get_database)):
     user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    if not verify_password(credentials.password, user["password_hash"]):
+    # Run CPU-bound password verification in threadpool
+    if not await run_in_threadpool(
+        verify_password, credentials.password, user["password_hash"]
+    ):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     if not user.get("is_active", True):
@@ -695,7 +701,9 @@ async def get_admin_tools_config(admin_user: dict = Depends(require_admin)):
 
 @api_router.post("/admin/create-organization")
 async def create_organization(
-    org_data: OrganizationCreate, admin_user: dict = Depends(require_admin)
+    org_data: OrganizationCreate,
+    admin_user: dict = Depends(require_admin),
+    db=Depends(get_database),
 ):
     """Create a new organization with licenses (admin only)"""
     # Check if admin email already exists
@@ -734,7 +742,10 @@ async def create_organization(
     user = User(email=admin_user_data.email, role="org_admin", organization_id=org.id)
 
     user_doc = user.model_dump()
-    user_doc["password_hash"] = get_password_hash(org_data.admin_password)
+    # Run CPU-bound hashing in threadpool
+    user_doc["password_hash"] = await run_in_threadpool(
+        get_password_hash, org_data.admin_password
+    )
     user_doc["created_at"] = user_doc["created_at"].isoformat()
 
     await db.users.insert_one(user_doc)
