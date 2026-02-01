@@ -1805,33 +1805,36 @@ async def list_s3_objects(request: S3ListObjectsRequest):
         # List objects with delimiter to get folders
         response = await run_in_threadpool(_list_objects)
 
-        objects = []
+        # Optimize performance: extract prefix and use list comprehensions
+        # Also fix bug: use removeprefix instead of replace to avoid mangling filenames
+        prefix_str = request.prefix or ""
 
         # Add folders
-        for prefix in response.get("CommonPrefixes", []):
-            folder_name = prefix["Prefix"].replace(request.prefix or "", "").rstrip("/")
-            if folder_name:
-                objects.append(
-                    {"key": prefix["Prefix"], "name": folder_name, "isFolder": True}
-                )
+        objects = [
+            {
+                "key": prefix["Prefix"],
+                "name": prefix["Prefix"].removeprefix(prefix_str).rstrip("/"),
+                "isFolder": True,
+            }
+            for prefix in response.get("CommonPrefixes", [])
+            if prefix["Prefix"].removeprefix(prefix_str).rstrip("/")
+        ]
 
         # Add files
-        for obj in response.get("Contents", []):
-            # Skip the prefix itself
-            if obj["Key"] == request.prefix:
-                continue
-
-            file_name = obj["Key"].replace(request.prefix or "", "")
-            if file_name:
-                objects.append(
-                    {
-                        "key": obj["Key"],
-                        "name": file_name,
-                        "size": obj["Size"],
-                        "lastModified": obj["LastModified"].isoformat(),
-                        "isFolder": False,
-                    }
-                )
+        objects.extend(
+            [
+                {
+                    "key": obj["Key"],
+                    "name": obj["Key"].removeprefix(prefix_str),
+                    "size": obj["Size"],
+                    "lastModified": obj["LastModified"].isoformat(),
+                    "isFolder": False,
+                }
+                for obj in response.get("Contents", [])
+                if obj["Key"] != request.prefix
+                and obj["Key"].removeprefix(prefix_str)
+            ]
+        )
 
         return {"objects": objects}
     except Exception as e:
