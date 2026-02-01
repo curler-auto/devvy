@@ -11,3 +11,7 @@
 ## 2026-05-24 - Disconnected Labels in Custom Settings Forms
 **Learning:** Custom form layouts in modals (like `SettingsModal`'s `LLMConfig`) often use visual proximity for labels (`<div><label>...<input>...</div>`) without programmatic association (`htmlFor` + `id`). This fails WCAG 1.3.1 and breaks click-to-focus behavior.
 **Action:** Always enforce explicit `htmlFor` and `id` pairing on custom form inputs, especially when not using the standardized `Form` components which handle this automatically.
+
+## 2026-05-25 - Disconnected Labels in Auth Forms
+**Learning:** The `AuthScreen` component used `<label>` elements that were visually positioned near inputs but lacked `htmlFor` attributes, and inputs lacked `id` attributes. This breaks accessibility relationships and click-to-focus behavior.
+**Action:** Ensure all form labels have `htmlFor` matching the `id` of their corresponding input, even when using custom UI components.

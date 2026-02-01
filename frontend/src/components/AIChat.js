@@ -233,6 +233,7 @@ function AIChat({ toolContext, isOpen, onClose, onMinimize, isMinimized }) {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Ask me anything..."
+            aria-label="Chat input"
             className="flex-1 px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)] text-sm resize-none"
             rows={2}
           />
