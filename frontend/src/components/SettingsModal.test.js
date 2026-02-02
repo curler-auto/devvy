@@ -130,10 +130,10 @@ describe('SettingsModal Accessibility', () => {
     fireEvent.click(addButton);
 
     // Check for labelled inputs
-    const nameInput = screen.getByRole('textbox', { name: 'Configuration Name' });
+    const nameInput = screen.getByRole('textbox', { name: 'Name' });
     expect(nameInput).toBeInTheDocument();
 
-    const ownerInput = screen.getByRole('textbox', { name: 'Configuration owner' });
+    const ownerInput = screen.getByRole('textbox', { name: 'Owner' });
     expect(ownerInput).toBeInTheDocument();
   });
 });

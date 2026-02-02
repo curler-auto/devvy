@@ -565,6 +565,13 @@ const ArrayConfig = ({ config, category, onSave }) => {
     }
   };
 
+  const formatLabel = (key) => {
+    return key
+      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+      .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+      .trim();
+  };
+
   return (
     <div className="space-y-4">
       <button
@@ -580,26 +587,41 @@ const ArrayConfig = ({ config, category, onSave }) => {
           <div key={item.id || index} className="border border-[var(--border-primary)] rounded-md p-4 bg-[var(--bg-tertiary)]">
             {editIndex === index ? (
               <div className="space-y-3">
-                <input
-                  type="text"
-                  value={editData.name || ''}
-                  onChange={(e) => setEditData({...editData, name: e.target.value})}
-                  placeholder="Name"
-                  aria-label="Configuration Name"
-                  className="w-full px-3 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
-                />
-                {Object.keys(getDefaultFields(category)).map(field => (
+                <div>
+                  <label
+                    htmlFor={`config-${category}-name-${index}`}
+                    className="block text-sm font-medium text-[var(--text-primary)] mb-1"
+                  >
+                    Name
+                  </label>
                   <input
-                    key={field}
-                    type={field.includes('password') || field.includes('token') ? 'password' : 'text'}
-                    value={editData[field] || ''}
-                    onChange={(e) => setEditData({...editData, [field]: e.target.value})}
-                    placeholder={field}
-                    aria-label={`Configuration ${field}`}
+                    id={`config-${category}-name-${index}`}
+                    type="text"
+                    value={editData.name || ''}
+                    onChange={(e) => setEditData({...editData, name: e.target.value})}
+                    placeholder="Name"
                     className="w-full px-3 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
                   />
+                </div>
+                {Object.keys(getDefaultFields(category)).map(field => (
+                  <div key={field}>
+                    <label
+                      htmlFor={`config-${category}-${field}-${index}`}
+                      className="block text-sm font-medium text-[var(--text-primary)] mb-1"
+                    >
+                      {formatLabel(field)}
+                    </label>
+                    <input
+                      id={`config-${category}-${field}-${index}`}
+                      type={field.includes('password') || field.includes('token') ? 'password' : 'text'}
+                      value={editData[field] || ''}
+                      onChange={(e) => setEditData({...editData, [field]: e.target.value})}
+                      placeholder={formatLabel(field)}
+                      className="w-full px-3 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
+                    />
+                  </div>
                 ))}
-                <div className="flex gap-2">
+                <div className="flex gap-2 pt-2">
                   <button onClick={saveItem} className="px-3 py-1 bg-green-500 text-white rounded text-sm">Save</button>
                   <button onClick={() => setEditIndex(null)} className="px-3 py-1 bg-gray-500 text-white rounded text-sm">Cancel</button>
                 </div>
