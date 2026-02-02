@@ -100,11 +100,22 @@ function MainApp() {
   const [editorTheme, setEditorTheme] = useState(getMonacoTheme(getStoredTheme()));
   const [unsavedTabs, setUnsavedTabs] = useState(new Set()); // Track tabs with unsaved changes
 
-  // Use a ref to access current favorites in stable callbacks
+  // Use refs to access current state in stable callbacks without triggering re-renders
   const favoritesRef = useRef(favorites);
+  const tabsRef = useRef(tabs);
+  const activeTabRef = useRef(activeTab);
+
   useEffect(() => {
     favoritesRef.current = favorites;
   }, [favorites]);
+
+  useEffect(() => {
+    tabsRef.current = tabs;
+  }, [tabs]);
+
+  useEffect(() => {
+    activeTabRef.current = activeTab;
+  }, [activeTab]);
 
   // Load favorites is wrapped in useCallback to be stable
   const loadFavorites = useCallback(async () => {
@@ -413,46 +424,54 @@ function MainApp() {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
-  const closeTab = (tabId, e) => {
+  const closeTab = useCallback((tabId, e) => {
     e?.stopPropagation();
-    const tabIndex = tabs.findIndex(t => t.tabId === tabId);
-    const newTabs = tabs.filter(t => t.tabId !== tabId);
+    const currentTabs = tabsRef.current;
+    const currentActiveTab = activeTabRef.current;
+
+    const tabIndex = currentTabs.findIndex(t => t.tabId === tabId);
+    const newTabs = currentTabs.filter(t => t.tabId !== tabId);
     setTabs(newTabs);
     
-    if (activeTab === tabId && newTabs.length > 0) {
+    if (currentActiveTab === tabId && newTabs.length > 0) {
       const newActiveIndex = Math.min(tabIndex, newTabs.length - 1);
       setActiveTab(newTabs[newActiveIndex].tabId);
     } else if (newTabs.length === 0) {
       setActiveTab(null);
     }
-  };
+  }, []);
 
-  const closeOtherTabs = (tabId) => {
-    const keepTab = tabs.find(t => t.tabId === tabId);
+  const closeOtherTabs = useCallback((tabId) => {
+    const currentTabs = tabsRef.current;
+    const keepTab = currentTabs.find(t => t.tabId === tabId);
     setTabs([keepTab]);
     setActiveTab(tabId);
-  };
+  }, []);
 
-  const closeTabsToRight = (tabId) => {
-    const tabIndex = tabs.findIndex(t => t.tabId === tabId);
-    const newTabs = tabs.slice(0, tabIndex + 1);
+  const closeTabsToRight = useCallback((tabId) => {
+    const currentTabs = tabsRef.current;
+    const currentActiveTab = activeTabRef.current;
+
+    const tabIndex = currentTabs.findIndex(t => t.tabId === tabId);
+    const newTabs = currentTabs.slice(0, tabIndex + 1);
     setTabs(newTabs);
-    if (!newTabs.find(t => t.tabId === activeTab)) {
+    if (!newTabs.find(t => t.tabId === currentActiveTab)) {
       setActiveTab(tabId);
     }
-  };
+  }, []);
 
-  const renameTab = (tabId, newName) => {
-    const updatedTabs = tabs.map(t => 
+  const renameTab = useCallback((tabId, newName) => {
+    setTabs(prevTabs => prevTabs.map(t =>
       t.tabId === tabId 
         ? { ...t, customName: newName.trim() || null }
         : t
-    );
-    setTabs(updatedTabs);
-  };
+    ));
+  }, []);
 
-  const duplicateTab = (tabId) => {
-    const tabToDuplicate = tabs.find(t => t.tabId === tabId);
+  const duplicateTab = useCallback((tabId) => {
+    const currentTabs = tabsRef.current;
+    const tabToDuplicate = currentTabs.find(t => t.tabId === tabId);
+
     if (tabToDuplicate) {
       const newTab = {
         ...tabToDuplicate,
@@ -460,15 +479,18 @@ function MainApp() {
         customName: tabToDuplicate.customName ? `${tabToDuplicate.customName} (Copy)` : null,
         data: { ...tabToDuplicate.data }
       };
-      const tabIndex = tabs.findIndex(t => t.tabId === tabId);
-      const newTabs = [...tabs.slice(0, tabIndex + 1), newTab, ...tabs.slice(tabIndex + 1)];
+      const tabIndex = currentTabs.findIndex(t => t.tabId === tabId);
+      const newTabs = [...currentTabs.slice(0, tabIndex + 1), newTab, ...currentTabs.slice(tabIndex + 1)];
       setTabs(newTabs);
       setActiveTab(newTab.tabId);
     }
-  };
+  }, []);
 
-  const handleSaveCurrentTab = () => {
-    const currentTab = tabs.find(t => t.tabId === activeTab);
+  const handleSaveCurrentTab = useCallback(() => {
+    const currentTabs = tabsRef.current;
+    const currentActiveTab = activeTabRef.current;
+
+    const currentTab = currentTabs.find(t => t.tabId === currentActiveTab);
     if (currentTab) {
       // Direct save for existing items, dialog for new items
       if (currentTab.savedItemId) {
@@ -480,13 +502,13 @@ function MainApp() {
     } else {
       toast.error('No active tab to save');
     }
-  };
+  }, []);
 
-  const handleSaveTab = (tab) => {
+  const handleSaveTab = useCallback((tab) => {
     if (!tab) return;
     setTabToSave(tab);
     setShowSaveDialog(true);
-  };
+  }, []);
 
   const handleDirectSave = async (tab) => {
     if (!tab || !tab.savedItemId) return;
@@ -922,12 +944,12 @@ function MainApp() {
                   key={tab.tabId}
                   tab={tab}
                   isActive={activeTab === tab.tabId}
-                  onActivate={() => setActiveTab(tab.tabId)}
-                  onClose={(e) => closeTab(tab.tabId, e)}
-                  onRename={(newName) => renameTab(tab.tabId, newName)}
-                  onDuplicate={() => duplicateTab(tab.tabId)}
-                  onCloseOthers={() => closeOtherTabs(tab.tabId)}
-                  onCloseToRight={() => closeTabsToRight(tab.tabId)}
+                  onActivate={setActiveTab}
+                  onClose={closeTab}
+                  onRename={renameTab}
+                  onDuplicate={duplicateTab}
+                  onCloseOthers={closeOtherTabs}
+                  onCloseToRight={closeTabsToRight}
                   onSave={handleSaveCurrentTab}
                   hasUnsavedChanges={unsavedTabs.has(tab.tabId)}
                 />
@@ -1045,7 +1067,7 @@ function MainApp() {
   );
 }
 
-function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, onCloseOthers, onCloseToRight, onSave, hasUnsavedChanges }) {
+const TabItem = React.memo(({ tab, isActive, onActivate, onClose, onRename, onDuplicate, onCloseOthers, onCloseToRight, onSave, hasUnsavedChanges }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -1067,7 +1089,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
 
   const handleRename = () => {
     if (editName.trim()) {
-      onRename(editName);
+      onRename(tab.tabId, editName);
     }
     setIsEditing(false);
   };
@@ -1098,7 +1120,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
     <>
       <div
         className={`tab ${isActive ? 'active' : ''}`}
-        onClick={onActivate}
+        onClick={() => onActivate(tab.tabId)}
         onContextMenu={handleContextMenu}
         data-testid={`tab-${tab.tabId}`}
       >
@@ -1140,7 +1162,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
         )}
         <button
           className="tab-close"
-          onClick={onClose}
+          onClick={(e) => onClose(tab.tabId, e)}
           data-testid={`close-tab-${tab.tabId}`}
         >
           <X className="w-3.5 h-3.5" />
@@ -1172,7 +1194,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
           <button 
             className="context-menu-item"
             onClick={() => {
-              onDuplicate();
+              onDuplicate(tab.tabId);
               setShowContextMenu(false);
             }}
             data-testid="context-menu-duplicate"
@@ -1183,7 +1205,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
           <button 
             className="context-menu-item"
             onClick={() => {
-              onClose();
+              onClose(tab.tabId);
               setShowContextMenu(false);
             }}
             data-testid="context-menu-close"
@@ -1193,7 +1215,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
           <button 
             className="context-menu-item"
             onClick={() => {
-              onCloseOthers();
+              onCloseOthers(tab.tabId);
               setShowContextMenu(false);
             }}
             data-testid="context-menu-close-others"
@@ -1203,7 +1225,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
           <button 
             className="context-menu-item"
             onClick={() => {
-              onCloseToRight();
+              onCloseToRight(tab.tabId);
               setShowContextMenu(false);
             }}
             data-testid="context-menu-close-right"
@@ -1214,7 +1236,7 @@ function TabItem({ tab, isActive, onActivate, onClose, onRename, onDuplicate, on
       )}
     </>
   );
-}
+});
 
 const ToolPaneItem = React.memo(({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, isLocked }) => {
   const Icon = tool.icon;
