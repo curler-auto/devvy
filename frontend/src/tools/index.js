@@ -15,6 +15,8 @@
  * 4. Tool will be automatically available based on toolconfig.json
  */
 
+import React from 'react';
+
 import JSONBeautifier from './JSONBeautifier';
 import YAMLFormatter from './YAMLFormatter';
 import XMLFormatter from './XMLFormatter';
@@ -56,30 +58,32 @@ import SSLCertGenerator from './SSLCertGenerator';
 import TOTPGenerator from './TOTPGenerator';
 import ShellExecutor from './ShellExecutor';
 import CronManager from './CronManager';
-import S3Visualizer from './S3Visualizer';
 import SwaggerPayloadBuilder from './SwaggerPayloadBuilder';
 import RepaymentCalculator from './RepaymentCalculator';
-import DockerUI from './DockerUI';
-import CodeCompare from './CodeCompare';
-import KafkaTopicViewer from './KafkaTopicViewer';
-import FilebeatViewer from './FilebeatViewer';
-import VectorViewer from './VectorViewer';
-import DataCompare from './DataCompare';
-import CodeExecutor from './CodeExecutor';
 import OpenAPIToTests from './OpenAPIToTests';
-import SheetVue from './SheetVue';
-import PDFEditorTool from './PDFEditorTool';
-import PDFOrganizerTool from './PDFOrganizerTool';
-import PDFSplitterTool from './PDFSplitterTool';
-import PDFRotatorTool from './PDFRotatorTool';
-import PDFScanTool from './PDFScanTool';
-import PDFCropTool from './PDFCropTool';
-import PDFCompareTool from './PDFCompareTool';
-import PDFCompressTool from './PDFCompressTool';
-import PDFRepairTool from './PDFRepairTool';
-import PDFOCRTool from './PDFOCRTool';
-import PDFConverterTool from './PDFConverterTool';
-import PDFProtectionTool from './PDFProtectionTool';
+
+// Lazy load heavy tools
+const S3Visualizer = React.lazy(() => import('./S3Visualizer'));
+const DockerUI = React.lazy(() => import('./DockerUI'));
+const CodeCompare = React.lazy(() => import('./CodeCompare'));
+const KafkaTopicViewer = React.lazy(() => import('./KafkaTopicViewer'));
+const FilebeatViewer = React.lazy(() => import('./FilebeatViewer'));
+const VectorViewer = React.lazy(() => import('./VectorViewer'));
+const DataCompare = React.lazy(() => import('./DataCompare'));
+const CodeExecutor = React.lazy(() => import('./CodeExecutor'));
+const SheetVue = React.lazy(() => import('./SheetVue'));
+const PDFEditorTool = React.lazy(() => import('./PDFEditorTool'));
+const PDFOrganizerTool = React.lazy(() => import('./PDFOrganizerTool'));
+const PDFSplitterTool = React.lazy(() => import('./PDFSplitterTool'));
+const PDFRotatorTool = React.lazy(() => import('./PDFRotatorTool'));
+const PDFScanTool = React.lazy(() => import('./PDFScanTool'));
+const PDFCropTool = React.lazy(() => import('./PDFCropTool'));
+const PDFCompareTool = React.lazy(() => import('./PDFCompareTool'));
+const PDFCompressTool = React.lazy(() => import('./PDFCompressTool'));
+const PDFRepairTool = React.lazy(() => import('./PDFRepairTool'));
+const PDFOCRTool = React.lazy(() => import('./PDFOCRTool'));
+const PDFConverterTool = React.lazy(() => import('./PDFConverterTool'));
+const PDFProtectionTool = React.lazy(() => import('./PDFProtectionTool'));
 
 /**
  * Tool Components Registry
