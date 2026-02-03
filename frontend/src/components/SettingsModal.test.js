@@ -136,4 +136,44 @@ describe('SettingsModal Accessibility', () => {
     const ownerInput = screen.getByRole('textbox', { name: 'Owner' });
     expect(ownerInput).toBeInTheDocument();
   });
+
+  test('should close on Escape key press', () => {
+    render(<SettingsModal {...defaultProps} />);
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(defaultProps.onClose).toHaveBeenCalled();
+  });
+
+  test('should have dialog role and accessibility attributes', () => {
+    render(<SettingsModal {...defaultProps} />);
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(dialog).toHaveAttribute('aria-labelledby', 'settings-modal-title');
+
+    // Check if the title has the corresponding ID
+    const title = screen.getByText('Settings');
+    expect(title).toHaveAttribute('id', 'settings-modal-title');
+  });
+
+  test('tabs should have correct ARIA roles and states', () => {
+    render(<SettingsModal {...defaultProps} />);
+
+    const tabList = screen.getByRole('tablist');
+    expect(tabList).toBeInTheDocument();
+
+    const tabs = screen.getAllByRole('tab');
+    expect(tabs.length).toBeGreaterThan(0);
+
+    // "Appearance" is the default active tab
+    const appearanceTab = tabs.find(tab => tab.textContent.includes('Appearance'));
+    expect(appearanceTab).toHaveAttribute('aria-selected', 'true');
+
+    // Switch tab and check selection state
+    const environmentTab = tabs.find(tab => tab.textContent.includes('Environment'));
+    expect(environmentTab).toHaveAttribute('aria-selected', 'false');
+
+    fireEvent.click(environmentTab);
+    expect(environmentTab).toHaveAttribute('aria-selected', 'true');
+    expect(appearanceTab).toHaveAttribute('aria-selected', 'false');
+  });
 });
