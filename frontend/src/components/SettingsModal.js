@@ -12,6 +12,22 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
     setSelectedTheme(getStoredTheme());
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleThemeChange = (themeId) => {
@@ -32,12 +48,22 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-modal-title"
+    >
       <div className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg shadow-2xl w-full max-w-4xl mx-4 max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border-primary)]">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">Settings</h2>
+            <h2
+              id="settings-modal-title"
+              className="text-lg font-semibold text-[var(--text-primary)]"
+            >
+              Settings
+            </h2>
             <p className="text-sm text-[var(--text-tertiary)]">Customize your Devvy Studio experience</p>
           </div>
           <button
@@ -52,12 +78,18 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
         {/* Tabs and Content */}
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar Tabs */}
-          <div className="w-48 border-r border-[var(--border-primary)] p-4 space-y-1">
+          <div
+            className="w-48 border-r border-[var(--border-primary)] p-4 space-y-1"
+            role="tablist"
+            aria-orientation="vertical"
+          >
             {settingsTabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
                     w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
