@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { getToolComponent } from '@/tools';
 
@@ -39,4 +39,6 @@ function ToolWrapper({ toolId, tab, tabs, setTabs, editorTheme }) {
   );
 }
 
-export default ToolWrapper;
+// Optimized: Wrap in React.memo to prevent unnecessary re-renders of hidden tabs
+// when parent state changes (e.g. sidebar search, active tab switch).
+export default memo(ToolWrapper);
