@@ -15,3 +15,7 @@
 ## 2026-05-25 - Disconnected Labels in Auth Forms
 **Learning:** The `AuthScreen` component used `<label>` elements that were visually positioned near inputs but lacked `htmlFor` attributes, and inputs lacked `id` attributes. This breaks accessibility relationships and click-to-focus behavior.
 **Action:** Ensure all form labels have `htmlFor` matching the `id` of their corresponding input, even when using custom UI components.
+
+## 2026-05-26 - Monolithic Components Hinder Accessibility Testing
+**Learning:** `App.js` was too large and tightly coupled, making it hard to test individual components like `TabItem` or `ToolPaneItem` for accessibility without mocking the entire app. Also found a silent bug where `AuthScreen` was used but not imported.
+**Action:** Extracted `TabItem` and `ToolPaneItem` to separate components. This allowed isolating accessibility tests. always check for missing imports even if code compiles (dynamic imports or loose checking might hide it).
