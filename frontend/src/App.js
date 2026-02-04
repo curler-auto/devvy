@@ -19,7 +19,10 @@ import GrpcTester from '@/components/GrpcTester';
 import UiRecorder from '@/components/UiRecorder';
 import ActivationDialog from '@/components/ActivationDialog';
 import SettingsModal from '@/components/SettingsModal';
+import AuthScreen from '@/components/AuthScreen';
 import ToolWrapper from '@/components/ToolWrapper';
+import TabItem from '@/components/TabItem';
+import ToolPaneItem from '@/components/ToolPaneItem';
 import licenseService from '@/services/licenseService';
 import { applyTheme, getStoredTheme, getMonacoTheme } from '@/themes';
 import { isToolRegistered } from '@/tools';
@@ -705,6 +708,7 @@ function MainApp() {
                 setIsSidebarCollapsed(false);
               }}
               title="Categories"
+              aria-label="Categories"
               data-testid="icon-categories"
             >
               <Menu className="w-5 h-5" />
@@ -718,6 +722,7 @@ function MainApp() {
                 setIsSidebarCollapsed(false);
               }}
               title="All Tools"
+              aria-label="All Tools"
               data-testid="icon-tools"
             >
               <Search className="w-5 h-5" />
@@ -731,6 +736,7 @@ function MainApp() {
                 setIsSidebarCollapsed(false);
               }}
               title={`Favorites ${favorites.length > 0 ? `(${favorites.length})` : ''}`}
+              aria-label={`Favorites ${favorites.length > 0 ? `(${favorites.length})` : ''}`}
               data-testid="icon-favorites"
             >
               <Star className="w-5 h-5" fill={favorites.length > 0 ? 'currentColor' : 'none'} />
@@ -744,6 +750,7 @@ function MainApp() {
                 setIsSidebarCollapsed(false);
               }}
               title="Collections"
+              aria-label="Collections"
               data-testid="icon-collections"
             >
               <Bookmark className="w-5 h-5" />
@@ -784,6 +791,7 @@ function MainApp() {
               onClick={toggleSidebar}
               className="sidebar-toggle"
               title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+              aria-label={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
             >
               <ChevronRight className={`w-3 h-3 transition-transform ${isSidebarCollapsed ? '' : 'rotate-180'}`} />
             </button>
@@ -1067,225 +1075,7 @@ function MainApp() {
   );
 }
 
-const TabItem = React.memo(({ tab, isActive, onActivate, onClose, onRename, onDuplicate, onCloseOthers, onCloseToRight, onSave, hasUnsavedChanges }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState('');
-  const [showContextMenu, setShowContextMenu] = useState(false);
-  const [contextMenuPos, setContextMenuPos] = useState({ x: 0, y: 0 });
-  const inputRef = useRef(null);
 
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  }, [isEditing]);
-
-  const handleDoubleClick = (e) => {
-    e.stopPropagation();
-    setEditName(tab.customName || tab.name);
-    setIsEditing(true);
-  };
-
-  const handleRename = () => {
-    if (editName.trim()) {
-      onRename(tab.tabId, editName);
-    }
-    setIsEditing(false);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleRename();
-    } else if (e.key === 'Escape') {
-      setIsEditing(false);
-    }
-  };
-
-  const handleContextMenu = (e) => {
-    e.preventDefault();
-    setContextMenuPos({ x: e.clientX, y: e.clientY });
-    setShowContextMenu(true);
-  };
-
-  useEffect(() => {
-    const handleClickOutside = () => setShowContextMenu(false);
-    if (showContextMenu) {
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
-  }, [showContextMenu]);
-
-  return (
-    <>
-      <div
-        className={`tab ${isActive ? 'active' : ''}`}
-        onClick={() => onActivate(tab.tabId)}
-        onContextMenu={handleContextMenu}
-        data-testid={`tab-${tab.tabId}`}
-      >
-        <tab.icon className="w-4 h-4 flex-shrink-0" />
-        {isEditing ? (
-          <input
-            ref={inputRef}
-            type="text"
-            value={editName}
-            onChange={(e) => setEditName(e.target.value)}
-            onBlur={handleRename}
-            onKeyDown={handleKeyDown}
-            className="tab-name-input"
-            onClick={(e) => e.stopPropagation()}
-            data-testid={`tab-rename-input-${tab.tabId}`}
-          />
-        ) : (
-          <span 
-            onDoubleClick={handleDoubleClick}
-            className="tab-name"
-            title={tab.customName || tab.name}
-          >
-            {hasUnsavedChanges && tab.savedItemId && <span style={{ color: 'var(--accent-primary)', marginRight: '4px' }}>*</span>}
-            {tab.customName || tab.name}
-          </span>
-        )}
-        {isActive && onSave && (
-          <button
-            className="tab-action"
-            onClick={(e) => {
-              e.stopPropagation();
-              onSave();
-            }}
-            title="Save to Collection (Cmd+S)"
-            data-testid={`save-tab-${tab.tabId}`}
-          >
-            <Bookmark className="w-3.5 h-3.5 text-gray-400 hover:text-emerald-500" />
-          </button>
-        )}
-        <button
-          className="tab-close"
-          onClick={(e) => onClose(tab.tabId, e)}
-          data-testid={`close-tab-${tab.tabId}`}
-        >
-          <X className="w-3.5 h-3.5" />
-        </button>
-      </div>
-
-      {showContextMenu && (
-        <div 
-          className="context-menu"
-          style={{ 
-            position: 'fixed', 
-            top: contextMenuPos.y, 
-            left: contextMenuPos.x,
-            zIndex: 1000
-          }}
-          data-testid={`context-menu-${tab.tabId}`}
-        >
-          <button 
-            className="context-menu-item"
-            onClick={() => {
-              setEditName(tab.customName || tab.name);
-              setIsEditing(true);
-              setShowContextMenu(false);
-            }}
-            data-testid="context-menu-rename"
-          >
-            Rename Tab
-          </button>
-          <button 
-            className="context-menu-item"
-            onClick={() => {
-              onDuplicate(tab.tabId);
-              setShowContextMenu(false);
-            }}
-            data-testid="context-menu-duplicate"
-          >
-            Duplicate Tab
-          </button>
-          <div className="context-menu-divider" />
-          <button 
-            className="context-menu-item"
-            onClick={() => {
-              onClose(tab.tabId);
-              setShowContextMenu(false);
-            }}
-            data-testid="context-menu-close"
-          >
-            Close
-          </button>
-          <button 
-            className="context-menu-item"
-            onClick={() => {
-              onCloseOthers(tab.tabId);
-              setShowContextMenu(false);
-            }}
-            data-testid="context-menu-close-others"
-          >
-            Close Others
-          </button>
-          <button 
-            className="context-menu-item"
-            onClick={() => {
-              onCloseToRight(tab.tabId);
-              setShowContextMenu(false);
-            }}
-            data-testid="context-menu-close-right"
-          >
-            Close to the Right
-          </button>
-        </div>
-      )}
-    </>
-  );
-});
-
-const ToolPaneItem = React.memo(({ tool, onOpen, isFavorite, onToggleFavorite, isPremium, isLocked }) => {
-  const Icon = tool.icon;
-  
-  const handleFavoriteClick = (e) => {
-    e.stopPropagation();
-    onToggleFavorite(tool.id);
-  };
-  
-  return (
-    <button
-      className={`pane-item ${isLocked ? 'opacity-75' : ''} relative group`}
-      data-category={tool.category}
-      onClick={() => onOpen(tool)}
-      data-testid={`tool-pane-item-${tool.id}`}
-      title={tool.description || tool.name}
-    >
-      <div className="pane-item-icon">
-        <Icon className="w-6 h-6" />
-      </div>
-      <div className="pane-item-content">
-        <div className="pane-item-name flex items-center justify-center gap-1">
-          <span>{tool.name}</span>
-          {isPremium && (
-            <Crown className="w-3 h-3 text-amber-500" />
-          )}
-          {isLocked && (
-            <Lock className="w-3 h-3 text-gray-500" />
-          )}
-        </div>
-      </div>
-      <button
-        onClick={handleFavoriteClick}
-        className="absolute top-2 right-2 p-1 rounded hover:bg-[var(--bg-tertiary)] transition-colors z-10"
-        title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-        data-testid={`favorite-btn-${tool.id}`}
-      >
-        <Star 
-          className={`w-3.5 h-3.5 transition-all ${
-            isFavorite 
-              ? 'text-amber-500' 
-              : 'text-gray-400 group-hover:text-amber-400'
-          }`}
-          fill={isFavorite ? 'currentColor' : 'none'}
-        />
-      </button>
-    </button>
-  );
-});
 
 // Main App with Auth Provider
 export default function App() {
