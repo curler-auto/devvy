@@ -1,5 +1,5 @@
-import React from 'react';
-import { AlertCircle } from 'lucide-react';
+import React, { Suspense } from 'react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { getToolComponent } from '@/tools';
 
 /**
@@ -29,13 +29,20 @@ function ToolWrapper({ toolId, tab, tabs, setTabs, editorTheme }) {
 
   // Render the tool component with all necessary props
   return (
-    <ToolComponent
-      toolId={toolId}
-      tab={tab}
-      tabs={tabs}
-      setTabs={setTabs}
-      editorTheme={editorTheme}
-    />
+    <Suspense fallback={
+      <div className="flex flex-col items-center justify-center h-full text-slate-400">
+        <Loader2 className="w-8 h-8 animate-spin mb-2 text-blue-500" />
+        <p>Loading tool...</p>
+      </div>
+    }>
+      <ToolComponent
+        toolId={toolId}
+        tab={tab}
+        tabs={tabs}
+        setTabs={setTabs}
+        editorTheme={editorTheme}
+      />
+    </Suspense>
   );
 }
 
