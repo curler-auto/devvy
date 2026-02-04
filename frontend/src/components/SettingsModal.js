@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { X, Palette, Check, Settings as SettingsIcon, Bell, Shield, Database, Server, Plus, Trash2, Edit2, Save } from 'lucide-react';
 import DataExportImport from './DataExportImport';
 import { THEMES, applyTheme, getStoredTheme } from '../themes';
@@ -689,4 +689,7 @@ const ArrayConfig = ({ config, category, onSave }) => {
   );
 };
 
-export default SettingsModal;
+// Optimized: Custom comparison function prevents the heavy SettingsModal from re-rendering
+// on every parent render when it is closed (!isOpen).
+// It only re-renders when opening, closing, or while open.
+export default memo(SettingsModal, (prev, next) => !prev.isOpen && !next.isOpen);
