@@ -1604,6 +1604,32 @@ class ScriptExecuteResponse(BaseModel):
     executionTime: float
 
 
+def _setup_script_file(script_content: str) -> str:
+    """Helper to create script file synchronously"""
+    script_path = None
+    try:
+        # Create temporary script file
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".sh", delete=False
+        ) as f:
+            script_path = f.name
+            f.write(script_content)
+
+        # Make script executable
+        os.chmod(script_path, 0o755)
+        return script_path
+    except Exception:
+        if script_path and os.path.exists(script_path):
+            os.unlink(script_path)
+        raise
+
+
+def _cleanup_script_file(script_path: str):
+    """Helper to cleanup script file synchronously"""
+    if os.path.exists(script_path):
+        os.unlink(script_path)
+
+
 @api_router.post("/execute-script", response_model=ScriptExecuteResponse)
 async def execute_script(request: ScriptExecuteRequest):
     """
@@ -1614,14 +1640,10 @@ async def execute_script(request: ScriptExecuteRequest):
 
     start_time = time.time()
 
+    script_path = None
     try:
-        # Create temporary script file
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".sh", delete=False) as f:
-            f.write(request.script)
-            script_path = f.name
-
-        # Make script executable
-        os.chmod(script_path, 0o755)
+        # Run blocking file operations in threadpool
+        script_path = await run_in_threadpool(_setup_script_file, request.script)
 
         # Prepare environment
         env = os.environ.copy()
@@ -1664,10 +1686,11 @@ async def execute_script(request: ScriptExecuteRequest):
             )
         finally:
             # Clean up temp file
-            try:
-                os.unlink(script_path)
-            except:
-                pass
+            if script_path:
+                try:
+                    await run_in_threadpool(_cleanup_script_file, script_path)
+                except Exception:
+                    pass
 
     except Exception as e:
         logger.error(f"Script execution error: {str(e)}")
