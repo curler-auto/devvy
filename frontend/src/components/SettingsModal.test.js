@@ -167,13 +167,37 @@ describe('SettingsModal Accessibility', () => {
     // "Appearance" is the default active tab
     const appearanceTab = tabs.find(tab => tab.textContent.includes('Appearance'));
     expect(appearanceTab).toHaveAttribute('aria-selected', 'true');
+    expect(appearanceTab).toHaveAttribute('aria-controls', 'panel-appearance');
+    expect(appearanceTab).toHaveAttribute('id', 'tab-appearance');
 
     // Switch tab and check selection state
     const environmentTab = tabs.find(tab => tab.textContent.includes('Environment'));
     expect(environmentTab).toHaveAttribute('aria-selected', 'false');
+    expect(environmentTab).toHaveAttribute('aria-controls', 'panel-environment');
+    expect(environmentTab).toHaveAttribute('id', 'tab-environment');
 
     fireEvent.click(environmentTab);
     expect(environmentTab).toHaveAttribute('aria-selected', 'true');
     expect(appearanceTab).toHaveAttribute('aria-selected', 'false');
+  });
+
+  test('panels should have correct role and aria-labelledby', () => {
+    render(<SettingsModal {...defaultProps} />);
+
+    // Check Appearance panel (default)
+    const appearancePanel = screen.getByRole('tabpanel');
+    expect(appearancePanel).toBeInTheDocument();
+    expect(appearancePanel).toHaveAttribute('id', 'panel-appearance');
+    expect(appearancePanel).toHaveAttribute('aria-labelledby', 'tab-appearance');
+
+    // Switch to Environment tab
+    const environmentTab = screen.getByText(/Environment/i);
+    fireEvent.click(environmentTab);
+
+    // Check Environment panel
+    const environmentPanel = screen.getByRole('tabpanel');
+    expect(environmentPanel).toBeInTheDocument();
+    expect(environmentPanel).toHaveAttribute('id', 'panel-environment');
+    expect(environmentPanel).toHaveAttribute('aria-labelledby', 'tab-environment');
   });
 });
