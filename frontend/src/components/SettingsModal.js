@@ -88,8 +88,10 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
               return (
                 <button
                   key={tab.id}
+                  id={`tab-${tab.id}`}
                   role="tab"
                   aria-selected={activeTab === tab.id}
+                  aria-controls={`panel-${tab.id}`}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
                     w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
@@ -109,7 +111,12 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
           {/* Content Area */}
           <div className="flex-1 overflow-y-auto p-6">
             {activeTab === 'appearance' && (
-              <div className="space-y-6">
+              <div
+                className="space-y-6"
+                role="tabpanel"
+                id="panel-appearance"
+                aria-labelledby="tab-appearance"
+              >
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">Theme</h3>
                   <p className="text-sm text-[var(--text-tertiary)]">Choose your preferred color theme</p>
@@ -148,11 +155,22 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
             )}
 
             {activeTab === 'environment' && (
-              <EnvironmentSettings />
+              <div
+                role="tabpanel"
+                id="panel-environment"
+                aria-labelledby="tab-environment"
+              >
+                <EnvironmentSettings />
+              </div>
             )}
 
             {activeTab === 'general' && (
-              <div className="space-y-6">
+              <div
+                className="space-y-6"
+                role="tabpanel"
+                id="panel-general"
+                aria-labelledby="tab-general"
+              >
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">General Settings</h3>
                   <p className="text-sm text-[var(--text-tertiary)]">Configure general application settings</p>
@@ -164,7 +182,12 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
             )}
 
             {activeTab === 'notifications' && (
-              <div className="space-y-6">
+              <div
+                className="space-y-6"
+                role="tabpanel"
+                id="panel-notifications"
+                aria-labelledby="tab-notifications"
+              >
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">Notifications</h3>
                   <p className="text-sm text-[var(--text-tertiary)]">Manage notification preferences</p>
@@ -176,7 +199,12 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
             )}
 
             {activeTab === 'security' && (
-              <div className="space-y-6">
+              <div
+                className="space-y-6"
+                role="tabpanel"
+                id="panel-security"
+                aria-labelledby="tab-security"
+              >
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">Security & Privacy</h3>
                   <p className="text-sm text-[var(--text-tertiary)]">Manage security and privacy settings</p>
@@ -188,12 +216,18 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
             )}
             
             {activeTab === 'data' && (
-              <DataExportImport 
-                tabs={tabs} 
-                setTabs={setTabs} 
-                favorites={favorites} 
-                setFavorites={setFavorites} 
-              />
+              <div
+                role="tabpanel"
+                id="panel-data"
+                aria-labelledby="tab-data"
+              >
+                <DataExportImport
+                  tabs={tabs}
+                  setTabs={setTabs}
+                  favorites={favorites}
+                  setFavorites={setFavorites}
+                />
+              </div>
             )}
           </div>
         </div>
