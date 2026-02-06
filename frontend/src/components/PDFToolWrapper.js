@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Upload } from 'lucide-react';
 
 const readFileAsBase64 = (file) => {
@@ -19,7 +19,7 @@ export default function PDFToolWrapper({ children, title, description, allowedTy
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = useCallback(async (e) => {
     const selectedFile = e.target.files[0];
     if (!selectedFile) return;
 
@@ -46,11 +46,11 @@ export default function PDFToolWrapper({ children, title, description, allowedTy
     } finally {
       setLoading(false);
     }
-  };
+  }, [allowedTypes]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setFile(null);
-  };
+  }, []);
 
   if (file) {
     // Clone element and pass file and onClose props
