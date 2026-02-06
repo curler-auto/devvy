@@ -688,6 +688,7 @@ function MainApp() {
             onClick={() => setShowSettings(true)}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-tertiary)] border border-[var(--border-primary)] hover:border-[var(--border-focus)] transition-colors"
             title="Settings"
+            aria-label="Settings"
           >
             <Settings className="w-4 h-4 text-[var(--text-secondary)]" />
           </button>
@@ -765,6 +766,7 @@ function MainApp() {
                 className="icon-pane-item"
                 onClick={() => setShowActivationDialog(true)}
                 title="Activate License"
+                aria-label="Activate License"
                 data-testid="icon-activate"
               >
                 <Key className="w-5 h-5 text-emerald-500" />
@@ -777,6 +779,7 @@ function MainApp() {
                 className="icon-pane-item"
                 onClick={() => toast.success(`License Active: ${licenseConfig?.licenseType || 'Unknown'}`)}
                 title={`License Active: ${licenseConfig?.licenseType || 'Unknown'}`}
+                aria-label={`License Active: ${licenseConfig?.licenseType || 'Unknown'}`}
                 data-testid="icon-license-status"
               >
                 <Shield className="w-5 h-5 text-emerald-500" />
@@ -806,6 +809,8 @@ function MainApp() {
                         onClick={handleBackToCategories}
                         className="text-gray-400 hover:text-white"
                         data-testid="back-to-categories"
+                        aria-label="Back to categories"
+                        title="Back to categories"
                       >
                         <ChevronRight className="w-4 h-4 rotate-180" />
                       </button>

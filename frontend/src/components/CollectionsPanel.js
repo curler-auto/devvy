@@ -343,6 +343,7 @@ export default function CollectionsPanel({ onOpenItem }) {
               onClick={() => document.getElementById('import-collection-input').click()}
               data-testid="import-collection-button"
               title="Import Collection"
+              aria-label="Import Collection"
             >
               <Upload className="w-4 h-4" />
             </Button>
@@ -358,6 +359,7 @@ export default function CollectionsPanel({ onOpenItem }) {
             size="sm"
             onClick={() => setShowNewCollection(true)}
             data-testid="new-collection-button"
+            aria-label="Create new collection"
           >
             <Plus className="w-4 h-4" />
           </Button>
@@ -413,6 +415,7 @@ export default function CollectionsPanel({ onOpenItem }) {
                   }}
                   className="delete-icon"
                   title="Edit Collection"
+                  aria-label="Edit Collection"
                   data-testid={`edit-collection-${collection.id}`}
                 >
                   <Edit2 className="w-3 h-3" />
@@ -424,6 +427,7 @@ export default function CollectionsPanel({ onOpenItem }) {
                   }}
                   className="delete-icon"
                   title="Export Collection"
+                  aria-label="Export Collection"
                   data-testid={`export-collection-${collection.id}`}
                 >
                   <Download className="w-3 h-3" />
@@ -434,6 +438,8 @@ export default function CollectionsPanel({ onOpenItem }) {
                     deleteCollection(collection.id);
                   }}
                   className="delete-icon"
+                  title="Delete Collection"
+                  aria-label="Delete Collection"
                   data-testid={`delete-collection-${collection.id}`}
                 >
                   <Trash2 className="w-3 h-3" />
@@ -695,6 +701,7 @@ const FolderItem = memo(function FolderItem({ folder, collectionId, items, folde
                 setShowNewSubfolder(!showNewSubfolder);
               }}
               title="New Subfolder"
+              aria-label="New Subfolder"
               data-testid={`new-subfolder-${folder.id}`}
             >
               <FolderPlus className="w-3.5 h-3.5" />
