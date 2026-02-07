@@ -54,11 +54,12 @@ export default function AuthScreen() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label className="form-label">
+              <label htmlFor="email" className="form-label">
                 <Mail className="w-4 h-4" />
                 Email Address
               </label>
               <Input
+                id="email"
                 type="email"
                 placeholder="you@company.com"
                 value={email}
@@ -70,11 +71,12 @@ export default function AuthScreen() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">
+              <label htmlFor="password" className="form-label">
                 <Lock className="w-4 h-4" />
                 Password
               </label>
               <Input
+                id="password"
                 type="password"
                 placeholder="••••••••"
                 value={password}

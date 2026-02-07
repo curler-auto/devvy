@@ -16,7 +16,7 @@ import PDFToolWrapper from '@/components/PDFToolWrapper';
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
-const SplitPDF = ({ file, onClose, title = "Split PDF", actionLabel = "Split PDF" }) => {
+const SplitPDF = React.memo(({ file, onClose, title = "Split PDF", actionLabel = "Split PDF" }) => {
   const [thumbnails, setThumbnails] = useState([]);
   const [selectedPages, setSelectedPages] = useState(new Set());
   const [isLoading, setIsLoading] = useState(true);
@@ -321,7 +321,7 @@ const SplitPDF = ({ file, onClose, title = "Split PDF", actionLabel = "Split PDF
        </div>
     </div>
   );
-};
+});
 
 const PDFSplitterTool = () => {
     return (

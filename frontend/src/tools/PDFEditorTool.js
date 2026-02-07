@@ -39,7 +39,7 @@ import PDFToolWrapper from '@/components/PDFToolWrapper';
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
-const PDFEditor = ({ file, onClose }) => {
+const PDFEditor = React.memo(({ file, onClose }) => {
   const [scale, setScale] = useState(1.0);
   const [rotation, setRotation] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
@@ -864,7 +864,7 @@ const PDFEditor = ({ file, onClose }) => {
       </div>
     </div>
   );
-};
+});
 
 // Tool Wrapper Component
 const PDFEditorTool = () => {

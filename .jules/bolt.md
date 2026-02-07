@@ -5,3 +5,7 @@
 ## 2026-01-27 - [Blocking Synchronous I/O in Async Handlers]
 **Learning:** The `docker` python library is synchronous. Using it directly in `async def` FastAPI endpoints blocks the event loop during network I/O, causing requests to hang until the docker operation completes.
 **Action:** Always wrap synchronous I/O operations (like `docker` client calls) in `await run_in_threadpool(...)` when working within `async def` endpoints.
+
+## 2026-02-06 - [Blocking File I/O in Async Handlers]
+**Learning:** File operations like `tempfile.NamedTemporaryFile` (creation) and `os.unlink` (deletion) are synchronous and blocking. When used in `async def` endpoints, they block the event loop.
+**Action:** Wrap file I/O operations in synchronous helper functions and execute them using `await run_in_threadpool(...)`.

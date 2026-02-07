@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { X, Palette, Check, Settings as SettingsIcon, Bell, Shield, Database, Server, Plus, Trash2, Edit2, Save } from 'lucide-react';
 import DataExportImport from './DataExportImport';
 import { THEMES, applyTheme, getStoredTheme } from '../themes';
@@ -11,6 +11,22 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
   useEffect(() => {
     setSelectedTheme(getStoredTheme());
   }, [isOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -32,12 +48,22 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-modal-title"
+    >
       <div className="bg-[var(--bg-secondary)] border border-[var(--border-primary)] rounded-lg shadow-2xl w-full max-w-4xl mx-4 max-h-[85vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[var(--border-primary)]">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">Settings</h2>
+            <h2
+              id="settings-modal-title"
+              className="text-lg font-semibold text-[var(--text-primary)]"
+            >
+              Settings
+            </h2>
             <p className="text-sm text-[var(--text-tertiary)]">Customize your Devvy Studio experience</p>
           </div>
           <button
@@ -52,12 +78,20 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
         {/* Tabs and Content */}
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar Tabs */}
-          <div className="w-48 border-r border-[var(--border-primary)] p-4 space-y-1">
+          <div
+            className="w-48 border-r border-[var(--border-primary)] p-4 space-y-1"
+            role="tablist"
+            aria-orientation="vertical"
+          >
             {settingsTabs.map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.id}
+                  id={`tab-${tab.id}`}
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
+                  aria-controls={`panel-${tab.id}`}
                   onClick={() => setActiveTab(tab.id)}
                   className={`
                     w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
@@ -77,7 +111,12 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
           {/* Content Area */}
           <div className="flex-1 overflow-y-auto p-6">
             {activeTab === 'appearance' && (
-              <div className="space-y-6">
+              <div
+                className="space-y-6"
+                role="tabpanel"
+                id="panel-appearance"
+                aria-labelledby="tab-appearance"
+              >
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">Theme</h3>
                   <p className="text-sm text-[var(--text-tertiary)]">Choose your preferred color theme</p>
@@ -116,11 +155,22 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
             )}
 
             {activeTab === 'environment' && (
-              <EnvironmentSettings />
+              <div
+                role="tabpanel"
+                id="panel-environment"
+                aria-labelledby="tab-environment"
+              >
+                <EnvironmentSettings />
+              </div>
             )}
 
             {activeTab === 'general' && (
-              <div className="space-y-6">
+              <div
+                className="space-y-6"
+                role="tabpanel"
+                id="panel-general"
+                aria-labelledby="tab-general"
+              >
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">General Settings</h3>
                   <p className="text-sm text-[var(--text-tertiary)]">Configure general application settings</p>
@@ -132,7 +182,12 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
             )}
 
             {activeTab === 'notifications' && (
-              <div className="space-y-6">
+              <div
+                className="space-y-6"
+                role="tabpanel"
+                id="panel-notifications"
+                aria-labelledby="tab-notifications"
+              >
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">Notifications</h3>
                   <p className="text-sm text-[var(--text-tertiary)]">Manage notification preferences</p>
@@ -144,7 +199,12 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
             )}
 
             {activeTab === 'security' && (
-              <div className="space-y-6">
+              <div
+                className="space-y-6"
+                role="tabpanel"
+                id="panel-security"
+                aria-labelledby="tab-security"
+              >
                 <div>
                   <h3 className="text-base font-semibold text-[var(--text-primary)] mb-1">Security & Privacy</h3>
                   <p className="text-sm text-[var(--text-tertiary)]">Manage security and privacy settings</p>
@@ -156,12 +216,18 @@ const SettingsModal = ({ isOpen, onClose, tabs, setTabs, favorites, setFavorites
             )}
             
             {activeTab === 'data' && (
-              <DataExportImport 
-                tabs={tabs} 
-                setTabs={setTabs} 
-                favorites={favorites} 
-                setFavorites={setFavorites} 
-              />
+              <div
+                role="tabpanel"
+                id="panel-data"
+                aria-labelledby="tab-data"
+              >
+                <DataExportImport
+                  tabs={tabs}
+                  setTabs={setTabs}
+                  favorites={favorites}
+                  setFavorites={setFavorites}
+                />
+              </div>
             )}
           </div>
         </div>
@@ -313,7 +379,7 @@ const EnvironmentSettings = () => {
 };
 
 const LLMConfig = ({ config, onSave }) => {
-  const [formData, setFormData] = useState(config || {
+  const defaultConfig = {
     provider: 'openai',
     apiKey: '',
     model: 'gpt-4',
@@ -322,19 +388,12 @@ const LLMConfig = ({ config, onSave }) => {
     maxTokens: 2000,
     customHeaders: {},
     requestFormat: 'openai'
-  });
+  };
+
+  const [formData, setFormData] = useState({ ...defaultConfig, ...config });
 
   useEffect(() => {
-    setFormData(config || {
-      provider: 'openai',
-      apiKey: '',
-      model: 'gpt-4',
-      apiUrl: 'https://api.openai.com/v1',
-      temperature: 0.7,
-      maxTokens: 2000,
-      customHeaders: {},
-      requestFormat: 'openai'
-    });
+    setFormData({ ...defaultConfig, ...config });
   }, [config]);
 
   const handleSave = () => {
@@ -384,8 +443,9 @@ const LLMConfig = ({ config, onSave }) => {
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Provider</label>
+          <label htmlFor="llm-provider" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Provider</label>
           <select
+            id="llm-provider"
             value={formData.provider}
             onChange={(e) => handleProviderChange(e.target.value)}
             className="w-full px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
@@ -398,8 +458,9 @@ const LLMConfig = ({ config, onSave }) => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Model</label>
+          <label htmlFor="llm-model" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Model</label>
           <input
+            id="llm-model"
             type="text"
             value={formData.model}
             onChange={(e) => setFormData({...formData, model: e.target.value})}
@@ -409,8 +470,9 @@ const LLMConfig = ({ config, onSave }) => {
         </div>
       </div>
       <div>
-        <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">API Key</label>
+        <label htmlFor="llm-apikey" className="block text-sm font-medium text-[var(--text-primary)] mb-1">API Key</label>
         <input
+          id="llm-apikey"
           type="password"
           value={formData.apiKey}
           onChange={(e) => setFormData({...formData, apiKey: e.target.value})}
@@ -419,8 +481,9 @@ const LLMConfig = ({ config, onSave }) => {
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">API URL</label>
+        <label htmlFor="llm-apiurl" className="block text-sm font-medium text-[var(--text-primary)] mb-1">API URL</label>
         <input
+          id="llm-apiurl"
           type="text"
           value={formData.apiUrl}
           onChange={(e) => setFormData({...formData, apiUrl: e.target.value})}
@@ -430,8 +493,9 @@ const LLMConfig = ({ config, onSave }) => {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Temperature</label>
+          <label htmlFor="llm-temp" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Temperature</label>
           <input
+            id="llm-temp"
             type="number"
             step="0.1"
             min="0"
@@ -442,8 +506,9 @@ const LLMConfig = ({ config, onSave }) => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Max Tokens</label>
+          <label htmlFor="llm-tokens" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Max Tokens</label>
           <input
+            id="llm-tokens"
             type="number"
             value={formData.maxTokens}
             onChange={(e) => setFormData({...formData, maxTokens: parseInt(e.target.value)})}
@@ -457,8 +522,9 @@ const LLMConfig = ({ config, onSave }) => {
           <h4 className="text-sm font-semibold text-[var(--text-primary)]">Custom Configuration</h4>
           
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Request Format</label>
+            <label htmlFor="llm-format" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Request Format</label>
             <select
+              id="llm-format"
               value={formData.requestFormat}
               onChange={(e) => setFormData({...formData, requestFormat: e.target.value})}
               className="w-full px-3 py-2 border rounded-md bg-[var(--bg-tertiary)] border-[var(--border-primary)] text-[var(--text-primary)]"
@@ -475,8 +541,9 @@ const LLMConfig = ({ config, onSave }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[var(--text-primary)] mb-1">Custom Headers (JSON)</label>
+            <label htmlFor="llm-headers" className="block text-sm font-medium text-[var(--text-primary)] mb-1">Custom Headers (JSON)</label>
             <textarea
+              id="llm-headers"
               value={typeof formData.customHeaders === 'string' ? formData.customHeaders : JSON.stringify(formData.customHeaders, null, 2)}
               onChange={(e) => {
                 try {
@@ -564,6 +631,13 @@ const ArrayConfig = ({ config, category, onSave }) => {
     }
   };
 
+  const formatLabel = (key) => {
+    return key
+      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+      .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+      .trim();
+  };
+
   return (
     <div className="space-y-4">
       <button
@@ -579,26 +653,41 @@ const ArrayConfig = ({ config, category, onSave }) => {
           <div key={item.id || index} className="border border-[var(--border-primary)] rounded-md p-4 bg-[var(--bg-tertiary)]">
             {editIndex === index ? (
               <div className="space-y-3">
-                <input
-                  type="text"
-                  value={editData.name || ''}
-                  onChange={(e) => setEditData({...editData, name: e.target.value})}
-                  placeholder="Name"
-                  aria-label="Configuration Name"
-                  className="w-full px-3 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
-                />
-                {Object.keys(getDefaultFields(category)).map(field => (
+                <div>
+                  <label
+                    htmlFor={`config-${category}-name-${index}`}
+                    className="block text-sm font-medium text-[var(--text-primary)] mb-1"
+                  >
+                    Name
+                  </label>
                   <input
-                    key={field}
-                    type={field.includes('password') || field.includes('token') ? 'password' : 'text'}
-                    value={editData[field] || ''}
-                    onChange={(e) => setEditData({...editData, [field]: e.target.value})}
-                    placeholder={field}
-                    aria-label={`Configuration ${field}`}
+                    id={`config-${category}-name-${index}`}
+                    type="text"
+                    value={editData.name || ''}
+                    onChange={(e) => setEditData({...editData, name: e.target.value})}
+                    placeholder="Name"
                     className="w-full px-3 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
                   />
+                </div>
+                {Object.keys(getDefaultFields(category)).map(field => (
+                  <div key={field}>
+                    <label
+                      htmlFor={`config-${category}-${field}-${index}`}
+                      className="block text-sm font-medium text-[var(--text-primary)] mb-1"
+                    >
+                      {formatLabel(field)}
+                    </label>
+                    <input
+                      id={`config-${category}-${field}-${index}`}
+                      type={field.includes('password') || field.includes('token') ? 'password' : 'text'}
+                      value={editData[field] || ''}
+                      onChange={(e) => setEditData({...editData, [field]: e.target.value})}
+                      placeholder={formatLabel(field)}
+                      className="w-full px-3 py-2 border rounded-md bg-[var(--bg-secondary)] border-[var(--border-primary)] text-[var(--text-primary)]"
+                    />
+                  </div>
                 ))}
-                <div className="flex gap-2">
+                <div className="flex gap-2 pt-2">
                   <button onClick={saveItem} className="px-3 py-1 bg-green-500 text-white rounded text-sm">Save</button>
                   <button onClick={() => setEditIndex(null)} className="px-3 py-1 bg-gray-500 text-white rounded text-sm">Cancel</button>
                 </div>
@@ -634,4 +723,7 @@ const ArrayConfig = ({ config, category, onSave }) => {
   );
 };
 
-export default SettingsModal;
+// Optimized: Custom comparison function prevents the heavy SettingsModal from re-rendering
+// on every parent render when it is closed (!isOpen).
+// It only re-renders when opening, closing, or while open.
+export default memo(SettingsModal, (prev, next) => !prev.isOpen && !next.isOpen);

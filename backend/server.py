@@ -192,7 +192,7 @@ class FavoriteTool(BaseModel):
 
 
 @api_router.post("/auth/register", response_model=Token)
-async def register(user_data: UserCreate):
+async def register(user_data: UserCreate, db=Depends(get_database)):
     # Check if user already exists
     existing_user = await db.users.find_one({"email": user_data.email}, {"_id": 0})
     if existing_user:
@@ -230,7 +230,10 @@ async def register(user_data: UserCreate):
     user = User(email=user_data.email, role=user_data.role, organization_id=org_id)
 
     user_doc = user.model_dump()
-    user_doc["password_hash"] = get_password_hash(user_data.password)
+    # Run CPU-bound bcrypt hashing in threadpool to avoid blocking event loop
+    user_doc["password_hash"] = await run_in_threadpool(
+        get_password_hash, user_data.password
+    )
     user_doc["created_at"] = user_doc["created_at"].isoformat()
 
     await db.users.insert_one(user_doc)
@@ -251,12 +254,15 @@ async def register(user_data: UserCreate):
 
 
 @api_router.post("/auth/login", response_model=Token)
-async def login(credentials: UserLogin):
+async def login(credentials: UserLogin, db=Depends(get_database)):
     user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    if not verify_password(credentials.password, user["password_hash"]):
+    # Run CPU-bound password verification in threadpool
+    if not await run_in_threadpool(
+        verify_password, credentials.password, user["password_hash"]
+    ):
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     if not user.get("is_active", True):
@@ -695,7 +701,9 @@ async def get_admin_tools_config(admin_user: dict = Depends(require_admin)):
 
 @api_router.post("/admin/create-organization")
 async def create_organization(
-    org_data: OrganizationCreate, admin_user: dict = Depends(require_admin)
+    org_data: OrganizationCreate,
+    admin_user: dict = Depends(require_admin),
+    db=Depends(get_database),
 ):
     """Create a new organization with licenses (admin only)"""
     # Check if admin email already exists
@@ -734,7 +742,10 @@ async def create_organization(
     user = User(email=admin_user_data.email, role="org_admin", organization_id=org.id)
 
     user_doc = user.model_dump()
-    user_doc["password_hash"] = get_password_hash(org_data.admin_password)
+    # Run CPU-bound hashing in threadpool
+    user_doc["password_hash"] = await run_in_threadpool(
+        get_password_hash, org_data.admin_password
+    )
     user_doc["created_at"] = user_doc["created_at"].isoformat()
 
     await db.users.insert_one(user_doc)
@@ -1593,6 +1604,32 @@ class ScriptExecuteResponse(BaseModel):
     executionTime: float
 
 
+def _setup_script_file(script_content: str) -> str:
+    """Helper to create script file synchronously"""
+    script_path = None
+    try:
+        # Create temporary script file
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".sh", delete=False
+        ) as f:
+            script_path = f.name
+            f.write(script_content)
+
+        # Make script executable
+        os.chmod(script_path, 0o755)
+        return script_path
+    except Exception:
+        if script_path and os.path.exists(script_path):
+            os.unlink(script_path)
+        raise
+
+
+def _cleanup_script_file(script_path: str):
+    """Helper to cleanup script file synchronously"""
+    if os.path.exists(script_path):
+        os.unlink(script_path)
+
+
 @api_router.post("/execute-script", response_model=ScriptExecuteResponse)
 async def execute_script(request: ScriptExecuteRequest):
     """
@@ -1603,14 +1640,10 @@ async def execute_script(request: ScriptExecuteRequest):
 
     start_time = time.time()
 
+    script_path = None
     try:
-        # Create temporary script file
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".sh", delete=False) as f:
-            f.write(request.script)
-            script_path = f.name
-
-        # Make script executable
-        os.chmod(script_path, 0o755)
+        # Run blocking file operations in threadpool
+        script_path = await run_in_threadpool(_setup_script_file, request.script)
 
         # Prepare environment
         env = os.environ.copy()
@@ -1653,10 +1686,11 @@ async def execute_script(request: ScriptExecuteRequest):
             )
         finally:
             # Clean up temp file
-            try:
-                os.unlink(script_path)
-            except:
-                pass
+            if script_path:
+                try:
+                    await run_in_threadpool(_cleanup_script_file, script_path)
+                except Exception:
+                    pass
 
     except Exception as e:
         logger.error(f"Script execution error: {str(e)}")
@@ -1794,33 +1828,36 @@ async def list_s3_objects(request: S3ListObjectsRequest):
         # List objects with delimiter to get folders
         response = await run_in_threadpool(_list_objects)
 
-        objects = []
+        # Optimize performance: extract prefix and use list comprehensions
+        # Also fix bug: use removeprefix instead of replace to avoid mangling filenames
+        prefix_str = request.prefix or ""
 
         # Add folders
-        for prefix in response.get("CommonPrefixes", []):
-            folder_name = prefix["Prefix"].replace(request.prefix or "", "").rstrip("/")
-            if folder_name:
-                objects.append(
-                    {"key": prefix["Prefix"], "name": folder_name, "isFolder": True}
-                )
+        objects = [
+            {
+                "key": prefix["Prefix"],
+                "name": prefix["Prefix"].removeprefix(prefix_str).rstrip("/"),
+                "isFolder": True,
+            }
+            for prefix in response.get("CommonPrefixes", [])
+            if prefix["Prefix"].removeprefix(prefix_str).rstrip("/")
+        ]
 
         # Add files
-        for obj in response.get("Contents", []):
-            # Skip the prefix itself
-            if obj["Key"] == request.prefix:
-                continue
-
-            file_name = obj["Key"].replace(request.prefix or "", "")
-            if file_name:
-                objects.append(
-                    {
-                        "key": obj["Key"],
-                        "name": file_name,
-                        "size": obj["Size"],
-                        "lastModified": obj["LastModified"].isoformat(),
-                        "isFolder": False,
-                    }
-                )
+        objects.extend(
+            [
+                {
+                    "key": obj["Key"],
+                    "name": obj["Key"].removeprefix(prefix_str),
+                    "size": obj["Size"],
+                    "lastModified": obj["LastModified"].isoformat(),
+                    "isFolder": False,
+                }
+                for obj in response.get("Contents", [])
+                if obj["Key"] != request.prefix
+                and obj["Key"].removeprefix(prefix_str)
+            ]
+        )
 
         return {"objects": objects}
     except Exception as e:
